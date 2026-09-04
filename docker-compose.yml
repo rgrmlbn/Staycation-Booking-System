@@ -1,0 +1,51 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: staycation_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: staycation
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - portfolio-net
+
+  backend:
+    build: ./backend
+    container_name: staycation_backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - portfolio-net
+
+  frontend:
+    build: ./frontend
+    container_name: staycation_frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - staycation-net
+
+volumes:
+  mysql_data:
+
+networks:
+  staycation-net:
+    driver: bridge
