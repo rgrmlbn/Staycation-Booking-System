@@ -2,7 +2,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: staycation_mysql
+    container_name: dental_mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: staycation
@@ -10,34 +10,46 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - dental-net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - portfolio-net
 
-  backend:
+  redis:
+    image: redis:7.2
+    container_name: staycation_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - staycation-net
+
+  app:
     build: ./backend
-    container_name: staycation_backend
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    env_file:
-      - ./backend/.env
+    container_name: staycation_app
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - ./backend/.env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8080:8080"
     networks:
-      - portfolio-net
+      - dental-net
 
   frontend:
     build: ./frontend
     container_name: staycation_frontend
     depends_on:
-      - backend
+      - app
     ports:
       - "80:80"
     networks:
@@ -45,6 +57,7 @@ services:
 
 volumes:
   mysql_data:
+  redis_data:
 
 networks:
   staycation-net:

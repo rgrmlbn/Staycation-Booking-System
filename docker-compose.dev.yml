@@ -17,5 +17,14 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7.2
+    container_name: staycation_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 volumes:
   mysql_data:
+  redis_data:
