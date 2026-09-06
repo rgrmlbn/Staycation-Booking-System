@@ -16,11 +16,9 @@ public interface UserMapper {
     UserEntity toEntity(RegisterRequest request);
 
     @Mapping(target = "age", expression = "java(calculateAge(user.getDateOfBirth()))")
-    @Mapping(target = "role", expression = "java(user.getRole().name())")
     UserResponse toResponse(UserEntity user);
 
     @Mapping(target = "age", expression = "java(calculateAge(user.getDateOfBirth()))")
-    @Mapping(target = "role", expression = "java(user.getRole().name())")
     RegisterResponse toRegisterResponse(UserEntity user);
 
     default int calculateAge(LocalDate dateOfBirth) {

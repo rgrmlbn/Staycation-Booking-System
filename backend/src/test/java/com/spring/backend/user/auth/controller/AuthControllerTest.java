@@ -12,6 +12,7 @@ import com.spring.backend.module.user.auth.dto.response.RegisterResponse;
 import com.spring.backend.module.user.auth.service.interfaces.AuthService;
 import com.spring.backend.module.user.token.service.interfaces.TokenBlacklistService;
 import com.spring.backend.module.user.user.enums.Gender;
+import com.spring.backend.module.user.user.enums.UserRole;
 import com.spring.backend.security.util.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ class AuthControllerTest {
                 .contactNumber("9123456789")
                 .address("123 Sample Street, Metro Manila")
                 .email(email)
+                .role(UserRole.GUEST)
                 .password("StrongPass123!")
                 .build();
     }

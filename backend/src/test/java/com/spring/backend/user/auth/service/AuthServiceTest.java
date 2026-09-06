@@ -14,6 +14,7 @@ import com.spring.backend.module.user.token.service.interfaces.RefreshTokenServi
 import com.spring.backend.module.user.token.service.interfaces.TokenBlacklistService;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import com.spring.backend.module.user.user.enums.Gender;
+import com.spring.backend.module.user.user.enums.UserRole;
 import com.spring.backend.module.user.user.mapper.UserMapper;
 import com.spring.backend.module.user.user.repository.UserRepository;
 import com.spring.backend.security.principal.UserPrincipal;
@@ -68,6 +69,7 @@ class AuthServiceTest {
                 .contactNumber("9123456789")
                 .address("123 Sample Street, Metro Manila")
                 .email("test@example.com")
+                .role(UserRole.GUEST)
                 .password("plainPassword123")
                 .build();
 

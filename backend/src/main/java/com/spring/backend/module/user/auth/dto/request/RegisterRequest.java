@@ -2,6 +2,7 @@ package com.spring.backend.module.user.auth.dto.request;
 
 
 import com.spring.backend.module.user.user.enums.Gender;
+import com.spring.backend.module.user.user.enums.UserRole;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,10 +36,12 @@ public class RegisterRequest {
     @Size(min = 8, max = 80, message = "Address must be between 8 and 80 characters")
     private  String address;
 
-
     @NotBlank(message = "Email is required")
     @Email(message = "Provide a valid email")
     private  String email;
+
+    @NotNull(message = "User Role is required")
+    private UserRole role;
 
     @NotBlank(message = "Password is required")
     @Pattern(

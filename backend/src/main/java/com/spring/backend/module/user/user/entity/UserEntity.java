@@ -45,6 +45,5 @@ public class UserEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
-    private UserRole role = UserRole.PATIENT; // default role is PATIENT when account creation
+    private UserRole role; // default role is PATIENT when account creation
 }

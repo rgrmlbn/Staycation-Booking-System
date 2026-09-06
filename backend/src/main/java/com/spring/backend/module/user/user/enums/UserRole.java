@@ -1,6 +1,7 @@
 package com.spring.backend.module.user.user.enums;
 
 public enum UserRole {
-    PATIENT,
+    HOST,
+    GUEST,
     ADMIN
 }
