@@ -28,7 +28,6 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @Mock private UserRepository userRepository;
-    @Mock private UserMapper userMapper;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private RefreshTokenService refreshTokenService;
     @Mock private OwnershipVerifier ownershipVerifier; // Mocked so ownership/admin checks can be simulated instead of running real security logic
