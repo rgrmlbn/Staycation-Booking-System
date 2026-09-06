@@ -3,11 +3,15 @@ package com.spring.backend.module.user.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class ChangePasswordRequest {
 
     @NotBlank(message = "Current password is required")

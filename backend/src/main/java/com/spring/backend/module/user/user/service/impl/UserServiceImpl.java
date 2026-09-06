@@ -57,20 +57,8 @@ public class UserServiceImpl implements UserService {
 
         ownershipVerifier.verifyOwnershipOrAdmin(user);
 
-        if (update.getFirstName() != null && !update.getFirstName().isBlank()) {
-            user.setFirstName(update.getFirstName());
-        }
-
-        if (update.getMiddleName() != null && !update.getMiddleName().isBlank()) {
-            user.setMiddleName(update.getMiddleName());
-        }
-
-        if (update.getLastName() != null && !update.getLastName().isBlank()) {
-            user.setLastName(update.getLastName());
-        }
-
-        if (update.getSuffix() != null && !update.getSuffix().isBlank()) {
-            user.setSuffix(update.getSuffix());
+        if (update.getName() != null && !update.getName().isBlank()) {
+            user.setName(update.getName());
         }
 
         if (update.getGender() != null) {
@@ -85,21 +73,10 @@ public class UserServiceImpl implements UserService {
             user.setContactNumber(update.getContactNumber());
         }
 
-        if (update.getStreet() != null && !update.getStreet().isBlank()) {
-            user.setStreet(update.getStreet());
+        if (update.getAddress() != null && !update.getAddress().isBlank()) {
+            user.setAddress(update.getAddress());
         }
 
-        if (update.getCity() != null && !update.getCity().isBlank()) {
-            user.setCity(update.getCity());
-        }
-
-        if (update.getProvince() != null && !update.getProvince().isBlank()) {
-            user.setProvince(update.getProvince());
-        }
-
-        if (update.getPostalCode() != null && !update.getPostalCode().isBlank()) {
-            user.setPostalCode(update.getPostalCode());
-        }
 
         if (update.getEmail() != null && !update.getEmail().isBlank()) {
             if (!user.getEmail().equals(update.getEmail()) &&

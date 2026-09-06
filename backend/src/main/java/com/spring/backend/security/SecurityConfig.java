@@ -46,20 +46,26 @@ public class SecurityConfig {
                                 "/auth/register",
                                 "/auth/login",
                                 "/auth/refresh",
+                                "/users/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/h2-console/**"          // 👈 add this
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN") // 👈 only list all users is ADMIN
-                        .anyRequest().authenticated()                                 // 👈 everything else just needs to be logged in
+//                        .requestMatchers(HttpMethod.GET, ).hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
 
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
+                )
+
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
                 )
 
                 .authenticationProvider(authenticationProvider())

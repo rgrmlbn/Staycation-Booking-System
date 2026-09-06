@@ -3,6 +3,8 @@ package com.spring.backend.module.user.auth.dto.request;
 
 import com.spring.backend.module.user.user.enums.Gender;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,21 +12,13 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class RegisterRequest {
 
-    @NotBlank(message = "First name is required")
-    @Size(min = 2, max = 20, message = "First name must be between 2 and 20 characters")
-    private  String firstName;
-
-    @Size(min = 1, max = 20, message = "Middle name must be between 1 and 20 characters")
-    private  String middleName;
-
-    @NotBlank(message = "Last name is required")
-    @Size(min = 2, max = 20, message = "Last name must be between 2 and 20 characters")
-    private  String lastName;
-
-    @Size(min = 1, max = 8, message = "Suffix must be between 1 and 8 characters")
-    private  String suffix;
+    @NotBlank(message = "Name is required")
+    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
+    private  String name;
 
     @NotNull(message = "Gender is required")
     private Gender gender;
@@ -37,21 +31,10 @@ public class RegisterRequest {
     @Pattern(regexp = "^9\\d{9}$", message = "Invalid phone number format")
     private  String contactNumber;
 
-    @NotBlank(message = "Street is required")
-    private  String street;
+    @NotBlank(message = "Address is required")
+    @Size(min = 8, max = 80, message = "Address must be between 8 and 80 characters")
+    private  String address;
 
-    @NotBlank(message = "Barangay is required")
-    private  String barangay;
-
-    @NotBlank(message = "City is required")
-    private  String city;
-
-    @NotBlank(message = "Province is required")
-    private  String province;
-
-    @NotBlank(message = "Postal code is required")
-    @Pattern(regexp = "^\\d{4}$", message = "Invalid postal code")
-    private  String postalCode;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Provide a valid email")

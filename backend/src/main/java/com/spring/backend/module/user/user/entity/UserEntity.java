@@ -22,14 +22,7 @@ public class UserEntity extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String firstName;
-
-    private String middleName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    private String suffix;
+    private String name;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -42,19 +35,7 @@ public class UserEntity extends BaseEntity {
     private String contactNumber;
 
     @Column(nullable = false)
-    private String street;
-
-    @Column(nullable = false)
-    private String barangay;
-
-    @Column(nullable = false)
-    private String city;
-
-    @Column(nullable = false)
-    private String province;
-
-    @Column(nullable = false)
-    private String postalCode;
+    private String address;
 
     @Column(nullable = false, unique = true)
     private String email;

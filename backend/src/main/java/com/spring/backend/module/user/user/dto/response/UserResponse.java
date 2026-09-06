@@ -11,18 +11,12 @@ import java.time.LocalDate;
 public class UserResponse {
 
     private Long id;
-    private String firstName;
-    private String middleName;
-    private String lastName;
+    private String name;
     private Gender gender;
     private LocalDate dateOfBirth;
     private int age;
     private String contactNumber;
-    private String street;
-    private String barangay;
-    private String city;
-    private String province;
-    private String postalCode;
+    private String address;
     private String email;
     private String role;
 
