@@ -1,5 +1,6 @@
 package com.spring.backend.module.property.mapper;
 
+import com.spring.backend.module.property.dto.request.AmenityCreateRequest;
 import com.spring.backend.module.property.dto.response.AmenityResponse;
 import com.spring.backend.module.property.dto.response.PropertyDetailedResponse;
 import com.spring.backend.module.property.dto.response.PropertySummaryResponse;
@@ -9,6 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PropertyMapper {
+
+    public AmenityEntity toAmenityEntity(AmenityCreateRequest request) {
+        return AmenityEntity.builder()
+                .name(request.getName())
+                .build();
+    }
 
     public AmenityResponse toAmenityResponse(AmenityEntity entity) {
         return AmenityResponse.builder()
