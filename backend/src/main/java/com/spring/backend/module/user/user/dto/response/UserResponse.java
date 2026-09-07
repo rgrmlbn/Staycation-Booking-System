@@ -1,6 +1,7 @@
 package com.spring.backend.module.user.user.dto.response;
 
 import com.spring.backend.module.user.user.enums.Gender;
+import com.spring.backend.module.user.user.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,6 +19,6 @@ public class UserResponse {
     private String contactNumber;
     private String address;
     private String email;
-    private String role;
+    private UserRole role;
 
 }

@@ -4,24 +4,56 @@ import com.spring.backend.module.user.auth.dto.request.RegisterRequest;
 import com.spring.backend.module.user.auth.dto.response.RegisterResponse;
 import com.spring.backend.module.user.user.dto.response.UserResponse;
 import com.spring.backend.module.user.user.entity.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Period;
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
+@Component
+public class UserMapper {
 
-    UserEntity toEntity(RegisterRequest request);
+    public UserEntity toEntity(RegisterRequest request) {
+        return UserEntity.builder()
+                .name(request.getName())
+                .gender(request.getGender())
+                .dateOfBirth(request.getDateOfBirth())
+                .contactNumber(request.getContactNumber())
+                .address(request.getAddress())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
+    }
 
-    @Mapping(target = "age", expression = "java(calculateAge(user.getDateOfBirth()))")
-    UserResponse toResponse(UserEntity user);
-
-    @Mapping(target = "age", expression = "java(calculateAge(user.getDateOfBirth()))")
-    RegisterResponse toRegisterResponse(UserEntity user);
-
-    default int calculateAge(LocalDate dateOfBirth) {
+    private int calculateAge(LocalDate dateOfBirth) {
         return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
+
+    public UserResponse toResponse(UserEntity user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .gender(user.getGender())
+                .dateOfBirth(user.getDateOfBirth())
+                .age(calculateAge(user.getDateOfBirth()))
+                .contactNumber(user.getContactNumber())
+                .address(user.getAddress())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+    }
+
+    public RegisterResponse toRegisterResponse(UserEntity user) {
+        return RegisterResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .gender(user.getGender())
+                .dateOfBirth(user.getDateOfBirth())
+                .age(calculateAge(user.getDateOfBirth()))
+                .contactNumber(user.getContactNumber())
+                .address(user.getAddress())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+
 }
