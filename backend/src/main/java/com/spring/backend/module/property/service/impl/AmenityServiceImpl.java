@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,13 +48,13 @@ public class AmenityServiceImpl implements AmenityService {
     }
 
     @Override
-    public AmenityResponse updateAmenity(Long id, AmenityUpdateRequest request) {
+    public AmenityResponse updateAmenity(Long id, AmenityUpdateRequest update) {
 
         AmenityEntity entity = amenityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity"));
 
-        if(request.getName() != null && !request.getName().isBlank()) {
-            entity.setName(request.getName());
+        if(update.getName() != null && !update.getName().isBlank()) {
+            entity.setName(update.getName());
         }
 
         AmenityEntity updatedEntity = amenityRepository.save(entity);
