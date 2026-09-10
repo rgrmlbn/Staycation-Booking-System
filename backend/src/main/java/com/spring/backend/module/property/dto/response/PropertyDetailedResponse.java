@@ -1,6 +1,7 @@
 package com.spring.backend.module.property.dto.response;
 
 import com.spring.backend.module.property.enums.PropertyStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ import java.util.List;
 public class PropertyDetailedResponse {
 
     private Long id;
+    private Long hostId;
     private String title;
     private String description;
     private Double pricePerNight;

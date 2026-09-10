@@ -42,22 +42,26 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login",
-                                "/api/auth/refresh",
-                                "/api/users/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/swagger-resources/**",
-                                "/webjars/**",
-                                "/h2-console/**"          // 👈 add this
-                        ).permitAll()
-//                        .requestMatchers(HttpMethod.GET, ).hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
+
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(
+//                                "/api/auth/register",
+//                                "/api/auth/login",
+//                                "/api/auth/refresh",
+//                                "/api/users/**",
+//                                "/v3/api-docs/**",
+//                                "/v3/api-docs.yaml",
+//                                "/swagger-ui/**",
+//                                "/swagger-ui.html",
+//                                "/swagger-resources/**",
+//                                "/webjars/**",
+//                                "/h2-console/**"          // 👈 add this
+//                        ).permitAll()
+////                        .requestMatchers(HttpMethod.GET, ).hasRole("ADMIN")
+//                        .anyRequest().authenticated()
+//                )
 
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authEntryPoint)

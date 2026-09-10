@@ -20,6 +20,7 @@ public class UserMapper {
                 .contactNumber(request.getContactNumber())
                 .address(request.getAddress())
                 .email(request.getEmail())
+                .role(request.getRole())
                 .password(request.getPassword())
                 .build();
     }
@@ -52,7 +53,7 @@ public class UserMapper {
                 .contactNumber(user.getContactNumber())
                 .address(user.getAddress())
                 .email(user.getEmail())
-                .role(user.getRole().name())
+                .role(user.getRole())
                 .build();
     }
 

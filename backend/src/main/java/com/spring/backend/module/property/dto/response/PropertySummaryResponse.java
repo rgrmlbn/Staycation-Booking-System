@@ -11,6 +11,7 @@ import java.util.List;
 public class PropertySummaryResponse {
 
     private Long id;
+    private Long hostId;
     private String title;
 
     private Double pricePerNight;
