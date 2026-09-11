@@ -2,7 +2,7 @@ package com.spring.backend.module.user.auth.service.impl;
 
 
 import com.spring.backend.config.LoginRateLimitProperties;
-import com.spring.backend.exception.TooManyRequestsException;
+import com.spring.backend.exception.user.auth.TooManyRequestsException;
 import com.spring.backend.module.user.auth.service.interfaces.LoginRateLimiterService;
 import com.spring.backend.security.util.IpExtractor;
 import io.github.bucket4j.Bandwidth;

@@ -1,6 +1,15 @@
 package com.spring.backend.exception;
 
 
+import com.spring.backend.exception.common.ResourceNotFoundException;
+import com.spring.backend.exception.user.auth.InvalidTokenException;
+import com.spring.backend.exception.user.auth.TokenExpiredException;
+import com.spring.backend.exception.user.auth.TokenRevokedException;
+import com.spring.backend.exception.user.auth.TooManyRequestsException;
+import com.spring.backend.exception.user.user.DuplicateEmailException;
+import com.spring.backend.exception.user.user.IncorrectCurrentPasswordException;
+import com.spring.backend.exception.user.user.PasswordMismatchException;
+import com.spring.backend.exception.user.user.PasswordReuseException;
 import com.spring.backend.module.shared.response.ApiResponse;
 import com.spring.backend.module.shared.response.ApiResponseBuilder;
 import lombok.RequiredArgsConstructor;

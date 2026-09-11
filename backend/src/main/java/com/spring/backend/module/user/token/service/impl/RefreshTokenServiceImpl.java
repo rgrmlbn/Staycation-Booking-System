@@ -2,9 +2,9 @@ package com.spring.backend.module.user.token.service.impl;
 
 
 import com.spring.backend.config.JwtProperties;
-import com.spring.backend.exception.InvalidTokenException;
-import com.spring.backend.exception.TokenExpiredException;
-import com.spring.backend.exception.TokenRevokedException;
+import com.spring.backend.exception.user.auth.InvalidTokenException;
+import com.spring.backend.exception.user.auth.TokenExpiredException;
+import com.spring.backend.exception.user.auth.TokenRevokedException;
 import com.spring.backend.module.user.token.entity.RefreshToken;
 import com.spring.backend.module.user.token.repository.RefreshTokenRepository;
 import com.spring.backend.module.user.token.service.interfaces.RefreshTokenService;

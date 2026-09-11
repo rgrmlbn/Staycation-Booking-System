@@ -1,15 +1,16 @@
 package com.spring.backend.module.property.service.impl;
 
-import com.spring.backend.module.property.dto.request.PropertyCreateRequest;
-import com.spring.backend.module.property.dto.request.PropertyUpdateRequest;
-import com.spring.backend.module.property.dto.response.PropertyDetailedResponse;
-import com.spring.backend.module.property.dto.response.PropertySummaryResponse;
-import com.spring.backend.module.property.entity.AmenityEntity;
-import com.spring.backend.module.property.entity.PropertyEntity;
-import com.spring.backend.module.property.enums.PropertyStatus;
-import com.spring.backend.module.property.mapper.PropertyMapper;
-import com.spring.backend.module.property.repository.AmenityRepository;
-import com.spring.backend.module.property.repository.PropertyRepository;
+import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
+import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
+import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
+import com.spring.backend.module.property.property.dto.response.PropertySummaryResponse;
+import com.spring.backend.module.property.property.entity.AmenityEntity;
+import com.spring.backend.module.property.property.entity.PropertyEntity;
+import com.spring.backend.module.property.property.enums.PropertyStatus;
+import com.spring.backend.module.property.property.mapper.PropertyMapper;
+import com.spring.backend.module.property.property.repository.AmenityRepository;
+import com.spring.backend.module.property.property.repository.PropertyRepository;
+import com.spring.backend.module.property.property.service.impl.PropertyServiceImpl;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -212,21 +213,25 @@ class PropertyServiceImplTest {
     // ---------- createProperty() ----------
 
     @Test
-    @DisplayName("Should map the request and return the mapped response")
+    @DisplayName("Should map and save the property, returning the mapped response")
     void createProperty_mapsAndReturnsResponse() {
         PropertyCreateRequest request = mock(PropertyCreateRequest.class);
-        PropertyEntity mappedEntity = new PropertyEntity(); // What the mapper produces from the request
+        UserEntity user = mock(UserEntity.class);
+        PropertyEntity mappedEntity = new PropertyEntity();
+        PropertyEntity savedEntity = new PropertyEntity();
         PropertyDetailedResponse response = mock(PropertyDetailedResponse.class);
 
-        when(propertyMapper.toPropertyEntity(request)).thenReturn(mappedEntity); // Simulate converting the request DTO into an entity
-        when(propertyMapper.toDetailedResponse(mappedEntity)).thenReturn(response);
+        when(request.getAmenityIds()).thenReturn(null); // or Collections.emptyList(), to skip the amenities branch
+        when(ownershipVerifier.getCurrentUser()).thenReturn(user);
+        when(propertyMapper.toPropertyEntity(request, user)).thenReturn(mappedEntity);
+        when(propertyRepository.save(mappedEntity)).thenReturn(savedEntity);
+        when(propertyMapper.toDetailedResponse(savedEntity)).thenReturn(response);
 
         PropertyDetailedResponse result = propertyService.createProperty(request);
 
         assertThat(result).isEqualTo(response);
-        verifyNoInteractions(propertyRepository); // NOTE: the service never calls propertyRepository.save(...), so nothing is actually persisted — this test documents current behavior, which looks like a bug worth checking
+        verify(propertyRepository).save(mappedEntity);
     }
-
     // ---------- updateProperty() ----------
 
     @Test

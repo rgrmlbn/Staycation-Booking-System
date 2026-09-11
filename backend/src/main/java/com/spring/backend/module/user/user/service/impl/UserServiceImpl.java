@@ -1,7 +1,11 @@
 package com.spring.backend.module.user.user.service.impl;
 
 
-import com.spring.backend.exception.*;
+import com.spring.backend.exception.user.user.DuplicateEmailException;
+import com.spring.backend.exception.user.user.IncorrectCurrentPasswordException;
+import com.spring.backend.exception.user.user.PasswordMismatchException;
+import com.spring.backend.exception.user.user.PasswordReuseException;
+import com.spring.backend.exception.common.ResourceNotFoundException;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.token.service.interfaces.RefreshTokenService;
 import com.spring.backend.module.user.user.dto.request.ChangePasswordRequest;

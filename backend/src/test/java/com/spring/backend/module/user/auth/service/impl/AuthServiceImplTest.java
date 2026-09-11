@@ -1,7 +1,7 @@
 package com.spring.backend.module.user.auth.service.impl;
 
-import com.spring.backend.exception.DuplicateEmailException;
-import com.spring.backend.exception.ResourceNotFoundException;
+import com.spring.backend.exception.user.user.DuplicateEmailException;
+import com.spring.backend.exception.common.ResourceNotFoundException;
 import com.spring.backend.module.user.auth.dto.request.LoginRequest;
 import com.spring.backend.module.user.auth.dto.request.RefreshTokenRequest;
 import com.spring.backend.module.user.auth.dto.request.RegisterRequest;
