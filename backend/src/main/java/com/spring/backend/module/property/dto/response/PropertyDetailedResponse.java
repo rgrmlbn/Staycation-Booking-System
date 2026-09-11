@@ -13,6 +13,7 @@ public class PropertyDetailedResponse {
 
     private Long id;
     private Long hostId;
+    private String hostName;
     private String title;
     private String description;
     private Double pricePerNight;

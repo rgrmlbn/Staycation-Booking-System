@@ -25,6 +25,7 @@ public class OwnershipVerifier {
         return getCurrentPrincipal().getUser();
     }
 
+    // Helper method to get the current authenticated principal user
     private UserPrincipal getCurrentPrincipal() {
         return (UserPrincipal) SecurityContextHolder
                 .getContext()

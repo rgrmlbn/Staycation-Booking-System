@@ -64,6 +64,8 @@ public class PropertyMapper {
 
         return PropertySummaryResponse.builder()
                 .id(entity.getId())
+                .hostId(entity.getUser().getId())
+                .hostName(entity.getUser().getName())
                 .title(entity.getTitle())
                 .pricePerNight(entity.getPricePerNight())
                 .bedrooms(entity.getBedrooms())
@@ -89,6 +91,8 @@ public class PropertyMapper {
 
         return PropertyDetailedResponse.builder()
                 .id(entity.getId())
+                .hostId(entity.getUser().getId())
+                .hostName(entity.getUser().getName())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .pricePerNight(entity.getPricePerNight())
