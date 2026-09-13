@@ -2,6 +2,10 @@ package com.spring.backend.exception;
 
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
+import com.spring.backend.exception.property.property.DuplicateAmenityException;
+import com.spring.backend.exception.property.property.DuplicateImageException;
+import com.spring.backend.exception.property.property.InvalidTimeRangeException;
+import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
 import com.spring.backend.exception.user.auth.InvalidTokenException;
 import com.spring.backend.exception.user.auth.TokenExpiredException;
 import com.spring.backend.exception.user.auth.TokenRevokedException;
@@ -13,6 +17,7 @@ import com.spring.backend.exception.user.user.PasswordReuseException;
 import com.spring.backend.module.shared.response.ApiResponse;
 import com.spring.backend.module.shared.response.ApiResponseBuilder;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -30,14 +35,25 @@ public class GlobalExceptionHandler {
 
     private final ApiResponseBuilder apiResponseBuilder;
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<ApiResponse> handleDuplicateEmailException(DuplicateEmailException ex) {
-        return apiResponseBuilder.error(HttpStatus.CONFLICT, ex.getMessage());
+    // Default
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleException(Exception ex) {
+        return apiResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
+
+    // Common
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return apiResponseBuilder.error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    // User
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ApiResponse> handleDuplicateEmailException(DuplicateEmailException ex) {
+        return apiResponseBuilder.error(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(IncorrectCurrentPasswordException.class)
@@ -55,13 +71,10 @@ public class GlobalExceptionHandler {
         return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    // Auth
+
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ApiResponse> handleInvalidTokenException(InvalidTokenException ex) {
-        return apiResponseBuilder.error(HttpStatus.UNAUTHORIZED, ex.getMessage());
-    }
-
-    @ExceptionHandler(TokenRevokedException.class)
-    public ResponseEntity<ApiResponse> handleTokenRevokedException(TokenRevokedException ex) {
         return apiResponseBuilder.error(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
@@ -70,10 +83,39 @@ public class GlobalExceptionHandler {
         return apiResponseBuilder.error(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
+    @ExceptionHandler(TokenRevokedException.class)
+    public ResponseEntity<ApiResponse> handleTokenRevokedException(TokenRevokedException ex) {
+        return apiResponseBuilder.error(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
     @ExceptionHandler(TooManyRequestsException.class)
     public ResponseEntity<ApiResponse> handleTooManyRequestsException(TooManyRequestsException ex) {
         return apiResponseBuilder.error(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
     }
+
+    // Property
+
+    @ExceptionHandler(DuplicateAmenityException.class)
+    public ResponseEntity<ApiResponse> handleDuplicateAmenityException(DuplicateAmenityException ex) {
+        return apiResponseBuilder.error(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateImageException.class)
+    public ResponseEntity<ApiResponse> handleDuplicateImageException(DuplicateImageException ex) {
+        return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidTimeRangeException.class)
+    public ResponseEntity<ApiResponse> handleInvalidTimeRangeException(InvalidTimeRangeException ex) {
+        return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(OverlappingTimeSlotException .class)
+    public ResponseEntity<ApiResponse> handleOverlappingTimeSlotException(OverlappingTimeSlotException ex) {
+        return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    // Built-in
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse> handleBadCredentialsException(BadCredentialsException ex) {
@@ -82,7 +124,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
-        return apiResponseBuilder.error(HttpStatus.FORBIDDEN, ex.getMessage());
+        return apiResponseBuilder.error(HttpStatus.FORBIDDEN, "You do not have permission to access this resource.");
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
@@ -104,8 +146,4 @@ public class GlobalExceptionHandler {
         return apiResponseBuilder.validationError("Validation failed", errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleException(Exception ex) {
-        return apiResponseBuilder.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-    }
 }

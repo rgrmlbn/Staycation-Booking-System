@@ -17,7 +17,7 @@ public class OwnershipVerifier {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isOwner && !isAdmin) {
-            throw new AccessDeniedException("Access denied.");
+            throw new AccessDeniedException("You do not have permission to access this resource.");
         }
     }
 

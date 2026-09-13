@@ -1,6 +1,7 @@
 package com.spring.backend.module.property.property.service.impl;
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
+import com.spring.backend.exception.property.property.DuplicateAmenityException;
 import com.spring.backend.exception.property.property.DuplicateImageException;
 import com.spring.backend.exception.property.property.InvalidTimeRangeException;
 import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
@@ -40,6 +41,7 @@ public class PropertyServiceImpl implements PropertyService {
     private final AmenityRepository amenityRepository;
     private final OwnershipVerifier ownershipVerifier;
 
+    // Get all summary properties with pagination support, optionally filtered by title
     @Override
     public Page<PropertySummaryResponse> getAllSummaryProperties(int page, int size, String title) {
 
@@ -56,6 +58,7 @@ public class PropertyServiceImpl implements PropertyService {
         return property.map(PropertyEntity-> propertyMapper.toSummaryResponse(PropertyEntity));
     }
 
+    // Get all detailed properties, with optional title filtering and pagination support
     @Override
     public Page<PropertyDetailedResponse> getAllDetailedProperties(int page, int size, String title) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
@@ -71,6 +74,7 @@ public class PropertyServiceImpl implements PropertyService {
         return property.map(PropertyEntity-> propertyMapper.toDetailedResponse(PropertyEntity));
     }
 
+    // Get all detailed properties filtered by status, with pagination support
     @Override
     public Page<PropertyDetailedResponse> getAllDetailedPropertiesByStatus(int page, int size, PropertyStatus status) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
@@ -86,6 +90,7 @@ public class PropertyServiceImpl implements PropertyService {
         return property.map(PropertyEntity-> propertyMapper.toDetailedResponse(PropertyEntity));
     }
 
+    // Get detailed property by its ID, throwing an exception if not found
     @Override
     public PropertyDetailedResponse getPropertyById(Long id) {
 
@@ -95,6 +100,48 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyMapper.toDetailedResponse(property);
     }
 
+    // MAIN HELPER: Validates that the check-in slots do not have zero length and do not overlap with each other
+    private void validateCheckInSlots(List<CheckInSlotRequest> slots) {
+
+        validateNoZeroLengthSlots(slots);
+        validateNoOverlaps(slots);
+    }
+
+    // SUB-HELPER: Validates that no check-in slot has a zero length (start time equals end time)
+    private void validateNoZeroLengthSlots(List<CheckInSlotRequest> slots) {
+
+        for(CheckInSlotRequest slot : slots) {
+            if (slot.getStartTime().equals(slot.getEndTime())) {
+                throw new InvalidTimeRangeException();
+            }
+        }
+    }
+
+    // SUB-HELPER: Validates that no check-in slots overlap with each other
+    private void validateNoOverlaps(List<CheckInSlotRequest> slots) {
+
+        for (CheckInSlotRequest currentSlot : slots) {
+
+            for (CheckInSlotRequest otherSlot : slots) {
+
+                if (currentSlot == otherSlot) {
+                    continue;
+                }
+
+                if (slotsOverlap(currentSlot, otherSlot)) {
+                    throw new OverlappingTimeSlotException();
+                }
+            }
+        }
+    }
+
+    // SUB-HELPER: Checks if two check-in slots overlap
+    private boolean slotsOverlap(CheckInSlotRequest first, CheckInSlotRequest second) {
+        return first.getStartTime().isBefore(second.getEndTime())
+                && second.getStartTime().isBefore(first.getEndTime());
+    }
+
+    // Create a new property, verifying the current user as the owner and handling images, amenities, and check-in slots
     @Override
     @Transactional
     public PropertyDetailedResponse createProperty(PropertyCreateRequest request){
@@ -131,6 +178,16 @@ public class PropertyServiceImpl implements PropertyService {
         // Amenity
         if (request.getAmenityIds() != null && !request.getAmenityIds().isEmpty()) {
 
+            Set<Long> uniqueAmenityIds = new HashSet<>();
+
+            for(Long amenityId : request.getAmenityIds()) {
+                uniqueAmenityIds.add(amenityId);
+            }
+
+            if (uniqueAmenityIds.size() != request.getAmenityIds().size()) {
+                throw new DuplicateAmenityException();
+            }
+
             List<AmenityEntity> amenities = amenityRepository.findAllById(request.getAmenityIds());
 
             if (amenities.size() != request.getAmenityIds().size()) {
@@ -158,43 +215,7 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyMapper.toDetailedResponse(savedProperty);
     }
 
-    private void validateCheckInSlots(List<CheckInSlotRequest> slots) {
-
-        validateNoZeroLengthSlots(slots);
-        validateNoOverlaps(slots);
-    }
-
-    private void validateNoZeroLengthSlots(List<CheckInSlotRequest> slots) {
-
-        for(CheckInSlotRequest slot : slots) {
-            if (slot.getStartTime().equals(slot.getEndTime())) {
-                throw new InvalidTimeRangeException();
-            }
-        }
-    }
-
-    private void validateNoOverlaps(List<CheckInSlotRequest> slots) {
-
-        for (CheckInSlotRequest currentSlot : slots) {
-
-            for (CheckInSlotRequest otherSlot : slots) {
-
-                if (currentSlot == otherSlot) {
-                    continue;
-                }
-
-                if (slotsOverlap(currentSlot, otherSlot)) {
-                    throw new OverlappingTimeSlotException();
-                }
-            }
-        }
-    }
-
-    private boolean slotsOverlap(CheckInSlotRequest first, CheckInSlotRequest second) {
-        return first.getStartTime().isBefore(second.getEndTime())
-                && second.getStartTime().isBefore(first.getEndTime());
-    }
-
+    // Update a property by its ID, verifying ownership or admin rights before updating
     @Override
     @Transactional
     public PropertyDetailedResponse updateProperty(Long id, PropertyUpdateRequest update) {
@@ -204,6 +225,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         ownershipVerifier.verifyOwnershipOrAdmin(property.getUser());
 
+        // Update fields if they are not null or blank
         if(update.getTitle() != null && !update.getTitle().isBlank()) {
             property.setTitle(update.getTitle());
         }
@@ -229,7 +251,11 @@ public class PropertyServiceImpl implements PropertyService {
         // Image
         if (update.getImageUrls() != null && !update.getImageUrls().isEmpty()) {
 
-            Set<String> uniqueUrls = new HashSet<>(update.getImageUrls());
+            Set<String> uniqueUrls = new HashSet<>();
+
+            for(String imageUrl : update.getImageUrls()) {
+                uniqueUrls.add(imageUrl);
+            }
 
             if (uniqueUrls.size() != update.getImageUrls().size()) {
                 throw new DuplicateImageException();
@@ -276,6 +302,7 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyMapper.toDetailedResponse(updatedProperty);
     }
 
+    // Delete a property by its ID, verifying ownership or admin rights before deletion
     @Override
     public void deleteProperty(Long id) {
 
