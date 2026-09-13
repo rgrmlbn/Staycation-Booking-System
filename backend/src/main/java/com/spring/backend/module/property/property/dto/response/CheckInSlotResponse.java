@@ -12,4 +12,5 @@ public class CheckInSlotResponse {
     private Long id;
     private LocalTime startTime;
     private LocalTime endTime;
+    private Long durationMinutes;
 }

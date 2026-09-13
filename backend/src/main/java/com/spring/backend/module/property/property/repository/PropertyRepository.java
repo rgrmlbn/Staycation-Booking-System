@@ -20,4 +20,12 @@ public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> 
             Pageable pageable
     );
 
+    Page<PropertyEntity> findAllByUserId(Long userId, Pageable pageable);
+
+    Page<PropertyEntity> findAllByUserIdAndTitleContainingIgnoreCase(
+            Long userId,
+            String title,
+            Pageable pageable
+    );
+
 }

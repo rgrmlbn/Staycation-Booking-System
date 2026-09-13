@@ -33,7 +33,8 @@ public class PropertyUpdateRequest {
     @Min(value = 1, message = "Number of bathrooms should be 1 or more")
     private Integer bathrooms;
 
-    private Boolean airConditioning;
+    @Min(value = 1, message = "Max guests should be 1 or more")
+    private Integer maxGuests;
 
     @Size(min = 10, max = 200, message = "Address should be between 10 and 200 characters")
     private String address;

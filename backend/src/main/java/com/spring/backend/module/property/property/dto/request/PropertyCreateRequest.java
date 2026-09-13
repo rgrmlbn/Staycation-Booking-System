@@ -37,8 +37,9 @@ public class PropertyCreateRequest {
     @Min(value = 1, message = "Number of bathrooms should be 1 or more")
     private Integer bathrooms;
 
-    @NotNull(message = "Air conditioning information is required")
-    private Boolean airConditioning;
+    @NotNull(message = "Max guests is required")
+    @Min(value = 1, message = "Max guests should be 1 or more")
+    private Integer maxGuests;
 
     @NotBlank(message = "Address is required")
     @Size(min = 10, max = 200, message = "Address should be between 10 and 200 characters")

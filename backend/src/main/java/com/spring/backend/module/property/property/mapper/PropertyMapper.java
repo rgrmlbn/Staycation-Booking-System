@@ -14,6 +14,8 @@ import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -40,11 +42,23 @@ public class PropertyMapper {
                 .build();
     }
 
+    private long calculateDurationMinutes(LocalTime startTime, LocalTime endTime) {
+
+        Duration duration = Duration.between(startTime, endTime);
+
+        if (duration.isNegative()) {
+            duration = duration.plusDays(1);
+        }
+
+        return duration.toMinutes();
+    }
+
     public CheckInSlotResponse toCheckInSlotResponse(CheckInSlotEntity entity) {
         return CheckInSlotResponse.builder()
                 .id(entity.getId())
                 .startTime(entity.getStartTime())
                 .endTime(entity.getEndTime())
+                .durationMinutes(calculateDurationMinutes(entity.getStartTime(), entity.getEndTime()))
                 .build();
     }
 
@@ -56,7 +70,7 @@ public class PropertyMapper {
                 .pricePerNight(request.getPricePerNight())
                 .bedrooms(request.getBedrooms())
                 .bathrooms(request.getBathrooms())
-                .airConditioning(request.getAirConditioning())
+                .maxGuests(request.getMaxGuests())
                 .address(request.getAddress())
                 .build();
     }
@@ -75,6 +89,7 @@ public class PropertyMapper {
                 .title(entity.getTitle())
                 .pricePerNight(entity.getPricePerNight())
                 .bedrooms(entity.getBedrooms())
+                .maxGuests(entity.getMaxGuests())
                 .address(entity.getAddress())
                 .status(entity.getStatus())
                 .imageUrls(imageUrls)
@@ -109,7 +124,7 @@ public class PropertyMapper {
                 .pricePerNight(entity.getPricePerNight())
                 .bedrooms(entity.getBedrooms())
                 .bathrooms(entity.getBathrooms())
-                .airConditioning(entity.getAirConditioning())
+                .maxGuests(entity.getMaxGuests())
                 .address(entity.getAddress())
                 .status(entity.getStatus())
                 .imageUrls(imageUrls)

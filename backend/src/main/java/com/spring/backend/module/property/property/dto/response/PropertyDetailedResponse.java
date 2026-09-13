@@ -21,7 +21,7 @@ public class PropertyDetailedResponse {
 
     private Integer bedrooms;
     private Integer bathrooms;
-    private Boolean airConditioning;
+    private Integer maxGuests;
 
     private String address;
     private PropertyStatus status;

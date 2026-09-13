@@ -42,7 +42,7 @@ public class PropertyEntity extends BaseEntity {
     private Integer bathrooms;
 
     @Column(nullable = false)
-    private Boolean airConditioning;
+    private Integer maxGuests;
 
     @Column(nullable = false)
     private String address;

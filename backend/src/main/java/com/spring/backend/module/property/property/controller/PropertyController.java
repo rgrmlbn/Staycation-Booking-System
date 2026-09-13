@@ -23,15 +23,24 @@ public class PropertyController {
 
     private final PropertyService propertyService;
 
+    @GetMapping("/owned/detailed")
+    ResponseEntity<Page<PropertyDetailedResponse>> getAllMyProperties(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10")  int size,
+            @RequestParam (required = false ) String title
+    ){
+        return ResponseEntity.ok().body(propertyService.getAllMyProperties(page, size, title));
+    }
+
     @GetMapping("/summary")
     ResponseEntity<Page<PropertySummaryResponse>> getAllSummaryProperties(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam (defaultValue = "10")  int size,
-            @RequestParam (required = false ) String name
+            @RequestParam (required = false ) String title
     )
     {
 
-        return ResponseEntity.ok().body(propertyService.getAllSummaryProperties(page, size, name));
+        return ResponseEntity.ok().body(propertyService.getAllSummaryProperties(page, size, title));
 
     }
 
@@ -39,11 +48,11 @@ public class PropertyController {
     ResponseEntity<Page<PropertyDetailedResponse>> getAllDetailedProperties(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam (defaultValue = "10")  int size,
-            @RequestParam (required = false ) String name
+            @RequestParam (required = false ) String title
     )
     {
 
-        return ResponseEntity.ok().body(propertyService.getAllDetailedProperties(page, size, name));
+        return ResponseEntity.ok().body(propertyService.getAllDetailedProperties(page, size, title));
 
     }
 

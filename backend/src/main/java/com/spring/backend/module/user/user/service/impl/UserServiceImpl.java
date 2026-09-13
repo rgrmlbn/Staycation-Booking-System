@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenService refreshTokenService;
     private final OwnershipVerifier ownershipVerifier;
 
+    // Get all users
     @Override
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
@@ -39,6 +40,7 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    // Get a user by its ID, throwing an exception if not found
     @Override
     public UserResponse getUserById(Long id) {
         UserEntity user = userRepository.findById(id)
@@ -47,11 +49,13 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(user);
     }
 
+    // Get the currently authenticated user
     @Override
     public UserResponse getMe() {
         return userMapper.toResponse(ownershipVerifier.getCurrentUser());
     }
 
+    // Update a user by its ID, verifying ownership or admin rights before updating
     @Override
     @Transactional
     public UserResponse updateUserById(Long id, UpdateUserRequest update) {
@@ -61,6 +65,7 @@ public class UserServiceImpl implements UserService {
 
         ownershipVerifier.verifyOwnershipOrAdmin(user);
 
+        // Update fields if they are not null or blank
         if (update.getName() != null && !update.getName().isBlank()) {
             user.setName(update.getName());
         }
@@ -81,7 +86,7 @@ public class UserServiceImpl implements UserService {
             user.setAddress(update.getAddress());
         }
 
-
+        // Update email if it is not null or blank, checking for duplicate emails
         if (update.getEmail() != null && !update.getEmail().isBlank()) {
             if (!user.getEmail().equals(update.getEmail()) &&
                     userRepository.existsByEmail(update.getEmail())) {
@@ -95,6 +100,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(updatedUser);
     }
 
+    // Change a user's password by ID, verifying ownership or admin rights and validating the current password
     @Override
     @Transactional
     public void changePasswordById(Long id, ChangePasswordRequest request) {
@@ -123,6 +129,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    // Delete a user by its ID, verifying ownership or admin rights before deletion
     @Override
     @Transactional
     public void deleteUserById(Long id) {

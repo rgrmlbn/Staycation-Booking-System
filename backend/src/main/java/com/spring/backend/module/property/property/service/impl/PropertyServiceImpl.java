@@ -41,6 +41,33 @@ public class PropertyServiceImpl implements PropertyService {
     private final AmenityRepository amenityRepository;
     private final OwnershipVerifier ownershipVerifier;
 
+    // Get all properties owned by the current user, with optional title filtering and pagination support
+    @Override
+    public Page<PropertyDetailedResponse> getAllMyProperties(int page, int size, String title) {
+
+        UserEntity user = ownershipVerifier.getCurrentUser();
+
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+
+        Page<PropertyEntity> property;
+
+        // Filter properties by title when a search title is provided
+        if (title != null && !title.isBlank()) {
+            property = propertyRepository.findAllByUserIdAndTitleContainingIgnoreCase(
+                    user.getId(),
+                    title,
+                    pageable
+            );
+        } else {
+            property = propertyRepository.findAllByUserId(
+                    user.getId(),
+                    pageable
+            );
+        }
+
+        return property.map(propertyEntity -> propertyMapper.toDetailedResponse(propertyEntity));
+    }
+
     // Get all summary properties with pagination support, optionally filtered by title
     @Override
     public Page<PropertySummaryResponse> getAllSummaryProperties(int page, int size, String title) {
@@ -49,45 +76,50 @@ public class PropertyServiceImpl implements PropertyService {
 
         Page<PropertyEntity> property;
 
+        // Filter properties by title when a search title is provided
         if(title != null && !title.isBlank()) {
             property = propertyRepository.findByTitleContainingIgnoreCase(title, pageable);
         } else {
             property = propertyRepository.findAll(pageable);
         }
 
-        return property.map(PropertyEntity-> propertyMapper.toSummaryResponse(PropertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toSummaryResponse(propertyEntity));
     }
 
     // Get all detailed properties, with optional title filtering and pagination support
     @Override
     public Page<PropertyDetailedResponse> getAllDetailedProperties(int page, int size, String title) {
+
         Pageable pageable = Pageable.ofSize(size).withPage(page);
 
         Page<PropertyEntity> property;
 
+        // Filter properties by title when a search title is provided
         if(title != null && !title.isBlank()) {
             property = propertyRepository.findByTitleContainingIgnoreCase(title, pageable);
         } else {
             property = propertyRepository.findAll(pageable);
         }
 
-        return property.map(PropertyEntity-> propertyMapper.toDetailedResponse(PropertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toDetailedResponse(propertyEntity));
     }
 
     // Get all detailed properties filtered by status, with pagination support
     @Override
     public Page<PropertyDetailedResponse> getAllDetailedPropertiesByStatus(int page, int size, PropertyStatus status) {
+
         Pageable pageable = Pageable.ofSize(size).withPage(page);
 
         Page<PropertyEntity> property;
 
+        // Filter properties by status when a status is provided
         if(status != null) {
             property = propertyRepository.findByStatus(status, pageable);
         } else {
             property = propertyRepository.findAll(pageable);
         }
 
-        return property.map(PropertyEntity-> propertyMapper.toDetailedResponse(PropertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toDetailedResponse(propertyEntity));
     }
 
     // Get detailed property by its ID, throwing an exception if not found
@@ -128,6 +160,7 @@ public class PropertyServiceImpl implements PropertyService {
                     continue;
                 }
 
+                // Check whether the current slot overlaps with another slot
                 if (slotsOverlap(currentSlot, otherSlot)) {
                     throw new OverlappingTimeSlotException();
                 }
@@ -153,6 +186,7 @@ public class PropertyServiceImpl implements PropertyService {
         // Image
         if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
 
+            // Check for duplicate image URLs before creating image entities
             Set<String> uniqueUrls = new HashSet<>();
 
             for (String url : request.getImageUrls()) {
@@ -163,6 +197,7 @@ public class PropertyServiceImpl implements PropertyService {
                 throw new DuplicateImageException();
             }
 
+            // Convert image URLs into image entities linked to the property
             List<ImageEntity> images = request.getImageUrls()
                     .stream()
                     .map(imageUrl -> ImageEntity.builder()
@@ -178,6 +213,7 @@ public class PropertyServiceImpl implements PropertyService {
         // Amenity
         if (request.getAmenityIds() != null && !request.getAmenityIds().isEmpty()) {
 
+            // Check for duplicate amenity IDs before retrieving amenities
             Set<Long> uniqueAmenityIds = new HashSet<>();
 
             for(Long amenityId : request.getAmenityIds()) {
@@ -188,6 +224,7 @@ public class PropertyServiceImpl implements PropertyService {
                 throw new DuplicateAmenityException();
             }
 
+            // Retrieve the requested amenities and verify that all IDs exist
             List<AmenityEntity> amenities = amenityRepository.findAllById(request.getAmenityIds());
 
             if (amenities.size() != request.getAmenityIds().size()) {
@@ -200,8 +237,10 @@ public class PropertyServiceImpl implements PropertyService {
         // Check-in Slots
         if (request.getCheckInSlots() != null && !request.getCheckInSlots().isEmpty()) {
 
+            // Validate slot time ranges and prevent overlapping slots
             validateCheckInSlots(request.getCheckInSlots());
 
+            // Convert slot requests into entities linked to the property
             List<CheckInSlotEntity> checkInSlots = request.getCheckInSlots()
                     .stream()
                     .map(slotRequest -> propertyMapper.toCheckInSlotEntity(slotRequest, property))
@@ -241,9 +280,11 @@ public class PropertyServiceImpl implements PropertyService {
         if(update.getBathrooms() != null) {
             property.setBathrooms(update.getBathrooms());
         }
-        if(update.getAirConditioning() != null) {
-            property.setAirConditioning(update.getAirConditioning());
+
+        if(update.getMaxGuests() != null) {
+            property.setMaxGuests(update.getMaxGuests());
         }
+
         if(update.getAddress() != null && !update.getAddress().isBlank()) {
             property.setAddress(update.getAddress());
         }
@@ -251,6 +292,7 @@ public class PropertyServiceImpl implements PropertyService {
         // Image
         if (update.getImageUrls() != null && !update.getImageUrls().isEmpty()) {
 
+            // Check for duplicate image URLs before replacing the property's images
             Set<String> uniqueUrls = new HashSet<>();
 
             for(String imageUrl : update.getImageUrls()) {
@@ -261,6 +303,7 @@ public class PropertyServiceImpl implements PropertyService {
                 throw new DuplicateImageException();
             }
 
+            // Convert image URLs into image entities linked to the property
             List<ImageEntity> images = update.getImageUrls()
                     .stream()
                     .map(imageUrl -> ImageEntity.builder()
@@ -275,6 +318,7 @@ public class PropertyServiceImpl implements PropertyService {
         // Amenity
         if (update.getAmenityIds() != null) {
 
+            // Retrieve the requested amenities and verify that all IDs exist
             List<AmenityEntity> amenities = amenityRepository.findAllById(update.getAmenityIds());
 
             if (amenities.size() != update.getAmenityIds().size()) {
@@ -287,8 +331,10 @@ public class PropertyServiceImpl implements PropertyService {
         // Check-in Slots
         if (update.getCheckInSlots() != null && !update.getCheckInSlots().isEmpty()) {
 
+            // Validate slot time ranges and prevent overlapping slots
             validateCheckInSlots(update.getCheckInSlots());
 
+            // Convert slot requests into entities linked to the property
             List<CheckInSlotEntity> checkInSlots = update.getCheckInSlots()
                     .stream()
                     .map(slotRequest -> propertyMapper.toCheckInSlotEntity(slotRequest, property))

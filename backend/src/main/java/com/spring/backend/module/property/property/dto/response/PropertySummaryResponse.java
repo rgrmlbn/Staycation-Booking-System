@@ -18,6 +18,7 @@ public class PropertySummaryResponse {
     private Double pricePerNight;
 
     private Integer bedrooms;
+    private Integer maxGuests;
 
     private String address;
     private PropertyStatus status;

@@ -21,6 +21,7 @@ public class AmenityServiceImpl implements AmenityService {
     private final AmenityRepository amenityRepository;
     private final PropertyMapper propertyMapper;
 
+    // Get all amenities
     @Override
     public List<AmenityResponse> getAllAmenities() {
         return amenityRepository.findAll()
@@ -29,6 +30,7 @@ public class AmenityServiceImpl implements AmenityService {
                 .toList();
     }
 
+    // Get an amenity by its ID, throwing an exception if not found
     @Override
     public AmenityResponse getAmenityById(Long id) {
 
@@ -38,6 +40,7 @@ public class AmenityServiceImpl implements AmenityService {
         return propertyMapper.toAmenityResponse(entity);
     }
 
+    // Create a new amenity, checking for duplicate names before saving
     @Override
     public AmenityResponse createAmenity(AmenityCreateRequest request) {
 
@@ -52,12 +55,14 @@ public class AmenityServiceImpl implements AmenityService {
         return propertyMapper.toAmenityResponse(savedEntity);
     }
 
+    // Update an amenity by its ID, throwing an exception if not found
     @Override
     public AmenityResponse updateAmenity(Long id, AmenityUpdateRequest update) {
 
         AmenityEntity entity = amenityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity"));
 
+        // Update the name if it is not null or blank
         if(update.getName() != null && !update.getName().isBlank()) {
             entity.setName(update.getName());
         }
@@ -67,6 +72,7 @@ public class AmenityServiceImpl implements AmenityService {
         return propertyMapper.toAmenityResponse(updatedEntity);
     }
 
+    // Delete an amenity by its ID, throwing an exception if not found
     @Override
     public void deleteAmenity(Long id) {
 
