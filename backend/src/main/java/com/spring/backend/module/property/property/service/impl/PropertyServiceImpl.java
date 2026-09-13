@@ -21,6 +21,7 @@ import com.spring.backend.module.property.property.repository.PropertyRepository
 import com.spring.backend.module.property.property.service.interfaces.PropertyService;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.user.entity.UserEntity;
+import com.spring.backend.module.user.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import org.springframework.data.redis.connection.RedisSubscribedConnectionExcept
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +42,7 @@ public class PropertyServiceImpl implements PropertyService {
     private final PropertyMapper propertyMapper;
     private final AmenityRepository amenityRepository;
     private final OwnershipVerifier ownershipVerifier;
+
 
     // Get all properties owned by the current user, with optional title filtering and pagination support
     @Override
@@ -65,7 +68,7 @@ public class PropertyServiceImpl implements PropertyService {
             );
         }
 
-        return property.map(propertyEntity -> propertyMapper.toDetailedResponse(propertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toPropertyDetailedResponse(propertyEntity));
     }
 
     // Get all summary properties with pagination support, optionally filtered by title
@@ -83,7 +86,7 @@ public class PropertyServiceImpl implements PropertyService {
             property = propertyRepository.findAll(pageable);
         }
 
-        return property.map(propertyEntity -> propertyMapper.toSummaryResponse(propertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toPropertySummaryResponse(propertyEntity));
     }
 
     // Get all detailed properties, with optional title filtering and pagination support
@@ -101,7 +104,7 @@ public class PropertyServiceImpl implements PropertyService {
             property = propertyRepository.findAll(pageable);
         }
 
-        return property.map(propertyEntity -> propertyMapper.toDetailedResponse(propertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toPropertyDetailedResponse(propertyEntity));
     }
 
     // Get all detailed properties filtered by status, with pagination support
@@ -119,7 +122,7 @@ public class PropertyServiceImpl implements PropertyService {
             property = propertyRepository.findAll(pageable);
         }
 
-        return property.map(propertyEntity -> propertyMapper.toDetailedResponse(propertyEntity));
+        return property.map(propertyEntity -> propertyMapper.toPropertyDetailedResponse(propertyEntity));
     }
 
     // Get detailed property by its ID, throwing an exception if not found
@@ -129,7 +132,7 @@ public class PropertyServiceImpl implements PropertyService {
         PropertyEntity property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RedisSubscribedConnectionException("Property"));
 
-        return propertyMapper.toDetailedResponse(property);
+        return propertyMapper.toPropertyDetailedResponse(property);
     }
 
     // MAIN HELPER: Validates that the check-in slots do not have zero length and do not overlap with each other
@@ -168,7 +171,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
     }
 
-    // SUB-HELPER: Checks if two check-in slots overlap
+    // VALIDATE NO OVERLAPS YESSUB-HELPER: Checks if two check-in slots overlap
     private boolean slotsOverlap(CheckInSlotRequest first, CheckInSlotRequest second) {
         return first.getStartTime().isBefore(second.getEndTime())
                 && second.getStartTime().isBefore(first.getEndTime());
@@ -251,7 +254,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         PropertyEntity savedProperty = propertyRepository.save(property);
 
-        return propertyMapper.toDetailedResponse(savedProperty);
+        return propertyMapper.toPropertyDetailedResponse(savedProperty);
     }
 
     // Update a property by its ID, verifying ownership or admin rights before updating
@@ -345,7 +348,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         PropertyEntity updatedProperty = propertyRepository.save(property);
 
-        return propertyMapper.toDetailedResponse(updatedProperty);
+        return propertyMapper.toPropertyDetailedResponse(updatedProperty);
     }
 
     // Delete a property by its ID, verifying ownership or admin rights before deletion

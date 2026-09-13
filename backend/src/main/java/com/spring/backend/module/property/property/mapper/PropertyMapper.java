@@ -75,7 +75,7 @@ public class PropertyMapper {
                 .build();
     }
 
-    public PropertySummaryResponse toSummaryResponse(PropertyEntity entity) {
+    public PropertySummaryResponse toPropertySummaryResponse(PropertyEntity entity) {
 
         List<String> imageUrls = entity.getImages()
                 .stream()
@@ -98,7 +98,7 @@ public class PropertyMapper {
                 .build();
     }
 
-    public PropertyDetailedResponse toDetailedResponse(PropertyEntity entity) {
+    public PropertyDetailedResponse toPropertyDetailedResponse(PropertyEntity entity) {
 
         List<String> imageUrls = entity.getImages()
                 .stream()
