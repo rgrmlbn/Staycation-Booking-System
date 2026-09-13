@@ -4,10 +4,13 @@ import com.spring.backend.module.user.user.dto.request.ChangePasswordRequest;
 import com.spring.backend.module.user.user.dto.request.UpdateUserRequest;
 import com.spring.backend.module.user.user.dto.response.UserResponse;
 import com.spring.backend.module.user.user.service.interfaces.UserService;
+import com.spring.backend.security.principal.UserPrincipal;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,17 +28,17 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/me")
-    ResponseEntity<UserResponse> getCurrentUser() {
-        return ResponseEntity.ok(userService.getMe());
+    @GetMapping("/current-user")
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(userService.getUserById(principal.getUser().getId()));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     ResponseEntity<UserResponse> getUserById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/update")
     ResponseEntity<UserResponse> updateUserById(@PathVariable @Positive Long id, @RequestBody @Valid UpdateUserRequest update) {
         return ResponseEntity.ok(userService.updateUserById(id, update));
     }
@@ -47,6 +50,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.user.id")
     ResponseEntity<Void> deleteUserById(@PathVariable @Positive Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();

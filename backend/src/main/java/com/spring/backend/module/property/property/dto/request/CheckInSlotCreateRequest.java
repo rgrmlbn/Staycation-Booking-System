@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CheckInSlotRequest {
+public class CheckInSlotCreateRequest {
 
     @NotNull(message = "Start time is required")
     private LocalTime startTime;

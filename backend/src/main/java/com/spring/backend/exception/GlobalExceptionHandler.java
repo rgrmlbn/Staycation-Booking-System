@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.method.ParameterErrors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -127,20 +128,27 @@ public class GlobalExceptionHandler {
         return apiResponseBuilder.error(HttpStatus.FORBIDDEN, "You do not have permission to access this resource.");
     }
 
+    // Method - Argument
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ApiResponse> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
-        return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, "Validation failed");
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        List<ApiResponse.FieldError> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(e -> ApiResponse.FieldError.builder()
-                        .field(e.getField())
-                        .message(e.getDefaultMessage())
-                        .build())
+        List<ApiResponse.FieldError> errors = ex.getParameterValidationResults().stream()
+                .flatMap(result -> {
+                    if (result instanceof ParameterErrors parameterErrors) {
+                        // This branch covers @Valid @RequestBody objects (e.g. UpdateUserRequest)
+                        return parameterErrors.getFieldErrors().stream()
+                                .map(fe -> ApiResponse.FieldError.builder()
+                                        .field(fe.getField())
+                                        .message(fe.getDefaultMessage())
+                                        .build());
+                    } else {
+                        // This branch covers simple params like @PathVariable @Positive Long id
+                        return result.getResolvableErrors().stream()
+                                .map(err -> ApiResponse.FieldError.builder()
+                                        .field(result.getMethodParameter().getParameterName())
+                                        .message(err.getDefaultMessage())
+                                        .build());
+                    }
+                })
                 .toList();
 
         return apiResponseBuilder.validationError("Validation failed", errors);

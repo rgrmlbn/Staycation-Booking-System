@@ -54,5 +54,5 @@ public class PropertyCreateRequest {
     private List<Long> amenityIds;
 
     @Valid
-    private List<CheckInSlotRequest> checkInSlots;
+    private List<CheckInSlotCreateRequest> checkInSlots;
 }

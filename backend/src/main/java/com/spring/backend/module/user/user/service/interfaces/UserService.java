@@ -14,8 +14,6 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
-    UserResponse getMe();
-
     UserResponse updateUserById(Long id, UpdateUserRequest update);
 
     void changePasswordById(Long id, ChangePasswordRequest request);

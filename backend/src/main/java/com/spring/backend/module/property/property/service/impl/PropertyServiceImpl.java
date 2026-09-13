@@ -5,7 +5,7 @@ import com.spring.backend.exception.property.property.DuplicateAmenityException;
 import com.spring.backend.exception.property.property.DuplicateImageException;
 import com.spring.backend.exception.property.property.InvalidTimeRangeException;
 import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
-import com.spring.backend.module.property.property.dto.request.CheckInSlotRequest;
+import com.spring.backend.module.property.property.dto.request.CheckInSlotCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
@@ -21,7 +21,6 @@ import com.spring.backend.module.property.property.repository.PropertyRepository
 import com.spring.backend.module.property.property.service.interfaces.PropertyService;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.user.entity.UserEntity;
-import com.spring.backend.module.user.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,6 @@ import org.springframework.data.redis.connection.RedisSubscribedConnectionExcept
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.security.access.AccessDeniedException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -136,16 +134,16 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     // MAIN HELPER: Validates that the check-in slots do not have zero length and do not overlap with each other
-    private void validateCheckInSlots(List<CheckInSlotRequest> slots) {
+    private void validateCheckInSlots(List<CheckInSlotCreateRequest> slots) {
 
         validateNoZeroLengthSlots(slots);
         validateNoOverlaps(slots);
     }
 
     // SUB-HELPER: Validates that no check-in slot has a zero length (start time equals end time)
-    private void validateNoZeroLengthSlots(List<CheckInSlotRequest> slots) {
+    private void validateNoZeroLengthSlots(List<CheckInSlotCreateRequest> slots) {
 
-        for(CheckInSlotRequest slot : slots) {
+        for(CheckInSlotCreateRequest slot : slots) {
             if (slot.getStartTime().equals(slot.getEndTime())) {
                 throw new InvalidTimeRangeException();
             }
@@ -153,11 +151,11 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     // SUB-HELPER: Validates that no check-in slots overlap with each other
-    private void validateNoOverlaps(List<CheckInSlotRequest> slots) {
+    private void validateNoOverlaps(List<CheckInSlotCreateRequest> slots) {
 
-        for (CheckInSlotRequest currentSlot : slots) {
+        for (CheckInSlotCreateRequest currentSlot : slots) {
 
-            for (CheckInSlotRequest otherSlot : slots) {
+            for (CheckInSlotCreateRequest otherSlot : slots) {
 
                 if (currentSlot == otherSlot) {
                     continue;
@@ -172,7 +170,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     // VALIDATE NO OVERLAPS YESSUB-HELPER: Checks if two check-in slots overlap
-    private boolean slotsOverlap(CheckInSlotRequest first, CheckInSlotRequest second) {
+    private boolean slotsOverlap(CheckInSlotCreateRequest first, CheckInSlotCreateRequest second) {
         return first.getStartTime().isBefore(second.getEndTime())
                 && second.getStartTime().isBefore(first.getEndTime());
     }

@@ -2,8 +2,6 @@ package com.spring.backend.module.property.property.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +44,6 @@ public class PropertyUpdateRequest {
     private List<Long> amenityIds;
 
     @Valid
-    private List<CheckInSlotRequest> checkInSlots;
+    private List<CheckInSlotCreateRequest> checkInSlots;
 
 }

@@ -6,7 +6,6 @@ import com.spring.backend.exception.user.user.IncorrectCurrentPasswordException;
 import com.spring.backend.exception.user.user.PasswordMismatchException;
 import com.spring.backend.exception.user.user.PasswordReuseException;
 import com.spring.backend.exception.common.ResourceNotFoundException;
-import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.token.service.interfaces.RefreshTokenService;
 import com.spring.backend.module.user.user.dto.request.ChangePasswordRequest;
 import com.spring.backend.module.user.user.dto.request.UpdateUserRequest;
@@ -16,6 +15,7 @@ import com.spring.backend.module.user.user.mapper.UserMapper;
 import com.spring.backend.module.user.user.repository.UserRepository;
 import com.spring.backend.module.user.user.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,40 +30,32 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
-    private final OwnershipVerifier ownershipVerifier;
 
     // Get all users
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userMapper::toResponse)
                 .toList();
     }
 
-    // Get a user by its ID, throwing an exception if not found
+    // One method now, used by both endpoints
     @Override
     public UserResponse getUserById(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
-
         return userMapper.toResponse(user);
-    }
-
-    // Get the currently authenticated user
-    @Override
-    public UserResponse getMe() {
-        return userMapper.toResponse(ownershipVerifier.getCurrentUser());
     }
 
     // Update a user by its ID, verifying ownership or admin rights before updating
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.user.id")
     public UserResponse updateUserById(Long id, UpdateUserRequest update) {
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
-
-        ownershipVerifier.verifyOwnershipOrAdmin(user);
 
         // Update fields if they are not null or blank
         if (update.getName() != null && !update.getName().isBlank()) {
@@ -103,12 +95,11 @@ public class UserServiceImpl implements UserService {
     // Change a user's password by ID, verifying ownership or admin rights and validating the current password
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.user.id")
     public void changePasswordById(Long id, ChangePasswordRequest request) {
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
-
-        ownershipVerifier.verifyOwnershipOrAdmin(user);
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IncorrectCurrentPasswordException();
@@ -132,12 +123,11 @@ public class UserServiceImpl implements UserService {
     // Delete a user by its ID, verifying ownership or admin rights before deletion
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.user.id")
     public void deleteUserById(Long id) {
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
-
-        ownershipVerifier.verifyOwnershipOrAdmin(user);
 
         refreshTokenService.deleteAllByUser(user);
         userRepository.delete(user);

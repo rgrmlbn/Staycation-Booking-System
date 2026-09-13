@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CheckInSlotUpdate {
+public class CheckInSlotUpdateRequest {
 
     private LocalTime startTime;
     private LocalTime endTime;
