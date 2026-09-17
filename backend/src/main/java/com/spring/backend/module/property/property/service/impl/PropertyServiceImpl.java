@@ -354,7 +354,7 @@ public class PropertyServiceImpl implements PropertyService {
     public void deleteProperty(Long id) {
 
         PropertyEntity property = propertyRepository.findById(id)
-                .orElseThrow(() -> new RedisSubscribedConnectionException("Property"));
+                .orElseThrow(() -> new ResourceNotFoundException("Property"));
 
         ownershipVerifier.verifyOwnershipOrAdmin(property.getUser());
 
