@@ -79,7 +79,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepository.findByTitleContainingIgnoreCase(eq("Cabin"), eq(expectedPageable)))
                 .thenReturn(entityPage); // Simulate the repository filtering by title
-        when(propertyMapper.toSummaryResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertySummaryResponse(property)).thenReturn(response);
 
         Page<PropertySummaryResponse> result = propertyService.getAllSummaryProperties(0, 10, "Cabin");
 
@@ -95,7 +95,7 @@ class PropertyServiceImplTest {
         PropertySummaryResponse response = mock(PropertySummaryResponse.class);
 
         when(propertyRepository.findAll(expectedPageable)).thenReturn(entityPage); // Simulate an unfiltered page of results
-        when(propertyMapper.toSummaryResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertySummaryResponse(property)).thenReturn(response);
 
         Page<PropertySummaryResponse> result = propertyService.getAllSummaryProperties(0, 10, null);
 
@@ -110,7 +110,7 @@ class PropertyServiceImplTest {
         Page<PropertyEntity> entityPage = new PageImpl<>(List.of(property), expectedPageable, 1);
 
         when(propertyRepository.findAll(expectedPageable)).thenReturn(entityPage);
-        when(propertyMapper.toSummaryResponse(property)).thenReturn(mock(PropertySummaryResponse.class));
+        when(propertyMapper.toPropertySummaryResponse(property)).thenReturn(mock(PropertySummaryResponse.class));
 
         propertyService.getAllSummaryProperties(0, 10, "   ");
 
@@ -128,7 +128,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepository.findByTitleContainingIgnoreCase(eq("Cabin"), eq(expectedPageable)))
                 .thenReturn(entityPage);
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(response);
 
         Page<PropertyDetailedResponse> result = propertyService.getAllDetailedProperties(1, 5, "Cabin");
 
@@ -143,7 +143,7 @@ class PropertyServiceImplTest {
         PropertyDetailedResponse response = mock(PropertyDetailedResponse.class);
 
         when(propertyRepository.findAll(expectedPageable)).thenReturn(entityPage);
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(response);
 
         Page<PropertyDetailedResponse> result = propertyService.getAllDetailedProperties(0, 5, null);
 
@@ -161,7 +161,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepository.findByStatus(eq(PropertyStatus.AVAILABLE), eq(expectedPageable)))
                 .thenReturn(entityPage); // Simulate the repository filtering by status
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(response);
 
         Page<PropertyDetailedResponse> result =
                 propertyService.getAllDetailedPropertiesByStatus(0, 10, PropertyStatus.AVAILABLE);
@@ -177,7 +177,7 @@ class PropertyServiceImplTest {
         Page<PropertyEntity> entityPage = new PageImpl<>(List.of(property), expectedPageable, 1);
 
         when(propertyRepository.findAll(expectedPageable)).thenReturn(entityPage);
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
 
         propertyService.getAllDetailedPropertiesByStatus(0, 10, null);
 
@@ -192,7 +192,7 @@ class PropertyServiceImplTest {
         PropertyDetailedResponse response = mock(PropertyDetailedResponse.class);
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property)); // Simulate finding the property
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(response);
 
         PropertyDetailedResponse result = propertyService.getPropertyById(1L);
 
@@ -207,7 +207,7 @@ class PropertyServiceImplTest {
         assertThatThrownBy(() -> propertyService.getPropertyById(1L))
                 .isInstanceOf(RedisSubscribedConnectionException.class); // Matches the exception currently thrown by the service
 
-        verify(propertyMapper, never()).toDetailedResponse(any()); // Confirm mapping was never attempted since there was nothing to map
+        verify(propertyMapper, never()).toPropertyDetailedResponse(any()); // Confirm mapping was never attempted since there was nothing to map
     }
 
     // ---------- createProperty() ----------
@@ -225,7 +225,7 @@ class PropertyServiceImplTest {
         when(ownershipVerifier.getCurrentUser()).thenReturn(user);
         when(propertyMapper.toPropertyEntity(request, user)).thenReturn(mappedEntity);
         when(propertyRepository.save(mappedEntity)).thenReturn(savedEntity);
-        when(propertyMapper.toDetailedResponse(savedEntity)).thenReturn(response);
+        when(propertyMapper.toPropertyDetailedResponse(savedEntity)).thenReturn(response);
 
         PropertyDetailedResponse result = propertyService.createProperty(request);
 
@@ -245,14 +245,13 @@ class PropertyServiceImplTest {
         when(update.getPricePerNight()).thenReturn(150.0);
         when(update.getBedrooms()).thenReturn(3);
         when(update.getBathrooms()).thenReturn(2);
-        when(update.getAirConditioning()).thenReturn(true);
         when(update.getAddress()).thenReturn("456 Updated Ave");
         when(update.getImageUrls()).thenReturn(null);
         when(update.getAmenityIds()).thenReturn(null);
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property)); // Simulate finding the existing property
         when(propertyRepository.save(property)).thenReturn(property); // Simulate persisting the updated entity
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(response);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(response);
 
         PropertyDetailedResponse result = propertyService.updateProperty(1L, update);
 
@@ -261,7 +260,6 @@ class PropertyServiceImplTest {
         assertThat(property.getPricePerNight()).isEqualTo(150.0);
         assertThat(property.getBedrooms()).isEqualTo(3);
         assertThat(property.getBathrooms()).isEqualTo(2);
-        assertThat(property.getAirConditioning()).isTrue();
         assertThat(property.getAddress()).isEqualTo("456 Updated Ave");
         assertThat(result).isEqualTo(response);
         verify(ownershipVerifier).verifyOwnershipOrAdmin(owner); // Confirm the caller's ownership/admin status was checked
@@ -279,7 +277,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property));
         when(propertyRepository.save(property)).thenReturn(property);
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
 
         propertyService.updateProperty(1L, update);
 
@@ -297,7 +295,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property));
         when(propertyRepository.save(property)).thenReturn(property);
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
 
         propertyService.updateProperty(1L, update);
 
@@ -322,7 +320,7 @@ class PropertyServiceImplTest {
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property));
         when(amenityRepository.findAllById(List.of(2L))).thenReturn(List.of(amenity)); // Simulate resolving amenity IDs into entities
         when(propertyRepository.save(property)).thenReturn(property);
-        when(propertyMapper.toDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
 
         propertyService.updateProperty(1L, update);
 

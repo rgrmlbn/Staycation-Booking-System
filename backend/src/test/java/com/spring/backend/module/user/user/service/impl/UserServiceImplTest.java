@@ -5,6 +5,7 @@ import com.spring.backend.exception.user.user.IncorrectCurrentPasswordException;
 import com.spring.backend.exception.user.user.PasswordMismatchException;
 import com.spring.backend.exception.user.user.PasswordReuseException;
 import com.spring.backend.exception.common.ResourceNotFoundException;
+import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.token.service.interfaces.RefreshTokenService;
 import com.spring.backend.module.user.user.dto.request.ChangePasswordRequest;
 import com.spring.backend.module.user.user.dto.request.UpdateUserRequest;
@@ -36,24 +37,28 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserRepository userRepository; // Fake repository — no real database involved
 
     @Mock
-    private UserMapper userMapper;
+    private UserMapper userMapper; // Fake mapper — controls exactly what DTO conversion returns
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder; // Fake encoder — controls match/encode results directly
 
     @Mock
-    private RefreshTokenService refreshTokenService;
+    private RefreshTokenService refreshTokenService; // Fake token service — confirms it's invoked without needing real tokens
+
+    @Mock
+    private OwnershipVerifier ownershipVerifier; // Fake ownership check — lets us simulate allowed/denied access
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserServiceImpl userService; // Real service, wired with all mocks above
 
     private UserEntity user;
 
     @BeforeEach
     void setUp() {
+
         user = UserEntity.builder()
                 .id(1L)
                 .name("Roger")
@@ -69,23 +74,23 @@ class UserServiceImplTest {
     void getAllUsers_returnsMappedList() {
         UserResponse response = mock(UserResponse.class);
 
-        when(userRepository.findAll()).thenReturn(List.of(user));
-        when(userMapper.toResponse(user)).thenReturn(response);
+        when(userRepository.findAll()).thenReturn(List.of(user)); // Simulate one user existing in the "database"
+        when(userMapper.toResponse(user)).thenReturn(response); // Simulate the mapper converting it to a DTO
 
         List<UserResponse> result = userService.getAllUsers();
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0)).isEqualTo(response);
+        assertThat(result).hasSize(1); // Confirm the list has exactly the one user
+        assertThat(result.get(0)).isEqualTo(response); // Confirm it's the mapped DTO, not the raw entity
     }
 
     @Test
     @DisplayName("Should return an empty list when there are no users")
     void getAllUsers_noUsers_returnsEmptyList() {
-        when(userRepository.findAll()).thenReturn(List.of());
+        when(userRepository.findAll()).thenReturn(List.of()); // Simulate an empty database
 
         List<UserResponse> result = userService.getAllUsers();
 
-        assertThat(result).isEmpty();
+        assertThat(result).isEmpty(); // Confirm no users means no results, not a null or an exception
     }
 
     // ---------- getUserById() ----------
@@ -95,29 +100,39 @@ class UserServiceImplTest {
     void getUserById_userExists_returnsMappedUser() {
         UserResponse response = mock(UserResponse.class);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userMapper.toResponse(user)).thenReturn(response);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user)); // Simulate finding the user
+        when(userMapper.toResponse(user)).thenReturn(response); // Simulate mapping it to a DTO
 
         UserResponse result = userService.getUserById(1L);
 
-        assertThat(result).isEqualTo(response);
+        assertThat(result).isEqualTo(response); // Confirm the returned DTO matches what the mapper produced
     }
 
     @Test
     @DisplayName("Should throw ResourceNotFoundException when user ID does not exist")
     void getUserById_userDoesNotExist_throws() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty()); // Simulate no user found
 
         assertThatThrownBy(() -> userService.getUserById(1L))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(ResourceNotFoundException.class); // Expect the service to reject a missing ID
 
-        verify(userMapper, never()).toResponse(any());
+        verify(userMapper, never()).toResponse(any()); // Confirm mapping was never attempted since there was nothing to map
     }
 
-    // NOTE: getMe() removed from the service entirely.
-    // "Who is the current user" now resolves in the controller via
-    // @AuthenticationPrincipal, which then just calls getUserById(id) —
-    // so there's no separate service method left to unit test here.
+    // ---------- getMe() ----------
+
+    @Test
+    @DisplayName("Should return the mapped currently authenticated user")
+    void getMe_returnsMappedCurrentUser() {
+        UserResponse response = mock(UserResponse.class);
+
+        when(ownershipVerifier.getCurrentUser()).thenReturn(user); // Simulate resolving the logged-in user
+        when(userMapper.toResponse(user)).thenReturn(response);
+
+        UserResponse result = userService.getCurrentUser();
+
+        assertThat(result).isEqualTo(response); // Confirm the returned DTO matches what the mapper produced
+    }
 
     // ---------- updateUserById() ----------
 
@@ -134,19 +149,20 @@ class UserServiceImplTest {
         when(update.getAddress()).thenReturn("123 New Street");
         when(update.getEmail()).thenReturn("new@example.com");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user)); // Simulate finding the existing user
+        when(userRepository.existsByEmail("new@example.com")).thenReturn(false); // Simulate the new email being available
+        when(userRepository.save(user)).thenReturn(user); // Simulate persisting the updated entity
         when(userMapper.toResponse(user)).thenReturn(response);
 
         UserResponse result = userService.updateUserById(1L, update);
 
-        assertThat(user.getName()).isEqualTo("New Name");
+        assertThat(user.getName()).isEqualTo("New Name"); // Confirm each field was actually changed
         assertThat(user.getContactNumber()).isEqualTo("09171234567");
         assertThat(user.getAddress()).isEqualTo("123 New Street");
         assertThat(user.getEmail()).isEqualTo("new@example.com");
         assertThat(result).isEqualTo(response);
-        verify(userRepository).save(user);
+        verify(ownershipVerifier).verifyOwnershipOrAdmin(user); // Confirm the caller's ownership/admin status was checked
+        verify(userRepository).save(user); // Confirm the updated entity was persisted
     }
 
     @Test
@@ -154,11 +170,11 @@ class UserServiceImplTest {
     void updateUserById_blankOrNullFields_keepsOriginalValues() {
         UpdateUserRequest update = mock(UpdateUserRequest.class);
 
-        when(update.getName()).thenReturn("   ");
+        when(update.getName()).thenReturn("   "); // Blank, should be ignored
         when(update.getGender()).thenReturn(null);
         when(update.getDateOfBirth()).thenReturn(null);
         when(update.getContactNumber()).thenReturn(null);
-        when(update.getAddress()).thenReturn("   ");
+        when(update.getAddress()).thenReturn("   "); // Blank, should be ignored
         when(update.getEmail()).thenReturn(null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -167,9 +183,9 @@ class UserServiceImplTest {
 
         userService.updateUserById(1L, update);
 
-        assertThat(user.getName()).isEqualTo("Roger");
+        assertThat(user.getName()).isEqualTo("Roger"); // Confirm nothing changed
         assertThat(user.getEmail()).isEqualTo("roger@example.com");
-        verify(userRepository, never()).existsByEmail(anyString());
+        verify(userRepository, never()).existsByEmail(anyString()); // No email lookup since the email was never touched
     }
 
     @Test
@@ -177,15 +193,15 @@ class UserServiceImplTest {
     void updateUserById_sameEmail_skipsDuplicateCheck() {
         UpdateUserRequest update = mock(UpdateUserRequest.class);
 
-        when(update.getEmail()).thenReturn("roger@example.com");
+        when(update.getEmail()).thenReturn("roger@example.com"); // Same as the user's current email
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toResponse(user)).thenReturn(mock(UserResponse.class));
 
         userService.updateUserById(1L, update);
 
-        assertThat(user.getEmail()).isEqualTo("roger@example.com");
-        verify(userRepository, never()).existsByEmail(anyString());
+        assertThat(user.getEmail()).isEqualTo("roger@example.com"); // Still set, just re-assigned to itself
+        verify(userRepository, never()).existsByEmail(anyString()); // No duplicate check needed since the email didn't change
     }
 
     @Test
@@ -195,13 +211,13 @@ class UserServiceImplTest {
 
         when(update.getEmail()).thenReturn("taken@example.com");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.existsByEmail("taken@example.com")).thenReturn(true);
+        when(userRepository.existsByEmail("taken@example.com")).thenReturn(true); // Simulate another user already owning this email
 
         assertThatThrownBy(() -> userService.updateUserById(1L, update))
                 .isInstanceOf(DuplicateEmailException.class);
 
-        assertThat(user.getEmail()).isEqualTo("roger@example.com");
-        verify(userRepository, never()).save(any());
+        assertThat(user.getEmail()).isEqualTo("roger@example.com"); // Confirm the email was never overwritten
+        verify(userRepository, never()).save(any()); // Confirm nothing was saved once the conflict was detected
     }
 
     @Test
@@ -214,6 +230,7 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.updateUserById(1L, update))
                 .isInstanceOf(ResourceNotFoundException.class);
 
+        verify(ownershipVerifier, never()).verifyOwnershipOrAdmin(any()); // Confirm ownership was never checked since there was no user
         verify(userRepository, never()).save(any());
     }
 
@@ -228,16 +245,17 @@ class UserServiceImplTest {
         when(request.getNewPassword()).thenReturn("new-password");
         when(request.getConfirmPassword()).thenReturn("new-password");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("old-password", user.getPassword())).thenReturn(true);
-        when(passwordEncoder.matches("new-password", user.getPassword())).thenReturn(false);
-        when(passwordEncoder.encode("new-password")).thenReturn("encoded-new-password");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user)); // Simulate finding the existing user
+        when(passwordEncoder.matches("old-password", user.getPassword())).thenReturn(true); // Simulate a correct current password
+        when(passwordEncoder.matches("new-password", user.getPassword())).thenReturn(false); // Simulate the new password not being a reuse
+        when(passwordEncoder.encode("new-password")).thenReturn("encoded-new-password"); // Simulate hashing the new password
 
         userService.changePasswordById(1L, request);
 
-        assertThat(user.getPassword()).isEqualTo("encoded-new-password");
-        verify(refreshTokenService).deleteAllByUser(user);
-        verify(userRepository).save(user);
+        assertThat(user.getPassword()).isEqualTo("encoded-new-password"); // Confirm the password was actually replaced
+        verify(ownershipVerifier).verifyOwnershipOrAdmin(user); // Confirm the caller's ownership/admin status was checked
+        verify(refreshTokenService).deleteAllByUser(user); // Confirm existing sessions were invalidated
+        verify(userRepository).save(user); // Confirm the updated entity was persisted
     }
 
     @Test
@@ -247,12 +265,12 @@ class UserServiceImplTest {
 
         when(request.getCurrentPassword()).thenReturn("wrong-password");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("wrong-password", user.getPassword())).thenReturn(false);
+        when(passwordEncoder.matches("wrong-password", user.getPassword())).thenReturn(false); // Simulate a failed password check
 
         assertThatThrownBy(() -> userService.changePasswordById(1L, request))
                 .isInstanceOf(IncorrectCurrentPasswordException.class);
 
-        verify(refreshTokenService, never()).deleteAllByUser(any());
+        verify(refreshTokenService, never()).deleteAllByUser(any()); // Confirm no sessions were touched
         verify(userRepository, never()).save(any());
     }
 
@@ -284,7 +302,7 @@ class UserServiceImplTest {
         when(request.getConfirmPassword()).thenReturn("old-password");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("old-password", user.getPassword())).thenReturn(true);
+        when(passwordEncoder.matches("old-password", user.getPassword())).thenReturn(true); // Matches for both the current-password check and the reuse check
 
         assertThatThrownBy(() -> userService.changePasswordById(1L, request))
                 .isInstanceOf(PasswordReuseException.class);
@@ -302,6 +320,7 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.changePasswordById(1L, request))
                 .isInstanceOf(ResourceNotFoundException.class);
 
+        verify(ownershipVerifier, never()).verifyOwnershipOrAdmin(any());
         verify(userRepository, never()).save(any());
     }
 
@@ -314,8 +333,9 @@ class UserServiceImplTest {
 
         userService.deleteUserById(1L);
 
-        verify(refreshTokenService).deleteAllByUser(user);
-        verify(userRepository).delete(user);
+        verify(ownershipVerifier).verifyOwnershipOrAdmin(user); // Confirm the caller's ownership/admin status was checked
+        verify(refreshTokenService).deleteAllByUser(user); // Confirm the user's sessions were cleaned up
+        verify(userRepository).delete(user); // Confirm the correct entity was passed to delete
     }
 
     @Test
@@ -326,7 +346,7 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.deleteUserById(1L))
                 .isInstanceOf(ResourceNotFoundException.class);
 
-        verify(refreshTokenService, never()).deleteAllByUser(any());
+        verify(refreshTokenService, never()).deleteAllByUser(any()); // Confirm nothing was cleaned up since there was no user
         verify(userRepository, never()).delete(any());
     }
 }

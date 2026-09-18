@@ -3,24 +3,25 @@ package com.spring.backend.module.property.booking.mapper;
 import com.spring.backend.module.property.booking.dto.request.BookingCreateRequest;
 import com.spring.backend.module.property.booking.dto.response.BookingResponse;
 import com.spring.backend.module.property.booking.entity.BookingEntity;
+import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookingMapper {
 
-//    public BookingEntity toBookingEntity(BookingCreateRequest request, UserEntity user){
-//
-//        return BookingEntity.builder()
-//                .property(request.getPropertyId())
-//                .guest(user)
-//                .checkInDate(request.getCheckInDate())
-//                .checkOutDate(request.getCheckOutDate())
-//                .checkInTime(request.getCheckInTime())
-//                .checkOutTime(request.getCheckOutTime())
-//                .numberOfGuests(request.getNumberOfGuests())
-//                .build();
-//    }
+    public BookingEntity toBookingEntity(BookingCreateRequest request, PropertyEntity property, UserEntity user){
+
+        return BookingEntity.builder()
+                .property(property)
+                .guest(user)
+                .checkInDate(request.getCheckInDate())
+                .checkOutDate(request.getCheckOutDate())
+                .checkInTime(request.getCheckInTime())
+                .checkOutTime(request.getCheckOutTime())
+                .numberOfGuests(request.getNumberOfGuests())
+                .build();
+    }
 
     public BookingResponse toBookingResponse(BookingEntity entity){
 
