@@ -1,9 +1,9 @@
-package com.spring.backend.module.property.property.controller;
+package com.spring.backend.module.property.amenity.controller;
 
-import com.spring.backend.module.property.property.dto.request.AmenityCreateRequest;
-import com.spring.backend.module.property.property.dto.request.AmenityUpdateRequest;
-import com.spring.backend.module.property.property.dto.response.AmenityResponse;
-import com.spring.backend.module.property.property.service.interfaces.AmenityService;
+import com.spring.backend.module.property.amenity.dto.request.AmenityCreateRequest;
+import com.spring.backend.module.property.amenity.dto.request.AmenityUpdateRequest;
+import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
+import com.spring.backend.module.property.amenity.service.interfaces.AmenityService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;

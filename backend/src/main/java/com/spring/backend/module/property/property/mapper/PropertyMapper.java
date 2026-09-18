@@ -1,14 +1,12 @@
 package com.spring.backend.module.property.property.mapper;
 
-import com.spring.backend.module.property.property.dto.request.AmenityCreateRequest;
-import com.spring.backend.module.property.property.dto.request.CheckInSlotCreateRequest;
+import com.spring.backend.module.property.checkin.dto.request.CheckInSlotCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
-import com.spring.backend.module.property.property.dto.response.AmenityResponse;
-import com.spring.backend.module.property.property.dto.response.CheckInSlotResponse;
+import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
+import com.spring.backend.module.property.checkin.dto.response.CheckInSlotResponse;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
 import com.spring.backend.module.property.property.dto.response.PropertySummaryResponse;
-import com.spring.backend.module.property.property.entity.AmenityEntity;
-import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import org.springframework.stereotype.Component;
@@ -19,19 +17,6 @@ import java.util.List;
 
 @Component
 public class PropertyMapper {
-
-    public AmenityEntity toAmenityEntity(AmenityCreateRequest request) {
-        return AmenityEntity.builder()
-                .name(request.getName())
-                .build();
-    }
-
-    public AmenityResponse toAmenityResponse(AmenityEntity entity) {
-        return AmenityResponse.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
-    }
 
     public CheckInSlotEntity toCheckInSlotEntity(CheckInSlotCreateRequest request, PropertyEntity property) {
         return CheckInSlotEntity.builder()

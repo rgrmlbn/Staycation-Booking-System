@@ -15,8 +15,6 @@ public class PropertySummaryResponse {
     private String hostName;
     private String title;
 
-    private Double pricePerNight;
-
     private Integer bedrooms;
     private Integer maxGuests;
 

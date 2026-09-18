@@ -3,7 +3,7 @@ package com.spring.backend.module.property.booking.mapper;
 import com.spring.backend.module.property.booking.dto.request.BookingCreateRequest;
 import com.spring.backend.module.property.booking.dto.response.BookingResponse;
 import com.spring.backend.module.property.booking.entity.BookingEntity;
-import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import org.springframework.stereotype.Component;

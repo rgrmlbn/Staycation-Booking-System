@@ -5,18 +5,18 @@ import com.spring.backend.exception.property.property.DuplicateAmenityException;
 import com.spring.backend.exception.property.property.DuplicateImageException;
 import com.spring.backend.exception.property.property.InvalidTimeRangeException;
 import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
-import com.spring.backend.module.property.property.dto.request.CheckInSlotCreateRequest;
+import com.spring.backend.module.property.checkin.dto.request.CheckInSlotCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
 import com.spring.backend.module.property.property.dto.response.PropertySummaryResponse;
-import com.spring.backend.module.property.property.entity.AmenityEntity;
-import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.amenity.entity.AmenityEntity;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.ImageEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.property.property.enums.PropertyStatus;
 import com.spring.backend.module.property.property.mapper.PropertyMapper;
-import com.spring.backend.module.property.property.repository.AmenityRepository;
+import com.spring.backend.module.property.amenity.repository.AmenityRepository;
 import com.spring.backend.module.property.property.repository.PropertyRepository;
 import com.spring.backend.module.property.property.service.interfaces.PropertyService;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
@@ -24,7 +24,6 @@ import com.spring.backend.module.user.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.connection.RedisSubscribedConnectionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -254,9 +253,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (update.getDescription() != null && !update.getDescription().isBlank()) {
             property.setDescription(update.getDescription());
         }
-        if (update.getPricePerNight() != null) {
-            property.setPricePerNight(update.getPricePerNight());
-        }
+
         if (update.getBedrooms() != null) {
             property.setBedrooms(update.getBedrooms());
         }

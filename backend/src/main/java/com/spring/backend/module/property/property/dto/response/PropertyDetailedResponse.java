@@ -1,11 +1,11 @@
 package com.spring.backend.module.property.property.dto.response;
 
-import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
+import com.spring.backend.module.property.checkin.dto.response.CheckInSlotResponse;
 import com.spring.backend.module.property.property.enums.PropertyStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

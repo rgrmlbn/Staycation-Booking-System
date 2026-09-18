@@ -1,5 +1,6 @@
-package com.spring.backend.module.property.property.entity;
+package com.spring.backend.module.property.checkin.entity;
 
+import com.spring.backend.module.property.property.entity.PropertyEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

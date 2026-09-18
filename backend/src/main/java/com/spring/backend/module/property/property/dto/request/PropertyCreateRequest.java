@@ -1,4 +1,5 @@
 package com.spring.backend.module.property.property.dto.request;
+import com.spring.backend.module.property.checkin.dto.request.CheckInSlotCreateRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -24,10 +25,6 @@ public class PropertyCreateRequest {
     @NotBlank(message = "Description is required")
     @Size(min = 10, max = 200, message = "Description should be between 10 and 200 characters")
     private String description;
-
-    @NotNull(message = "Price per night is required")
-    @Min(value = 350, message = "Price per night should be 350 or more")
-    private Double pricePerNight;
 
     @NotNull(message = "Bedrooms is required")
     @Min(value = 1, message = "Number of bedrooms should be 1 or more")

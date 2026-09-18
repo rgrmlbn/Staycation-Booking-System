@@ -1,5 +1,7 @@
 package com.spring.backend.module.property.property.entity;
 
+import com.spring.backend.module.property.amenity.entity.AmenityEntity;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.enums.PropertyStatus;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import com.spring.backend.module.shared.entity.BaseEntity;
@@ -31,9 +33,6 @@ public class PropertyEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
-    private Double pricePerNight;
 
     @Column(nullable = false)
     private Integer bedrooms;

@@ -1,8 +1,8 @@
-package com.spring.backend.module.property.property.service.interfaces;
+package com.spring.backend.module.property.amenity.service.interfaces;
 
-import com.spring.backend.module.property.property.dto.request.AmenityCreateRequest;
-import com.spring.backend.module.property.property.dto.request.AmenityUpdateRequest;
-import com.spring.backend.module.property.property.dto.response.AmenityResponse;
+import com.spring.backend.module.property.amenity.dto.request.AmenityCreateRequest;
+import com.spring.backend.module.property.amenity.dto.request.AmenityUpdateRequest;
+import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
 
 import java.util.List;
 

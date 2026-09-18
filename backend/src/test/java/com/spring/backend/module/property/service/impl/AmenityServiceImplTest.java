@@ -1,13 +1,13 @@
 package com.spring.backend.module.property.service.impl;
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
-import com.spring.backend.module.property.property.dto.request.AmenityCreateRequest;
-import com.spring.backend.module.property.property.dto.request.AmenityUpdateRequest;
-import com.spring.backend.module.property.property.dto.response.AmenityResponse;
-import com.spring.backend.module.property.property.entity.AmenityEntity;
+import com.spring.backend.module.property.amenity.dto.request.AmenityCreateRequest;
+import com.spring.backend.module.property.amenity.dto.request.AmenityUpdateRequest;
+import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
+import com.spring.backend.module.property.amenity.entity.AmenityEntity;
 import com.spring.backend.module.property.property.mapper.PropertyMapper;
-import com.spring.backend.module.property.property.repository.AmenityRepository;
-import com.spring.backend.module.property.property.service.impl.AmenityServiceImpl;
+import com.spring.backend.module.property.amenity.repository.AmenityRepository;
+import com.spring.backend.module.property.amenity.service.impl.AmenityServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

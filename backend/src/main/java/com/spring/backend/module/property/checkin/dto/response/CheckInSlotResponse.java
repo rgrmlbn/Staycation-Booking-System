@@ -1,4 +1,4 @@
-package com.spring.backend.module.property.property.dto.response;
+package com.spring.backend.module.property.checkin.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

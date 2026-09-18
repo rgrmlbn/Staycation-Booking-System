@@ -1,6 +1,5 @@
-package com.spring.backend.module.property.property.dto.request;
+package com.spring.backend.module.property.amenity.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class AmenityCreateRequest {
+public class AmenityUpdateRequest {
 
-    @NotBlank(message = "Amenity name is required")
     @Size(min = 3, max = 50, message = "Amenity name should be between 3 and 50 characters")
     private String name;
 
 }
+

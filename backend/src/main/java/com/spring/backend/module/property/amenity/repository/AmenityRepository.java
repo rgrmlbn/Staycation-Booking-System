@@ -1,6 +1,6 @@
-package com.spring.backend.module.property.property.repository;
+package com.spring.backend.module.property.amenity.repository;
 
-import com.spring.backend.module.property.property.entity.AmenityEntity;
+import com.spring.backend.module.property.amenity.entity.AmenityEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

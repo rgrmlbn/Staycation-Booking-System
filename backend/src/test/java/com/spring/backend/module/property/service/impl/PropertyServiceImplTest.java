@@ -4,11 +4,11 @@ import com.spring.backend.module.property.property.dto.request.PropertyCreateReq
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
 import com.spring.backend.module.property.property.dto.response.PropertySummaryResponse;
-import com.spring.backend.module.property.property.entity.AmenityEntity;
+import com.spring.backend.module.property.amenity.entity.AmenityEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.property.property.enums.PropertyStatus;
 import com.spring.backend.module.property.property.mapper.PropertyMapper;
-import com.spring.backend.module.property.property.repository.AmenityRepository;
+import com.spring.backend.module.property.amenity.repository.AmenityRepository;
 import com.spring.backend.module.property.property.repository.PropertyRepository;
 import com.spring.backend.module.property.property.service.impl.PropertyServiceImpl;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
@@ -242,7 +242,6 @@ class PropertyServiceImplTest {
 
         when(update.getTitle()).thenReturn("Updated Title");
         when(update.getDescription()).thenReturn("Updated Description");
-        when(update.getPricePerNight()).thenReturn(150.0);
         when(update.getBedrooms()).thenReturn(3);
         when(update.getBathrooms()).thenReturn(2);
         when(update.getAddress()).thenReturn("456 Updated Ave");
@@ -257,7 +256,6 @@ class PropertyServiceImplTest {
 
         assertThat(property.getTitle()).isEqualTo("Updated Title"); // Confirm each field was actually changed
         assertThat(property.getDescription()).isEqualTo("Updated Description");
-        assertThat(property.getPricePerNight()).isEqualTo(150.0);
         assertThat(property.getBedrooms()).isEqualTo(3);
         assertThat(property.getBathrooms()).isEqualTo(2);
         assertThat(property.getAddress()).isEqualTo("456 Updated Ave");

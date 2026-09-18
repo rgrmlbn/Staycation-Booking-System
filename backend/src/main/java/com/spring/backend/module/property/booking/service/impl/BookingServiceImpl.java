@@ -10,7 +10,7 @@ import com.spring.backend.module.property.booking.entity.BookingEntity;
 import com.spring.backend.module.property.booking.mapper.BookingMapper;
 import com.spring.backend.module.property.booking.repository.BookingRepository;
 import com.spring.backend.module.property.booking.service.interfaces.BookingService;
-import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.property.property.repository.PropertyRepository;
 import com.spring.backend.module.shared.util.OwnershipVerifier;

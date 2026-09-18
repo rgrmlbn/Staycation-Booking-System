@@ -1,7 +1,7 @@
 package com.spring.backend.module.property.booking.entity;
 
 import com.spring.backend.module.property.booking.enums.BookingStatus;
-import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.shared.entity.BaseEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;

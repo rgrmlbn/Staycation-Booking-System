@@ -1,7 +1,6 @@
-package com.spring.backend.module.property.property.entity;
+package com.spring.backend.module.property.amenity.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
