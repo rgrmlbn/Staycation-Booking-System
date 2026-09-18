@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
@@ -20,22 +19,14 @@ public class BookingCreateRequest {
     @NotNull(message = "Property ID is required")
     private Long propertyId;
 
+    @NotNull(message = "Check-In Slot is required")
+    private Long checkInSlotId;
+
     @NotNull(message = "Check-In Date is required")
     @Future(message = "Invalid Date, Must be in the future")
     private LocalDate checkInDate;
 
-    @NotNull(message = "Check-Out Date is required")
-    @Future(message = "Invalid Date, Must be in the future")
-    private LocalDate checkOutDate;
-
-    @NotNull(message = "Check-In Time is required")
-    private LocalTime checkInTime;
-
-    @NotNull(message = "Check-Out Time is required")
-    private LocalTime checkOutTime;
-
     @NotNull(message = "Number of Guest is required")
     @Min(value = 1, message = "Number guests should be 1 or more")
     private Integer numberOfGuests;
-
 }

@@ -43,6 +43,7 @@ public class PropertyUpdateRequest {
     @Size(min = 1, message = "At least one amenity is required")
     private List<Long> amenityIds;
 
+    @Size(min = 1, message = "At least one check-in slot is required")
     @Valid
     private List<CheckInSlotCreateRequest> checkInSlots;
 

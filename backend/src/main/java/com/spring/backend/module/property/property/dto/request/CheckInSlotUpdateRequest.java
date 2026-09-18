@@ -1,5 +1,6 @@
 package com.spring.backend.module.property.property.dto.request;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +16,6 @@ public class CheckInSlotUpdateRequest {
 
     private LocalTime startTime;
     private LocalTime endTime;
+    @Positive(message = "Price must be greater than 0")
+    private Double price;
 }

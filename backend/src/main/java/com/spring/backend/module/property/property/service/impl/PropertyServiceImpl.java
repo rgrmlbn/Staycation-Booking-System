@@ -128,7 +128,7 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyDetailedResponse getPropertyById(Long id) {
 
         PropertyEntity property = propertyRepository.findById(id)
-                .orElseThrow(() -> new RedisSubscribedConnectionException("Property"));
+                .orElseThrow(() -> new ResourceNotFoundException("Property"));
 
         return propertyMapper.toPropertyDetailedResponse(property);
     }
@@ -169,7 +169,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
     }
 
-    // VALIDATE NO OVERLAPS YESSUB-HELPER: Checks if two check-in slots overlap
+    // SUB-HELPER: Checks if two check-in slots overlap
     private boolean slotsOverlap(CheckInSlotCreateRequest first, CheckInSlotCreateRequest second) {
         return first.getStartTime().isBefore(second.getEndTime())
                 && second.getStartTime().isBefore(first.getEndTime());
@@ -185,70 +185,52 @@ public class PropertyServiceImpl implements PropertyService {
         PropertyEntity property = propertyMapper.toPropertyEntity(request, user);
 
         // Image
-        if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+        // imageUrls is @NotNull + @Size(min = 1) on the DTO, so @Valid guarantees
+        // it's present and non-empty here. No null/empty guard needed.
+        Set<String> uniqueUrls = new HashSet<>(request.getImageUrls());
 
-            // Check for duplicate image URLs before creating image entities
-            Set<String> uniqueUrls = new HashSet<>();
-
-            for (String url : request.getImageUrls()) {
-                uniqueUrls.add(url);
-            }
-
-            if (uniqueUrls.size() != request.getImageUrls().size()) {
-                throw new DuplicateImageException();
-            }
-
-            // Convert image URLs into image entities linked to the property
-            List<ImageEntity> images = request.getImageUrls()
-                    .stream()
-                    .map(imageUrl -> ImageEntity.builder()
-                            .imageUrl(imageUrl)
-                            .property(property)
-                            .build())
-                    .toList();
-
-            property.setImages(images);
-
+        if (uniqueUrls.size() != request.getImageUrls().size()) {
+            throw new DuplicateImageException();
         }
+
+        List<ImageEntity> images = request.getImageUrls()
+                .stream()
+                .map(imageUrl -> ImageEntity.builder()
+                        .imageUrl(imageUrl)
+                        .property(property)
+                        .build())
+                .toList();
+
+        property.setImages(images);
 
         // Amenity
-        if (request.getAmenityIds() != null && !request.getAmenityIds().isEmpty()) {
+        // amenityIds is @NotNull + @Size(min = 1) on the DTO, so @Valid guarantees
+        // it's present and non-empty here. No null/empty guard needed.
+        Set<Long> uniqueAmenityIds = new HashSet<>(request.getAmenityIds());
 
-            // Check for duplicate amenity IDs before retrieving amenities
-            Set<Long> uniqueAmenityIds = new HashSet<>();
-
-            for(Long amenityId : request.getAmenityIds()) {
-                uniqueAmenityIds.add(amenityId);
-            }
-
-            if (uniqueAmenityIds.size() != request.getAmenityIds().size()) {
-                throw new DuplicateAmenityException();
-            }
-
-            // Retrieve the requested amenities and verify that all IDs exist
-            List<AmenityEntity> amenities = amenityRepository.findAllById(request.getAmenityIds());
-
-            if (amenities.size() != request.getAmenityIds().size()) {
-                throw new ResourceNotFoundException("One or more amenities");
-            }
-
-            property.setAmenities(amenities);
+        if (uniqueAmenityIds.size() != request.getAmenityIds().size()) {
+            throw new DuplicateAmenityException();
         }
+
+        List<AmenityEntity> amenities = amenityRepository.findAllById(request.getAmenityIds());
+
+        if (amenities.size() != request.getAmenityIds().size()) {
+            throw new ResourceNotFoundException("One or more amenities");
+        }
+
+        property.setAmenities(amenities);
 
         // Check-in Slots
-        if (request.getCheckInSlots() != null && !request.getCheckInSlots().isEmpty()) {
+        // checkInSlots is now @NotNull + @Size(min = 1) on the DTO, so @Valid guarantees
+        // it's present and non-empty here. No null/empty guard needed.
+        validateCheckInSlots(request.getCheckInSlots());
 
-            // Validate slot time ranges and prevent overlapping slots
-            validateCheckInSlots(request.getCheckInSlots());
+        List<CheckInSlotEntity> checkInSlots = request.getCheckInSlots()
+                .stream()
+                .map(slotRequest -> propertyMapper.toCheckInSlotEntity(slotRequest, property))
+                .toList();
 
-            // Convert slot requests into entities linked to the property
-            List<CheckInSlotEntity> checkInSlots = request.getCheckInSlots()
-                    .stream()
-                    .map(slotRequest -> propertyMapper.toCheckInSlotEntity(slotRequest, property))
-                    .toList();
-
-            property.setCheckInSlots(checkInSlots);
-        }
+        property.setCheckInSlots(checkInSlots);
 
         PropertyEntity savedProperty = propertyRepository.save(property);
 
@@ -261,44 +243,40 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyDetailedResponse updateProperty(Long id, PropertyUpdateRequest update) {
 
         PropertyEntity property = propertyRepository.findById(id)
-                .orElseThrow(() -> new RedisSubscribedConnectionException("Property"));
+                .orElseThrow(() -> new ResourceNotFoundException("Property"));
 
         ownershipVerifier.verifyOwnershipOrAdmin(property.getUser());
 
-        // Update fields if they are not null or blank
-        if(update.getTitle() != null && !update.getTitle().isBlank()) {
+        // Update fields if they are not null or blank.
+        if (update.getTitle() != null && !update.getTitle().isBlank()) {
             property.setTitle(update.getTitle());
         }
-        if(update.getDescription() != null && !update.getDescription().isBlank()) {
+        if (update.getDescription() != null && !update.getDescription().isBlank()) {
             property.setDescription(update.getDescription());
         }
-        if(update.getPricePerNight() != null) {
+        if (update.getPricePerNight() != null) {
             property.setPricePerNight(update.getPricePerNight());
         }
-        if(update.getBedrooms() != null) {
+        if (update.getBedrooms() != null) {
             property.setBedrooms(update.getBedrooms());
         }
-        if(update.getBathrooms() != null) {
+        if (update.getBathrooms() != null) {
             property.setBathrooms(update.getBathrooms());
         }
-
-        if(update.getMaxGuests() != null) {
+        if (update.getMaxGuests() != null) {
             property.setMaxGuests(update.getMaxGuests());
         }
-
-        if(update.getAddress() != null && !update.getAddress().isBlank()) {
+        if (update.getAddress() != null && !update.getAddress().isBlank()) {
             property.setAddress(update.getAddress());
         }
 
         // Image
-        if (update.getImageUrls() != null && !update.getImageUrls().isEmpty()) {
+        // imageUrls has @Size(min = 1), so if it's non-null, @Valid guarantees it's
+        // also non-empty. Only the null check is needed.
+        if (update.getImageUrls() != null) {
 
             // Check for duplicate image URLs before replacing the property's images
-            Set<String> uniqueUrls = new HashSet<>();
-
-            for(String imageUrl : update.getImageUrls()) {
-                uniqueUrls.add(imageUrl);
-            }
+            Set<String> uniqueUrls = new HashSet<>(update.getImageUrls());
 
             if (uniqueUrls.size() != update.getImageUrls().size()) {
                 throw new DuplicateImageException();
@@ -317,6 +295,8 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         // Amenity
+        // amenityIds has @Size(min = 1), so if it's non-null, @Valid guarantees it's
+        // also non-empty. Only the null check is needed.
         if (update.getAmenityIds() != null) {
 
             // Retrieve the requested amenities and verify that all IDs exist
@@ -330,7 +310,8 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         // Check-in Slots
-        if (update.getCheckInSlots() != null && !update.getCheckInSlots().isEmpty()) {
+        // checkInSlots has @Size(min = 1), so if it's non-null, @Valid guarantees it's
+        if (update.getCheckInSlots() != null) {
 
             // Validate slot time ranges and prevent overlapping slots
             validateCheckInSlots(update.getCheckInSlots());

@@ -1,7 +1,6 @@
 package com.spring.backend.module.property.property.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalTime;
@@ -24,6 +23,9 @@ public class CheckInSlotEntity {
 
     @Column(nullable = false)
     private LocalTime endTime;
+
+    @Column(nullable = false)
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "property_id", nullable = false)

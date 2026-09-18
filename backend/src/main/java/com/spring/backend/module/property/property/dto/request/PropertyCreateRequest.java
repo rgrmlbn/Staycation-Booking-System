@@ -53,6 +53,8 @@ public class PropertyCreateRequest {
     @Size(min = 1, message = "At least one amenity is required")
     private List<Long> amenityIds;
 
+    @NotNull(message = "Check-in slots are required")
+    @Size(min = 1, message = "At least one check-in slot is required")
     @Valid
     private List<CheckInSlotCreateRequest> checkInSlots;
 }

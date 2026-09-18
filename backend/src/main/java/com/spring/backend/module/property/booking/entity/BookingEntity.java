@@ -1,6 +1,7 @@
 package com.spring.backend.module.property.booking.entity;
 
 import com.spring.backend.module.property.booking.enums.BookingStatus;
+import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.shared.entity.BaseEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;
@@ -31,6 +32,10 @@ public class BookingEntity extends BaseEntity {
     @JoinColumn(name = "guest_id", nullable = false)
     private UserEntity guest;
 
+    @ManyToOne
+    @JoinColumn(name = "check_in_slot_id", nullable = false)
+    private CheckInSlotEntity checkInSlot;
+
     @Column(nullable = false)
     private LocalDate checkInDate;
 
@@ -53,5 +58,4 @@ public class BookingEntity extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private BookingStatus status = BookingStatus.PENDING;
-
 }

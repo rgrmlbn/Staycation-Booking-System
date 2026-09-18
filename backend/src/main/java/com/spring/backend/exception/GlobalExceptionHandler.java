@@ -2,10 +2,7 @@ package com.spring.backend.exception;
 
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
-import com.spring.backend.exception.property.property.DuplicateAmenityException;
-import com.spring.backend.exception.property.property.DuplicateImageException;
-import com.spring.backend.exception.property.property.InvalidTimeRangeException;
-import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
+import com.spring.backend.exception.property.property.*;
 import com.spring.backend.exception.user.auth.InvalidTokenException;
 import com.spring.backend.exception.user.auth.TokenExpiredException;
 import com.spring.backend.exception.user.auth.TokenRevokedException;
@@ -113,6 +110,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OverlappingTimeSlotException .class)
     public ResponseEntity<ApiResponse> handleOverlappingTimeSlotException(OverlappingTimeSlotException ex) {
+        return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(GuestCapacityExceededException.class)
+    public ResponseEntity<ApiResponse> handleGuestCapacityExceededException(GuestCapacityExceededException ex) {
         return apiResponseBuilder.error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

@@ -17,7 +17,6 @@ public class PropertyDetailedResponse {
     private String hostName;
     private String title;
     private String description;
-    private Double pricePerNight;
 
     private Integer bedrooms;
     private Integer bathrooms;

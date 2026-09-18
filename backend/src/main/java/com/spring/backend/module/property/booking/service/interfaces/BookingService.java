@@ -6,7 +6,7 @@ import com.spring.backend.module.property.booking.dto.response.BookingResponse;
 
 public interface BookingService {
 
-    BookingResponse createBooking(Long guestId, BookingCreateRequest request);
+    BookingResponse createBooking(BookingCreateRequest request);
     BookingResponse updateBooking(Long guestId, Long bookingId, BookingUpdateRequest update);
     BookingResponse approveBooking(Long hostId, Long bookingId);
     BookingResponse rejectBooking(Long id, Long bookingId, String reason);

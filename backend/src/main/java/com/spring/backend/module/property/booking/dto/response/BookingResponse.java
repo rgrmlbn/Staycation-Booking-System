@@ -1,8 +1,6 @@
 package com.spring.backend.module.property.booking.dto.response;
 
 import com.spring.backend.module.property.booking.enums.BookingStatus;
-import com.spring.backend.module.property.property.entity.PropertyEntity;
-import com.spring.backend.module.user.user.entity.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,8 +12,11 @@ import java.time.LocalTime;
 public class BookingResponse {
 
     private Long id;
-    private PropertyEntity property;
-    private UserEntity guest;
+    private Long propertyId;
+    private String propertyTitle;
+    private Long guestId;
+    private String guestName;
+    private Long checkInSlotId;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private LocalTime checkInTime;

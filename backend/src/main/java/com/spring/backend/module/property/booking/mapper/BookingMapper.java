@@ -3,32 +3,43 @@ package com.spring.backend.module.property.booking.mapper;
 import com.spring.backend.module.property.booking.dto.request.BookingCreateRequest;
 import com.spring.backend.module.property.booking.dto.response.BookingResponse;
 import com.spring.backend.module.property.booking.entity.BookingEntity;
+import com.spring.backend.module.property.property.entity.CheckInSlotEntity;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.user.user.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class BookingMapper {
 
-    public BookingEntity toBookingEntity(BookingCreateRequest request, PropertyEntity property, UserEntity user){
+    public BookingEntity toBookingEntity(BookingCreateRequest request,
+                                         PropertyEntity property,
+                                         UserEntity guest,
+                                         CheckInSlotEntity slot,
+                                         LocalDate checkOutDate) {
 
         return BookingEntity.builder()
                 .property(property)
-                .guest(user)
+                .guest(guest)
+                .checkInSlot(slot)
                 .checkInDate(request.getCheckInDate())
-                .checkOutDate(request.getCheckOutDate())
-                .checkInTime(request.getCheckInTime())
-                .checkOutTime(request.getCheckOutTime())
+                .checkOutDate(checkOutDate)
+                .checkInTime(slot.getStartTime())
+                .checkOutTime(slot.getEndTime())
                 .numberOfGuests(request.getNumberOfGuests())
                 .build();
     }
 
-    public BookingResponse toBookingResponse(BookingEntity entity){
+    public BookingResponse toBookingResponse(BookingEntity entity) {
 
         return BookingResponse.builder()
                 .id(entity.getId())
-                .property(entity.getProperty())
-                .guest(entity.getGuest())
+                .propertyId(entity.getProperty().getId())
+                .propertyTitle(entity.getProperty().getTitle())
+                .guestId(entity.getGuest().getId())
+                .guestName(entity.getGuest().getName())
+                .checkInSlotId(entity.getCheckInSlot().getId())
                 .checkInDate(entity.getCheckInDate())
                 .checkOutDate(entity.getCheckOutDate())
                 .checkInTime(entity.getCheckInTime())

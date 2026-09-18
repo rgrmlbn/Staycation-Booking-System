@@ -2,6 +2,7 @@ package com.spring.backend.module.property.booking.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,15 +17,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class BookingUpdateRequest {
 
+    private Long checkInSlotId;
+
     @Future(message = "Invalid Date, Must be in the future")
     private LocalDate checkInDate;
-
-    @Future(message = "Invalid Date, Must be in the future")
-    private LocalDate checkOutDate;
-
-    private LocalTime checkInTime;
-
-    private LocalTime checkOutTime;
 
     @Min(value = 1, message = "Number guests should be 1 or more")
     private Integer numberOfGuests;

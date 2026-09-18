@@ -37,6 +37,7 @@ public class PropertyMapper {
         return CheckInSlotEntity.builder()
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
+                .price(request.getPrice())
                 .property(property)
                 .build();
     }
@@ -58,6 +59,7 @@ public class PropertyMapper {
                 .startTime(entity.getStartTime())
                 .endTime(entity.getEndTime())
                 .durationMinutes(calculateDurationMinutes(entity.getStartTime(), entity.getEndTime()))
+                .price(entity.getPrice())
                 .build();
     }
 
@@ -66,7 +68,6 @@ public class PropertyMapper {
                 .user(user)
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .pricePerNight(request.getPricePerNight())
                 .bedrooms(request.getBedrooms())
                 .bathrooms(request.getBathrooms())
                 .maxGuests(request.getMaxGuests())
@@ -86,7 +87,6 @@ public class PropertyMapper {
                 .hostId(entity.getUser().getId())
                 .hostName(entity.getUser().getName())
                 .title(entity.getTitle())
-                .pricePerNight(entity.getPricePerNight())
                 .bedrooms(entity.getBedrooms())
                 .maxGuests(entity.getMaxGuests())
                 .address(entity.getAddress())
@@ -120,7 +120,6 @@ public class PropertyMapper {
                 .hostName(entity.getUser().getName())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
-                .pricePerNight(entity.getPricePerNight())
                 .bedrooms(entity.getBedrooms())
                 .bathrooms(entity.getBathrooms())
                 .maxGuests(entity.getMaxGuests())
