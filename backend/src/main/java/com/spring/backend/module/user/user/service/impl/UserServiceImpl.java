@@ -35,6 +35,9 @@ public class UserServiceImpl implements UserService {
     // Get all users
     @Override
     public List<UserResponse> getAllUsers() {
+
+        ownershipVerifier.verifyAdmin();
+
         return userRepository.findAll().stream()
                 .map(userMapper::toResponse)
                 .toList();
@@ -49,8 +52,11 @@ public class UserServiceImpl implements UserService {
     // Get a user by its ID, throwing an exception if not found
     @Override
     public UserResponse getUserById(Long id) {
+
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User"));
+
+        ownershipVerifier.verifyAdmin();
 
         return userMapper.toResponse(user);
     }
@@ -139,7 +145,7 @@ public class UserServiceImpl implements UserService {
 
         ownershipVerifier.verifyOwnershipOrAdmin(user);
 
-        refreshTokenService.deleteAllByUser(user);
+        refreshTokenService.deleteAllByUser(user); // Only delete refresh token, access token is not stored in DB and will be expired without refresh token
         userRepository.delete(user);
 
     }

@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -138,30 +139,34 @@ public class GlobalExceptionHandler {
         return apiResponseBuilder.error(HttpStatus.FORBIDDEN, "You do not have permission to access this resource.");
     }
 
-    // Method - Argument
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        return apiResponseBuilder.validationError("Validation failed",
+                toFieldErrors(ex.getBindingResult().getFieldErrors()));
+    }
+
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ApiResponse> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
         List<ApiResponse.FieldError> errors = ex.getParameterValidationResults().stream()
-                .flatMap(result -> {
-                    if (result instanceof ParameterErrors parameterErrors) {
-                        // This branch covers @Valid @RequestBody objects (e.g. UpdateUserRequest)
-                        return parameterErrors.getFieldErrors().stream()
-                                .map(fe -> ApiResponse.FieldError.builder()
-                                        .field(fe.getField())
-                                        .message(fe.getDefaultMessage())
-                                        .build());
-                    } else {
-                        // This branch covers simple params like @PathVariable @Positive Long id
-                        return result.getResolvableErrors().stream()
-                                .map(err -> ApiResponse.FieldError.builder()
-                                        .field(result.getMethodParameter().getParameterName())
-                                        .message(err.getDefaultMessage())
-                                        .build());
-                    }
-                })
+                .flatMap(result -> result instanceof ParameterErrors parameterErrors
+                        ? toFieldErrors(parameterErrors.getFieldErrors()).stream()
+                        : result.getResolvableErrors().stream()
+                        .map(err -> ApiResponse.FieldError.builder()
+                                .field(result.getMethodParameter().getParameterName())
+                                .message(err.getDefaultMessage())
+                                .build()))
                 .toList();
 
         return apiResponseBuilder.validationError("Validation failed", errors);
+    }
+
+    private List<ApiResponse.FieldError> toFieldErrors(List<FieldError> fieldErrors) {
+        return fieldErrors.stream()
+                .map(fe -> ApiResponse.FieldError.builder()
+                        .field(fe.getField())
+                        .message(fe.getDefaultMessage())
+                        .build())
+                .toList();
     }
 
 }

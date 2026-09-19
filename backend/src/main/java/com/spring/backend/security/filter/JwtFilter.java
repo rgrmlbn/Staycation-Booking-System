@@ -48,6 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
         jwt = authorizationHeader.substring(7);
 
         if (tokenBlacklistService.isBlacklisted(jwt)) {
+            log.warn("Rejected request with blacklisted JWT for URI: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }

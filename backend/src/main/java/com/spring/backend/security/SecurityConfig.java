@@ -43,10 +43,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().permitAll()
-//                )
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/auth/register",
@@ -58,9 +54,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/h2-console/**"          // 👈 add this
+                                "/h2-console/**"
                         ).permitAll()
-//                        .requestMatchers(HttpMethod.GET, ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
 

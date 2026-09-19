@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-@Valid
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -33,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<UserResponse> getUserById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
@@ -50,7 +51,6 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.user.id")
     ResponseEntity<Void> deleteUserById(@PathVariable @Positive Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();

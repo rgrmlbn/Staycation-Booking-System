@@ -111,15 +111,19 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void logout() {
 
+        // Retrieve the current authentication once, so it can be null-checked before use
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Guard against a missing/unauthenticated context instead of failing with a raw NPE
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResourceNotFoundException("User"); // or a more specific AuthenticationException
+        }
+
         // Retrieve the JWT stored in the authentication credentials by the JwtFilter
-        String accessToken = (String) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getCredentials();
+        String accessToken = (String) authentication.getCredentials();
 
         // Retrieve the authenticated user's email from the security context
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+        String email = authentication.getName();
 
         // Load the user so all of their refresh tokens can be revoked
         UserEntity user = userRepository.findByEmail(email)

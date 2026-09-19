@@ -7,9 +7,9 @@ import com.spring.backend.module.property.amenity.dto.request.AmenityUpdateReque
 import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
 import com.spring.backend.module.property.amenity.entity.AmenityEntity;
 import com.spring.backend.module.property.amenity.mapper.AmenityMapper;
-import com.spring.backend.module.property.property.mapper.PropertyMapper;
 import com.spring.backend.module.property.amenity.repository.AmenityRepository;
 import com.spring.backend.module.property.amenity.service.interfaces.AmenityService;
+import com.spring.backend.module.shared.util.OwnershipVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +20,15 @@ import java.util.List;
 public class AmenityServiceImpl implements AmenityService {
 
     private final AmenityRepository amenityRepository;
-    private final PropertyMapper propertyMapper;
     private final AmenityMapper amenityMapper;
+    private final OwnershipVerifier ownershipVerifier;
 
     // Get all amenities
     @Override
     public List<AmenityResponse> getAllAmenities() {
+
+        ownershipVerifier.verifyAdmin();
+
         return amenityRepository.findAll()
                 .stream()
                 .map(amenity -> amenityMapper.toAmenityResponse(amenity))
@@ -39,6 +42,8 @@ public class AmenityServiceImpl implements AmenityService {
         AmenityEntity entity = amenityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity"));
 
+        ownershipVerifier.verifyAdmin();
+
         return amenityMapper.toAmenityResponse(entity);
     }
 
@@ -49,6 +54,8 @@ public class AmenityServiceImpl implements AmenityService {
         if(amenityRepository.existsByName(request.getName())) {
             throw new DuplicateAmenityException();
         }
+
+        ownershipVerifier.verifyAdmin();
 
         AmenityEntity entity = amenityMapper.toAmenityEntity(request);
 
@@ -63,6 +70,8 @@ public class AmenityServiceImpl implements AmenityService {
 
         AmenityEntity entity = amenityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity"));
+
+        ownershipVerifier.verifyAdmin();
 
         // Update the name if it is not null or blank
         if(update.getName() != null && !update.getName().isBlank()) {
@@ -80,6 +89,8 @@ public class AmenityServiceImpl implements AmenityService {
 
         AmenityEntity entity = amenityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity"));
+
+        ownershipVerifier.verifyAdmin();
 
         amenityRepository.delete(entity);
     }
