@@ -18,16 +18,12 @@ public class BookingMapper {
     public BookingEntity toBookingEntity(BookingCreateRequest request,
                                          PropertyEntity property,
                                          UserEntity guest,
-                                         CheckInSlotEntity slot,
-                                         LocalDateTime checkInDateTime,
-                                         LocalDateTime checkOutDateTime) {
+                                         CheckInSlotEntity slot) {
 
         return BookingEntity.builder()
                 .property(property)
                 .guest(guest)
                 .checkInSlot(slot)
-                .checkInDateTime(checkInDateTime)
-                .checkOutDateTime(checkOutDateTime)
                 .numberOfGuests(request.getNumberOfGuests())
                 .totalPrice(slot.getPrice())
                 .build();

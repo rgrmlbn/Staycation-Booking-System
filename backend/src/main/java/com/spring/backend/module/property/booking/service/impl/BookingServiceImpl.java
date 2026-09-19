@@ -2,8 +2,7 @@ package com.spring.backend.module.property.booking.service.impl;
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
 import com.spring.backend.exception.property.booking.BookingAlreadyExistsException;
-import com.spring.backend.exception.property.property.GuestCapacityExceededException;
-import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
+import com.spring.backend.exception.property.booking.GuestCapacityExceededException;
 import com.spring.backend.module.property.booking.dto.request.BookingCreateRequest;
 import com.spring.backend.module.property.booking.dto.request.BookingUpdateRequest;
 import com.spring.backend.module.property.booking.dto.response.BookingResponse;
@@ -19,16 +18,16 @@ import com.spring.backend.module.property.property.enums.PropertyStatus;
 import com.spring.backend.module.property.property.repository.PropertyRepository;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.user.entity.UserEntity;
+import com.spring.backend.module.user.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -46,7 +45,13 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse createBooking(BookingCreateRequest request) {
 
         // Get the currently logged-in user as the guest
-        UserEntity guest = ownershipVerifier.getCurrentUser();
+        UserEntity entity = ownershipVerifier.getCurrentUser();
+
+        if(!entity.getRole().equals(UserRole.GUEST)){
+            throw new AccessDeniedException(
+                    "You do not have permission to access this resource."
+            );
+        }
 
         // Find the property being booked
         PropertyEntity property = propertyRepository.findById(request.getPropertyId())
@@ -61,13 +66,15 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Check-in slot");
         }
 
+        if(request.getNumberOfGuests() > property.getMaxGuests()){
+            throw new GuestCapacityExceededException();
+        }
+
         // Combine the check-in date and selected start time
-        LocalDateTime checkInDateTime =
-                LocalDateTime.of(request.getCheckInDate(), slot.getStartTime());
+        LocalDateTime checkInDateTime = LocalDateTime.of(request.getCheckInDate(), slot.getStartTime());
 
         // Calculate checkout based on the selected duration option
-        LocalDateTime checkOutDateTime =
-                checkInDateTime.plusHours(slot.getDurationHours());
+        LocalDateTime checkOutDateTime = checkInDateTime.plusHours(slot.getDurationHours());
 
         // Check if the property already has a pending or confirmed booking
         // during this time. Pulled as a plain list and checked with if
@@ -99,13 +106,12 @@ public class BookingServiceImpl implements BookingService {
         BookingEntity booking = bookingMapper.toBookingEntity(
                 request,
                 property,
-                guest,
-                slot,
-                checkInDateTime,
-                checkOutDateTime
+                entity,
+                slot
         );
 
-        property.setStatus(PropertyStatus.BOOKED);
+        booking.setCheckInDateTime(checkInDateTime);
+        booking.setCheckOutDateTime(checkOutDateTime);
 
         BookingEntity savedBooking = bookingRepository.save(booking);
 

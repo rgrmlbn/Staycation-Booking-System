@@ -3,9 +3,6 @@ package com.spring.backend.module.property.property.service.impl;
 import com.spring.backend.exception.common.ResourceNotFoundException;
 import com.spring.backend.exception.property.property.DuplicateAmenityException;
 import com.spring.backend.exception.property.property.DuplicateImageException;
-import com.spring.backend.exception.property.property.InvalidTimeRangeException;
-import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
-import com.spring.backend.module.property.checkin.dto.request.CheckInSlotCreateRequest;
 import com.spring.backend.module.property.checkin.mapper.CheckInSlotMapper;
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
@@ -30,8 +27,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -247,7 +242,11 @@ public class PropertyServiceImpl implements PropertyService {
         if (update.getImageUrls() != null) {
 
             // Check for duplicate image URLs before replacing the property's images
-            Set<String> uniqueUrls = new HashSet<>(update.getImageUrls());
+            Set<String> uniqueUrls = new HashSet<>();
+
+            for(String url : update.getImageUrls()){
+                uniqueUrls.add(url);
+            }
 
             if (uniqueUrls.size() != update.getImageUrls().size()) {
                 throw new DuplicateImageException();

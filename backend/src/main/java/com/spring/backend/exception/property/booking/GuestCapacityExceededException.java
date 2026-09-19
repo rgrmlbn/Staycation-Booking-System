@@ -1,4 +1,4 @@
-package com.spring.backend.exception.property.property;
+package com.spring.backend.exception.property.booking;
 
 public class GuestCapacityExceededException extends RuntimeException {
 

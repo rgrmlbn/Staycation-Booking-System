@@ -3,6 +3,7 @@ package com.spring.backend.exception;
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
 import com.spring.backend.exception.property.booking.BookingAlreadyExistsException;
+import com.spring.backend.exception.property.booking.GuestCapacityExceededException;
 import com.spring.backend.exception.property.property.*;
 import com.spring.backend.exception.user.auth.InvalidTokenException;
 import com.spring.backend.exception.user.auth.TokenExpiredException;
@@ -15,7 +16,6 @@ import com.spring.backend.exception.user.user.PasswordReuseException;
 import com.spring.backend.module.shared.response.ApiResponse;
 import com.spring.backend.module.shared.response.ApiResponseBuilder;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
