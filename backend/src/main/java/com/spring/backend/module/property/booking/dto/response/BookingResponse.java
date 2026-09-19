@@ -1,10 +1,12 @@
 package com.spring.backend.module.property.booking.dto.response;
 
 import com.spring.backend.module.property.booking.enums.BookingStatus;
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,10 +19,8 @@ public class BookingResponse {
     private Long guestId;
     private String guestName;
     private Long checkInSlotId;
-    private LocalDate checkInDate;
-    private LocalDate checkOutDate;
-    private LocalTime checkInTime;
-    private LocalTime checkOutTime;
+    private LocalDateTime checkInDateTime;
+    private LocalDateTime checkOutDateTime;
     private Integer numberOfGuests;
     private Double totalPrice;
     private BookingStatus status;

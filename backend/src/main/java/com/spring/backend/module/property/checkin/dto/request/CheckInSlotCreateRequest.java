@@ -18,8 +18,9 @@ public class CheckInSlotCreateRequest {
     @NotNull(message = "Start time is required")
     private LocalTime startTime;
 
-    @NotNull(message = "End time is required")
-    private LocalTime endTime;
+    @NotNull(message = "Duration is required")
+    @Positive(message = "Duration must be greater than 0")
+    private Integer durationHours;
 
     @NotNull(message = "Price is required")
     @Positive(message = "Price must be greater than 0")

@@ -9,6 +9,8 @@ import com.spring.backend.module.user.user.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Component
 public class BookingMapper {
@@ -17,17 +19,17 @@ public class BookingMapper {
                                          PropertyEntity property,
                                          UserEntity guest,
                                          CheckInSlotEntity slot,
-                                         LocalDate checkOutDate) {
+                                         LocalDateTime checkInDateTime,
+                                         LocalDateTime checkOutDateTime) {
 
         return BookingEntity.builder()
                 .property(property)
                 .guest(guest)
                 .checkInSlot(slot)
-                .checkInDate(request.getCheckInDate())
-                .checkOutDate(checkOutDate)
-                .checkInTime(slot.getStartTime())
-                .checkOutTime(slot.getEndTime())
+                .checkInDateTime(checkInDateTime)
+                .checkOutDateTime(checkOutDateTime)
                 .numberOfGuests(request.getNumberOfGuests())
+                .totalPrice(slot.getPrice())
                 .build();
     }
 
@@ -40,10 +42,8 @@ public class BookingMapper {
                 .guestId(entity.getGuest().getId())
                 .guestName(entity.getGuest().getName())
                 .checkInSlotId(entity.getCheckInSlot().getId())
-                .checkInDate(entity.getCheckInDate())
-                .checkOutDate(entity.getCheckOutDate())
-                .checkInTime(entity.getCheckInTime())
-                .checkOutTime(entity.getCheckOutTime())
+                .checkInDateTime(entity.getCheckInDateTime())
+                .checkOutDateTime(entity.getCheckOutDateTime())
                 .totalPrice(entity.getTotalPrice())
                 .status(entity.getStatus())
                 .build();

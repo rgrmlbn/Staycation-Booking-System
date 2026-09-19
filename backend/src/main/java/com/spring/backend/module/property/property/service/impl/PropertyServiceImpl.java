@@ -6,6 +6,7 @@ import com.spring.backend.exception.property.property.DuplicateImageException;
 import com.spring.backend.exception.property.property.InvalidTimeRangeException;
 import com.spring.backend.exception.property.property.OverlappingTimeSlotException;
 import com.spring.backend.module.property.checkin.dto.request.CheckInSlotCreateRequest;
+import com.spring.backend.module.property.checkin.mapper.CheckInSlotMapper;
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
@@ -27,6 +28,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +40,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final PropertyMapper propertyMapper;
+    private final CheckInSlotMapper checkInSlotMapper;
     private final AmenityRepository amenityRepository;
     private final OwnershipVerifier ownershipVerifier;
 
@@ -132,48 +136,6 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyMapper.toPropertyDetailedResponse(property);
     }
 
-    // MAIN HELPER: Validates that the check-in slots do not have zero length and do not overlap with each other
-    private void validateCheckInSlots(List<CheckInSlotCreateRequest> slots) {
-
-        validateNoZeroLengthSlots(slots);
-        validateNoOverlaps(slots);
-    }
-
-    // SUB-HELPER: Validates that no check-in slot has a zero length (start time equals end time)
-    private void validateNoZeroLengthSlots(List<CheckInSlotCreateRequest> slots) {
-
-        for(CheckInSlotCreateRequest slot : slots) {
-            if (slot.getStartTime().equals(slot.getEndTime())) {
-                throw new InvalidTimeRangeException();
-            }
-        }
-    }
-
-    // SUB-HELPER: Validates that no check-in slots overlap with each other
-    private void validateNoOverlaps(List<CheckInSlotCreateRequest> slots) {
-
-        for (CheckInSlotCreateRequest currentSlot : slots) {
-
-            for (CheckInSlotCreateRequest otherSlot : slots) {
-
-                if (currentSlot == otherSlot) {
-                    continue;
-                }
-
-                // Check whether the current slot overlaps with another slot
-                if (slotsOverlap(currentSlot, otherSlot)) {
-                    throw new OverlappingTimeSlotException();
-                }
-            }
-        }
-    }
-
-    // SUB-HELPER: Checks if two check-in slots overlap
-    private boolean slotsOverlap(CheckInSlotCreateRequest first, CheckInSlotCreateRequest second) {
-        return first.getStartTime().isBefore(second.getEndTime())
-                && second.getStartTime().isBefore(first.getEndTime());
-    }
-
     // Create a new property, verifying the current user as the owner and handling images, amenities, and check-in slots
     @Override
     @Transactional
@@ -184,9 +146,11 @@ public class PropertyServiceImpl implements PropertyService {
         PropertyEntity property = propertyMapper.toPropertyEntity(request, user);
 
         // Image
-        // imageUrls is @NotNull + @Size(min = 1) on the DTO, so @Valid guarantees
-        // it's present and non-empty here. No null/empty guard needed.
-        Set<String> uniqueUrls = new HashSet<>(request.getImageUrls());
+        Set<String> uniqueUrls = new HashSet<>();
+
+        for(String imageUrl : request.getImageUrls()){
+            uniqueUrls.add(imageUrl);
+        }
 
         if (uniqueUrls.size() != request.getImageUrls().size()) {
             throw new DuplicateImageException();
@@ -203,9 +167,11 @@ public class PropertyServiceImpl implements PropertyService {
         property.setImages(images);
 
         // Amenity
-        // amenityIds is @NotNull + @Size(min = 1) on the DTO, so @Valid guarantees
-        // it's present and non-empty here. No null/empty guard needed.
-        Set<Long> uniqueAmenityIds = new HashSet<>(request.getAmenityIds());
+        Set<Long> uniqueAmenityIds = new HashSet<>();
+
+        for(Long amenityId : request.getAmenityIds()){
+            uniqueAmenityIds.add(amenityId);
+        }
 
         if (uniqueAmenityIds.size() != request.getAmenityIds().size()) {
             throw new DuplicateAmenityException();
@@ -219,14 +185,10 @@ public class PropertyServiceImpl implements PropertyService {
 
         property.setAmenities(amenities);
 
-        // Check-in Slots
-        // checkInSlots is now @NotNull + @Size(min = 1) on the DTO, so @Valid guarantees
-        // it's present and non-empty here. No null/empty guard needed.
-        validateCheckInSlots(request.getCheckInSlots());
-
+        // Check In Slots
         List<CheckInSlotEntity> checkInSlots = request.getCheckInSlots()
                 .stream()
-                .map(slotRequest -> propertyMapper.toCheckInSlotEntity(slotRequest, property))
+                .map(slotRequest -> checkInSlotMapper.toCheckInSlotEntity(slotRequest, property))
                 .toList();
 
         property.setCheckInSlots(checkInSlots);
@@ -268,8 +230,6 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         // Image
-        // imageUrls has @Size(min = 1), so if it's non-null, @Valid guarantees it's
-        // also non-empty. Only the null check is needed.
         if (update.getImageUrls() != null) {
 
             // Check for duplicate image URLs before replacing the property's images
@@ -292,8 +252,6 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         // Amenity
-        // amenityIds has @Size(min = 1), so if it's non-null, @Valid guarantees it's
-        // also non-empty. Only the null check is needed.
         if (update.getAmenityIds() != null) {
 
             // Retrieve the requested amenities and verify that all IDs exist
@@ -307,16 +265,12 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         // Check-in Slots
-        // checkInSlots has @Size(min = 1), so if it's non-null, @Valid guarantees it's
         if (update.getCheckInSlots() != null) {
-
-            // Validate slot time ranges and prevent overlapping slots
-            validateCheckInSlots(update.getCheckInSlots());
 
             // Convert slot requests into entities linked to the property
             List<CheckInSlotEntity> checkInSlots = update.getCheckInSlots()
                     .stream()
-                    .map(slotRequest -> propertyMapper.toCheckInSlotEntity(slotRequest, property))
+                    .map(slotRequest -> checkInSlotMapper.toCheckInSlotEntity(slotRequest, property))
                     .toList();
 
             property.setCheckInSlots(checkInSlots);
@@ -326,7 +280,6 @@ public class PropertyServiceImpl implements PropertyService {
 
         return propertyMapper.toPropertyDetailedResponse(updatedProperty);
     }
-
     // Delete a property by its ID, verifying ownership or admin rights before deletion
     @Override
     public void deleteProperty(Long id) {

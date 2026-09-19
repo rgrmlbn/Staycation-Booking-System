@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -37,16 +38,10 @@ public class BookingEntity extends BaseEntity {
     private CheckInSlotEntity checkInSlot;
 
     @Column(nullable = false)
-    private LocalDate checkInDate;
+    private LocalDateTime checkInDateTime;
 
     @Column(nullable = false)
-    private LocalDate checkOutDate;
-
-    @Column(nullable = false)
-    private LocalTime checkInTime;
-
-    @Column(nullable = false)
-    private LocalTime checkOutTime;
+    private LocalDateTime checkOutDateTime;
 
     @Column(nullable = false)
     private Integer numberOfGuests;

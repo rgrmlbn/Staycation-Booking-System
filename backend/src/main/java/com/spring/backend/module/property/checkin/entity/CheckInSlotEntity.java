@@ -23,7 +23,7 @@ public class CheckInSlotEntity {
     private LocalTime startTime;
 
     @Column(nullable = false)
-    private LocalTime endTime;
+    private Integer durationHours;
 
     @Column(nullable = false)
     private Double price;
