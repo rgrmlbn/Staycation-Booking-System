@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 
 public interface PropertyService {
 
-    Page<PropertyDetailedResponse> getAllMyProperties(int page, int size, String title);
+    Page<PropertyDetailedResponse> getOwnedProperties(int page, int size, String title);
     Page<PropertySummaryResponse> getAllSummaryProperties(int page, int size, String title);
     Page<PropertyDetailedResponse> getAllDetailedProperties(int page, int size, String title);
     Page<PropertyDetailedResponse> getAllDetailedPropertiesByStatus(int page, int size, PropertyStatus status);

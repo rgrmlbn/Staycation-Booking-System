@@ -22,9 +22,11 @@ import com.spring.backend.module.property.property.repository.PropertyRepository
 import com.spring.backend.module.property.property.service.interfaces.PropertyService;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.user.entity.UserEntity;
+import com.spring.backend.module.user.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,9 +49,15 @@ public class PropertyServiceImpl implements PropertyService {
 
     // Get all properties owned by the current user, with optional title filtering and pagination support
     @Override
-    public Page<PropertyDetailedResponse> getAllMyProperties(int page, int size, String title) {
+    public Page<PropertyDetailedResponse> getOwnedProperties(int page, int size, String title) {
 
         UserEntity user = ownershipVerifier.getCurrentUser();
+
+        if (!user.getRole().equals(UserRole.HOST)) {
+            throw new AccessDeniedException(
+                    "You do not have permission to access this resource."
+            );
+        }
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
 
@@ -142,6 +150,12 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyDetailedResponse createProperty(PropertyCreateRequest request){
 
         UserEntity user = ownershipVerifier.getCurrentUser();
+
+        if (!user.getRole().equals(UserRole.HOST)) {
+            throw new AccessDeniedException(
+                    "You do not have permission to access this resource."
+            );
+        }
 
         PropertyEntity property = propertyMapper.toPropertyEntity(request, user);
 
@@ -248,7 +262,10 @@ public class PropertyServiceImpl implements PropertyService {
                             .build())
                     .toList();
 
-            property.setImages(images);
+            // Mutate the existing Hibernate-managed collection instead of replacing it,
+            // since 'images' has orphanRemoval = true
+            property.getImages().clear();
+            property.getImages().addAll(images);
         }
 
         // Amenity
@@ -273,7 +290,10 @@ public class PropertyServiceImpl implements PropertyService {
                     .map(slotRequest -> checkInSlotMapper.toCheckInSlotEntity(slotRequest, property))
                     .toList();
 
-            property.setCheckInSlots(checkInSlots);
+            // Mutate the existing Hibernate-managed collection instead of replacing it,
+            // since 'checkInSlots' has orphanRemoval = true
+            property.getCheckInSlots().clear();
+            property.getCheckInSlots().addAll(checkInSlots);
         }
 
         PropertyEntity updatedProperty = propertyRepository.save(property);
