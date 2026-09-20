@@ -40,8 +40,11 @@ public class BookingMapper {
                 .checkInSlotId(entity.getCheckInSlot().getId())
                 .checkInDateTime(entity.getCheckInDateTime())
                 .checkOutDateTime(entity.getCheckOutDateTime())
+                .numberOfGuests(entity.getNumberOfGuests())
                 .totalPrice(entity.getTotalPrice())
                 .status(entity.getStatus())
+                .statusReason(entity.getStatusReason())
+                .reviewRate(entity.getReviewRate())
                 .build();
     }
 }

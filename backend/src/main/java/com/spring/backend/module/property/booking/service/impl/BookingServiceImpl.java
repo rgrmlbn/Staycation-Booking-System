@@ -45,9 +45,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse createBooking(BookingCreateRequest request) {
 
         // Get the currently logged-in user as the guest
-        UserEntity entity = ownershipVerifier.getCurrentUser();
+        UserEntity guest = ownershipVerifier.getCurrentUser();
 
-        if(!entity.getRole().equals(UserRole.GUEST)){
+        if(guest.getRole() !=  UserRole.GUEST){
             throw new AccessDeniedException(
                     "You do not have permission to access this resource."
             );
@@ -66,15 +66,15 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Check-in slot");
         }
 
-        if(request.getNumberOfGuests() > property.getMaxGuests()){
-            throw new GuestCapacityExceededException();
-        }
-
         // Combine the check-in date and selected start time
         LocalDateTime checkInDateTime = LocalDateTime.of(request.getCheckInDate(), slot.getStartTime());
 
         // Calculate checkout based on the selected duration option
         LocalDateTime checkOutDateTime = checkInDateTime.plusHours(slot.getDurationHours());
+
+        if(request.getNumberOfGuests() > property.getMaxGuests()){
+            throw new GuestCapacityExceededException();
+        }
 
         // Check if the property already has a pending or confirmed booking
         // during this time. Pulled as a plain list and checked with if
@@ -106,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
         BookingEntity booking = bookingMapper.toBookingEntity(
                 request,
                 property,
-                entity,
+                guest,
                 slot
         );
 
@@ -152,6 +152,15 @@ public class BookingServiceImpl implements BookingService {
 
         LocalDateTime checkOutDateTime =
                 checkInDateTime.plusHours(slot.getDurationHours());
+
+        if (update.getNumberOfGuests() != null) {
+
+            if (update.getNumberOfGuests() > property.getMaxGuests()) {
+                throw new GuestCapacityExceededException();
+            }
+
+            booking.setNumberOfGuests(update.getNumberOfGuests());
+        }
 
         // Same overlap check as createBooking, but skip this booking's own
         // current row so it doesn't collide with itself.
@@ -224,9 +233,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setStatus(BookingStatus.REJECTED);
-
-        // Free up the property again now that the booking won't go ahead
-        booking.getProperty().setStatus(PropertyStatus.AVAILABLE);
+        booking.setStatusReason(reason);
 
         BookingEntity updated = bookingRepository.save(booking);
 
@@ -235,7 +242,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingResponse cancelBooking(Long bookingId) {
+    public BookingResponse cancelBooking(Long bookingId, String reason) {
 
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking"));
@@ -248,7 +255,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
-        booking.getProperty().setStatus(PropertyStatus.AVAILABLE);
+        booking.setStatusReason(reason);
 
         BookingEntity updated = bookingRepository.save(booking);
 
@@ -257,7 +264,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingResponse completeBooking(Long bookingId) {
+    public BookingResponse completeBooking(Long bookingId, String reason, Integer rate) {
 
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking"));
@@ -273,7 +280,8 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setStatus(BookingStatus.COMPLETED);
-        booking.getProperty().setStatus(PropertyStatus.AVAILABLE);
+        booking.setStatusReason(reason);
+        booking.setReviewRate(rate);
 
         BookingEntity updated = bookingRepository.save(booking);
 
@@ -285,6 +293,12 @@ public class BookingServiceImpl implements BookingService {
     public Page<BookingResponse> getGuestBooking(int page, int size) {
 
         UserEntity guest = ownershipVerifier.getCurrentUser();
+
+        if(guest.getRole() != UserRole.GUEST){
+            throw new AccessDeniedException(
+                    "You do not have permission to access this resource."
+            );
+        }
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
 
@@ -298,6 +312,12 @@ public class BookingServiceImpl implements BookingService {
     public Page<BookingResponse> getHostBooking(int page, int size) {
 
         UserEntity host = ownershipVerifier.getCurrentUser();
+
+        if(host.getRole() != UserRole.HOST){
+            throw new AccessDeniedException(
+                    "You do not have permission to access this resource."
+            );
+        }
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
 

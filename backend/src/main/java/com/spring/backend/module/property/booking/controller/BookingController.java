@@ -5,6 +5,10 @@ import com.spring.backend.module.property.booking.dto.request.BookingUpdateReque
 import com.spring.backend.module.property.booking.dto.response.BookingResponse;
 import com.spring.backend.module.property.booking.service.interfaces.BookingService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -52,23 +56,35 @@ public class BookingController {
     @PatchMapping("/{bookingId}/reject")
     ResponseEntity<BookingResponse> rejectBooking(
             @PathVariable Long bookingId,
-            @RequestParam(required = false) String reason) {
+            @RequestParam(required = true)
+            @Size(min = 10, max = 500) String reason) {
 
-        return ResponseEntity.ok(bookingService.rejectBooking(bookingId, reason));
+        return ResponseEntity.ok(
+                bookingService.rejectBooking(bookingId, reason)
+        );
     }
 
     // Guest-initiated: cancel a pending or confirmed booking
     @PatchMapping("/{bookingId}/cancel")
-    ResponseEntity<BookingResponse> cancelBooking(@PathVariable Long bookingId) {
+    ResponseEntity<BookingResponse> cancelBooking(
+            @PathVariable Long bookingId,
+            @RequestParam(required = true)
+            @Size(min = 10, max = 500) String reason) {
 
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId, reason));
     }
 
     // Guest-initiated: mark a confirmed, past-checkout booking as complete
     @PatchMapping("/{bookingId}/complete")
-    ResponseEntity<BookingResponse> completeBooking(@PathVariable Long bookingId) {
+    ResponseEntity<BookingResponse> completeBooking(
+            @PathVariable Long bookingId,
+            @RequestParam(required = false) String reason,
+            @RequestParam(required = false)
+            @Min(1)
+            @Max(5)
+            Integer rate) {
 
-        return ResponseEntity.ok(bookingService.completeBooking(bookingId));
+        return ResponseEntity.ok(bookingService.completeBooking(bookingId, reason, rate));
     }
 
     // The current user's bookings as a guest, with pagination support

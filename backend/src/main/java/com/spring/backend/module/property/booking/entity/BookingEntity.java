@@ -8,9 +8,7 @@ import com.spring.backend.module.user.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "bookings")
@@ -53,4 +51,8 @@ public class BookingEntity extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private BookingStatus status = BookingStatus.PENDING;
+
+    private String statusReason;
+
+    private Integer reviewRate;
 }

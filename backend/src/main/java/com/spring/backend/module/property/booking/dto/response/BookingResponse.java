@@ -24,4 +24,6 @@ public class BookingResponse {
     private Integer numberOfGuests;
     private Double totalPrice;
     private BookingStatus status;
+    private String statusReason;
+    private Integer reviewRate;
 }

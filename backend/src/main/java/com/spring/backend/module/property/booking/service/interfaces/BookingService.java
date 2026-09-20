@@ -18,9 +18,9 @@ public interface BookingService {
 
     BookingResponse rejectBooking(Long bookingId, String reason);
 
-    BookingResponse cancelBooking(Long bookingId);
+    BookingResponse cancelBooking(Long bookingId, String reason);
 
-    BookingResponse completeBooking(Long bookingId);
+    BookingResponse completeBooking(Long bookingId, String reason, Integer rate);
 
     // page/size follow the same pagination pattern as
     // PropertyService#getAllMyProperties
