@@ -281,7 +281,6 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setStatusReason(reason);
-        booking.setReviewRate(rate);
 
         BookingEntity updated = bookingRepository.save(booking);
 

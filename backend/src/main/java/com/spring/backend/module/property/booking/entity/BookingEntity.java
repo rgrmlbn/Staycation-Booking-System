@@ -54,5 +54,4 @@ public class BookingEntity extends BaseEntity {
 
     private String statusReason;
 
-    private Integer reviewRate;
 }
