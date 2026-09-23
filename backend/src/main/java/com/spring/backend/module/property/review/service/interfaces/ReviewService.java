@@ -1,3 +1,9 @@
+package com.spring.backend.module.property.review.service.interfaces;
+
+import com.spring.backend.module.property.review.dto.request.ReviewCreateRequest;
+import com.spring.backend.module.property.review.dto.request.ReviewUpdateRequest;
+import com.spring.backend.module.property.review.dto.response.ReviewResponse;
+import org.springframework.data.domain.Page;
 
 public interface ReviewService {
 
