@@ -1,12 +1,23 @@
 package com.spring.backend.module.property.review.repository;
 
 import com.spring.backend.module.property.review.entity.ReviewEntity;
-import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-@Repository
+import java.util.List;
+
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
-    Page<ReviewEntity> findAllByPropertyId(Long propertyId, Pageable pageable);
+
+    boolean existsByBookingId(Long bookingId);
+
+    Page<ReviewEntity> findByPropertyId(Long propertyId, Pageable pageable);
+
+    Page<ReviewEntity> findByBookingId(Long bookingId, Pageable pageable);
+
+    Page<ReviewEntity> findByGuestId(Long guestId, Pageable pageable);
+
+    List<ReviewEntity> findAllByPropertyId(Long propertyId);
 }
