@@ -41,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Page<ReviewEntity> reviews = reviewRepository.findAll(pageable);
 
-        return reviews.map(reviewMapper::toResponse);
+        return reviews.map(reviewEntity -> reviewMapper.toResponse(reviewEntity));
     }
 
     @Override
@@ -55,20 +55,15 @@ public class ReviewServiceImpl implements ReviewService {
 
         Page<ReviewEntity> reviews = reviewRepository.findByPropertyId(propertyId, pageable);
 
-        return reviews.map(reviewMapper::toResponse);
+        return reviews.map(reviewEntity -> reviewMapper.toResponse(reviewEntity));
     }
 
     @Override
-    public Page<ReviewResponse> getReviewByBooking(Long bookingId, int page, int size) {
+    public ReviewResponse getReviewByBooking(Long bookingId) {
 
-        bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking"));
+        ReviewEntity reviews = reviewRepository.findByBookingId(bookingId);
 
-        Pageable pageable = Pageable.ofSize(size).withPage(page);
-
-        Page<ReviewEntity> reviews = reviewRepository.findByBookingId(bookingId, pageable);
-
-        return reviews.map(reviewMapper::toResponse);
+        return reviewMapper.toResponse(reviews);
     }
 
     @Override
@@ -78,7 +73,34 @@ public class ReviewServiceImpl implements ReviewService {
 
         Page<ReviewEntity> reviews = reviewRepository.findByGuestId(guestId, pageable);
 
-        return reviews.map(reviewMapper::toResponse);
+        return reviews.map(reviewEntity -> reviewMapper.toResponse(reviewEntity));
+    }
+
+    // Single source of truth for keeping PropertyEntity.reviewScore / reviewCount
+    // in sync with the reviews table. Called inside the same transaction as
+    // every write (create/update/delete), so the cached columns never drift.
+    private void recalculatePropertyRating(PropertyEntity property) {
+
+        List<ReviewEntity> reviews = reviewRepository.findAllByPropertyId(property.getId());
+
+        double avgRating = 0.0;
+
+        if (!reviews.isEmpty()) {
+            int totalRating = 0;
+
+            for (ReviewEntity review : reviews) {
+                totalRating += review.getRating();
+            }
+
+            avgRating = (double) totalRating / reviews.size();
+        }
+
+        int reviewCount = reviews.size();
+
+        property.setReviewScore(Math.round(avgRating * 10) / 10.0);
+        property.setReviewCount(reviewCount);
+
+        propertyRepository.save(property);
     }
 
     @Override
@@ -151,26 +173,4 @@ public class ReviewServiceImpl implements ReviewService {
         recalculatePropertyRating(property);
     }
 
-    // Single source of truth for keeping PropertyEntity.reviewScore / reviewCount
-    // in sync with the reviews table. Called inside the same transaction as
-    // every write (create/update/delete), so the cached columns never drift.
-    private void recalculatePropertyRating(PropertyEntity property) {
-
-        List<ReviewEntity> reviews = reviewRepository.findAllByPropertyId(property.getId());
-
-        double avgRating = reviews.isEmpty()
-                ? 0.0
-                : reviews.stream()
-                .mapToInt(review -> review.getRating())
-                .average()
-                .orElse(0.0);
-
-        int reviewCount = reviews.size();
-
-        property.setReviewScore(Math.round(avgRating * 10) / 10.0);
-        property.setReviewCount(reviewCount);
-        propertyRepository.save(property);
-
-        propertyRepository.save(property);
-    }
 }

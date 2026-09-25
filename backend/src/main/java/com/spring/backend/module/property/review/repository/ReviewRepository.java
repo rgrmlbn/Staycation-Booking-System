@@ -15,7 +15,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
     Page<ReviewEntity> findByPropertyId(Long propertyId, Pageable pageable);
 
-    Page<ReviewEntity> findByBookingId(Long bookingId, Pageable pageable);
+    ReviewEntity findByBookingId(Long bookingId);
 
     Page<ReviewEntity> findByGuestId(Long guestId, Pageable pageable);
 

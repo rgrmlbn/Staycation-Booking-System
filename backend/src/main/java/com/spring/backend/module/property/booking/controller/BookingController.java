@@ -39,7 +39,7 @@ public class BookingController {
     // Guest-initiated: change a pending booking's check-in slot/date
     @PatchMapping("/{bookingId}")
     ResponseEntity<BookingResponse> updateBooking(
-            @PathVariable Long bookingId,
+            @Positive @PathVariable Long bookingId,
             @RequestBody @Valid BookingUpdateRequest request) {
 
         return ResponseEntity.ok(bookingService.updateBooking(bookingId, request));
@@ -47,7 +47,7 @@ public class BookingController {
 
     // Host-initiated: accept a pending booking
     @PatchMapping("/{bookingId}/approve")
-    ResponseEntity<BookingResponse> approveBooking(@PathVariable Long bookingId) {
+    ResponseEntity<BookingResponse> approveBooking(@Positive @PathVariable Long bookingId) {
 
         return ResponseEntity.ok(bookingService.approveBooking(bookingId));
     }
@@ -55,7 +55,7 @@ public class BookingController {
     // Host-initiated: decline a pending booking, with an optional reason
     @PatchMapping("/{bookingId}/reject")
     ResponseEntity<BookingResponse> rejectBooking(
-            @PathVariable Long bookingId,
+            @Positive @PathVariable Long bookingId,
             @RequestParam(required = true)
             @Size(min = 10, max = 500) String reason) {
 
@@ -67,7 +67,7 @@ public class BookingController {
     // Guest-initiated: cancel a pending or confirmed booking
     @PatchMapping("/{bookingId}/cancel")
     ResponseEntity<BookingResponse> cancelBooking(
-            @PathVariable Long bookingId,
+            @Positive @PathVariable Long bookingId,
             @RequestParam(required = true)
             @Size(min = 10, max = 500) String reason) {
 
@@ -77,14 +77,10 @@ public class BookingController {
     // Guest-initiated: mark a confirmed, past-checkout booking as complete
     @PatchMapping("/{bookingId}/complete")
     ResponseEntity<BookingResponse> completeBooking(
-            @PathVariable Long bookingId,
-            @RequestParam(required = false) String reason,
-            @RequestParam(required = false)
-            @Min(1)
-            @Max(5)
-            Integer rate) {
+            @Positive @PathVariable Long bookingId,
+            @RequestParam(required = false) String reason) {
 
-        return ResponseEntity.ok(bookingService.completeBooking(bookingId, reason, rate));
+        return ResponseEntity.ok(bookingService.completeBooking(bookingId, reason));
     }
 
     // The current user's bookings as a guest, with pagination support

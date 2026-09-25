@@ -5,6 +5,7 @@ import com.spring.backend.exception.common.ResourceNotFoundException;
 import com.spring.backend.exception.property.booking.BookingAlreadyExistsException;
 import com.spring.backend.exception.property.booking.GuestCapacityExceededException;
 import com.spring.backend.exception.property.property.*;
+import com.spring.backend.exception.property.rating.ReviewAlreadyExistsException;
 import com.spring.backend.exception.user.auth.InvalidTokenException;
 import com.spring.backend.exception.user.auth.TokenExpiredException;
 import com.spring.backend.exception.user.auth.TokenRevokedException;
@@ -126,6 +127,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleBookingAlreadyExistsException(BookingAlreadyExistsException ex) {
         return apiResponseBuilder.error(HttpStatus.CONFLICT, ex.getMessage());
     }
+
+    // Review
+    @ExceptionHandler(ReviewAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse> handleReviewAlreadyExistsException(ReviewAlreadyExistsException ex){
+        return apiResponseBuilder.error(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
 
     // Built-in
 

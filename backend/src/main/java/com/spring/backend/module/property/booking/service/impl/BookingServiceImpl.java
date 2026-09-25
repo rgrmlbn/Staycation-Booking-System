@@ -249,9 +249,8 @@ public class BookingServiceImpl implements BookingService {
 
         ownershipVerifier.verifyOwnershipOrAdmin(booking.getGuest());
 
-        if (booking.getStatus() != BookingStatus.PENDING
-                && booking.getStatus() != BookingStatus.CONFIRMED) {
-            throw new IllegalStateException("Only pending or confirmed bookings can be cancelled");
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new IllegalStateException("Only pending bookings can be rejected");
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
@@ -264,7 +263,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingResponse completeBooking(Long bookingId, String reason, Integer rate) {
+    public BookingResponse completeBooking(Long bookingId, String reason) {
 
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking"));

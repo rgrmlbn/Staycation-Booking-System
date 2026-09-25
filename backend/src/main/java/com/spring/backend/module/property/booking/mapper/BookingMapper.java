@@ -44,7 +44,6 @@ public class BookingMapper {
                 .totalPrice(entity.getTotalPrice())
                 .status(entity.getStatus())
                 .statusReason(entity.getStatusReason())
-                .reviewRate(entity.getReviewRate())
                 .build();
     }
 }

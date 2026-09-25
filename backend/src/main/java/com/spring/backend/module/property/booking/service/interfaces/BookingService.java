@@ -20,7 +20,7 @@ public interface BookingService {
 
     BookingResponse cancelBooking(Long bookingId, String reason);
 
-    BookingResponse completeBooking(Long bookingId, String reason, Integer rate);
+    BookingResponse completeBooking(Long bookingId, String reason);
 
     // page/size follow the same pagination pattern as
     // PropertyService#getAllMyProperties
