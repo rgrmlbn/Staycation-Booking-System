@@ -274,9 +274,9 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("Only confirmed bookings can be completed");
         }
 
-        if (booking.getCheckOutDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalStateException("Booking cannot be completed before its checkout time");
-        }
+//        if (booking.getCheckOutDateTime().isAfter(LocalDateTime.now())) {
+//            throw new IllegalStateException("Booking cannot be completed before its checkout time");
+//        }
 
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setStatusReason(reason);

@@ -23,7 +23,7 @@ public class BookingCreateRequest {
     private Long checkInSlotId;
 
     @NotNull(message = "Check-In Date is required")
-    @Future(message = "Invalid Date, Must be in the future")
+//    @Future(message = "Invalid Date, Must be in the future")
     private LocalDate checkInDate;
 
     @NotNull(message = "Number of Guest is required")

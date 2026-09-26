@@ -19,7 +19,7 @@ public class BookingUpdateRequest {
 
     private Long checkInSlotId;
 
-    @Future(message = "Invalid Date, Must be in the future")
+//    @Future(message = "Invalid Date, Must be in the future")
     private LocalDate checkInDate;
 
     @Min(value = 1, message = "Number guests should be 1 or more")
