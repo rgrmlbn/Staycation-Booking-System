@@ -1,109 +1,117 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 import logo from "../../assets/icons/logocon.png";
 
+import { TbArrowBigRightLineFilled } from "react-icons/tb";
+import {
+  FaHome,
+  FaBuilding,
+  FaInfoCircle,
+  FaPhoneAlt,
+  FaSignInAlt,
+  FaCalendarCheck,
+} from "react-icons/fa";
+
 const NAV_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Properties", to: "/properties" },
-  { label: "About", to: "/about" },
-  { label: "Contact", to: "/contact" },
+  { label: "Home", to: "/", icon: FaHome },
+  { label: "Properties", to: "/properties", icon: FaBuilding },
+  { label: "About", to: "/about", icon: FaInfoCircle },
+  { label: "Contact", to: "/contact", icon: FaPhoneAlt },
 ];
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [expandedMobileItem, setExpandedMobileItem] = useState(null);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/90 px-12 py-4 backdrop-blur-sm max-md:px-4 max-md:py-4">
-      <div className="container flex items-center justify-between">
-        {/* Left — Logo */}
-        <div className="flex items-center">
-          <NavLink
-            to="/"
-            className="flex shrink-0 items-center"
-            onClick={() => setOpen(false)}
-          >
-            <img src={logo} alt="StaySaya" className="h-9 w-auto md:h-12" />
-          </NavLink>
-        </div>
-
-        {/* Right */}
-        <div className="flex items-center gap-3">
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-10 md:mr-6 md:flex">
-            {NAV_LINKS.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className="font-semibold text-[var(--color-bark)] transition-colors duration-300 hover:text-[var(--color-sun-dark)]"
-              >
-                {link.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          {/* Desktop CTA */}
-          <div className="hidden items-center gap-3 md:flex">
-            <NavLink
-              to="/login"
-              className="rounded bg-[var(--color-sun)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)] transition-colors duration-300 hover:bg-[var(--color-sun-dark)]"
-            >
-              Sign in
-            </NavLink>
-            <NavLink
-              to="/login"
-              className="rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)] transition-colors duration-300 hover:bg-[var(--color-bark-dark)]"
-            >
-              Book Now
+    <>
+      <header className="sticky top-0 z-50 border-b border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/90 px-12 py-4 backdrop-blur-sm max-md:px-4 max-md:py-4">
+        <div className="container flex items-center justify-between">
+          {/* Left — Logo */}
+          <div className="flex items-center">
+            <NavLink to="/" className="flex shrink-0 items-center">
+              <img src={logo} alt="Roomance" className="h-9 w-auto md:h-12" />
             </NavLink>
           </div>
 
-          {/* Mobile menu toggle */}
-          <button
-            type="button"
-            onClick={() => setOpen((prev) => !prev)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            className="inline-flex items-center justify-center rounded-[var(--radius-sm)] p-2 text-[var(--color-ink)] md:hidden"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
+          {/* Right */}
+          <div className="flex items-center gap-3">
+            {/* Nav */}
+            <nav className="hidden items-center gap-10 md:mr-6 md:flex">
+              {NAV_LINKS.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 text-[15px] font-semibold transition-colors hover:text-[var(--color-sand)] ${
+                        isActive
+                          ? "text-[var(--color-sand)]"
+                          : "text-[var(--color-bark)]"
+                      }`
+                    }
+                  >
+                    <Icon />
+                    {link.label}
+                  </NavLink>
+                );
+              })}
+            </nav>
 
-      {/* Mobile panel */}
-      <div
-        className={`overflow-hidden border-t border-[var(--color-ink-dark)]/10 bg-[var(--color-cream)] transition-[max-height] duration-300 ease-in-out md:hidden ${
-          open ? "max-h-80" : "max-h-0 border-t-0"
-        }`}
+            {/* CTA */}
+            <div className="hidden items-center gap-3 md:flex">
+              <NavLink
+                to="/login"
+                className="rounded bg-[var(--color-sun)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
+              >
+                Sign in
+              </NavLink>
+              <NavLink
+                to="/login"
+                className="flex items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
+              >
+                Book Now
+                <TbArrowBigRightLineFilled />
+              </NavLink>
+            </div>
+          </div>
+        </div>
+      </header>
+      <nav
+        aria-label="Mobile navigation"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/95 pb-[env(safe-area-inset-bottom)] shadow-[var(--shadow-sm)] backdrop-blur-sm md:hidden"
       >
-        <nav className="container flex flex-col gap-1 py-4">
-          {NAV_LINKS.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                [
-                  "rounded-[var(--radius-sm)] px-3 py-2.5 text-[15px] font-medium transition-colors",
-                  isActive
-                    ? "bg-[var(--color-mocha)] text-[var(--color-ink)]"
-                    : "text-[var(--color-graph)] hover:bg-[var(--color-mocha)] hover:text-[var(--color-ink)]",
-                ].join(" ")
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-          <NavLink
-            to="/login"
-            onClick={() => setOpen(false)}
-            className="mt-2 rounded-[var(--radius-sm)] bg-[var(--color-sun)] px-3 py-2.5 text-center text-[15px] font-semibold text-[var(--color-ink-dark)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-sun-dark)]"
-          >
-            Log in
-          </NavLink>
-        </nav>
-      </div>
-    </header>
+        <div className="flex">
+          {[
+            { label: "Home", to: "/", icon: FaHome },
+            { label: "Properties", to: "/properties", icon: FaBuilding },
+            { label: "Sign in", to: "/login", icon: FaSignInAlt },
+            { label: "Book Now", to: "/login", icon: FaCalendarCheck },
+          ].map((item) => {
+            const Icon = item.icon;
+            const isExpanded = expandedMobileItem === item.label;
+            return (
+              <NavLink
+                key={item.label}
+                to={item.to}
+                onClick={() => setExpandedMobileItem(item.label)}
+                aria-label={item.label}
+                title={item.label}
+                className={`flex min-h-16 min-w-0 items-center justify-center gap-2 overflow-hidden text-[var(--color-graph)] transition-all duration-200 ease-out hover:text-[var(--color-sand)] ${
+                  isExpanded ? "flex-[2] text-[var(--color-sand)]" : "flex-1"
+                }`}
+              >
+                <Icon className="shrink-0 text-xl" aria-hidden="true" />
+                {isExpanded && (
+                  <span className="truncate text-sm font-semibold">
+                    {item.label}
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 }
