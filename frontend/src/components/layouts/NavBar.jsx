@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/icons/logocon.png";
 
@@ -20,8 +19,6 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
-  const [expandedMobileItem, setExpandedMobileItem] = useState(null);
-
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/90 px-12 py-4 backdrop-blur-sm max-md:px-4 max-md:py-4">
@@ -77,6 +74,7 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
       <nav
         aria-label="Mobile navigation"
         className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/95 pb-[env(safe-area-inset-bottom)] shadow-[var(--shadow-sm)] backdrop-blur-sm md:hidden"
@@ -89,23 +87,30 @@ export default function Navbar() {
             { label: "Book Now", to: "/login", icon: FaCalendarCheck },
           ].map((item) => {
             const Icon = item.icon;
-            const isExpanded = expandedMobileItem === item.label;
             return (
               <NavLink
                 key={item.label}
                 to={item.to}
-                onClick={() => setExpandedMobileItem(item.label)}
+                end={item.to === "/"}
                 aria-label={item.label}
                 title={item.label}
-                className={`flex min-h-16 min-w-0 items-center justify-center gap-2 overflow-hidden text-[var(--color-graph)] transition-all duration-200 ease-out hover:text-[var(--color-sand)] ${
-                  isExpanded ? "flex-[2] text-[var(--color-sand)]" : "flex-1"
-                }`}
+                className={({ isActive }) =>
+                  `flex min-h-16 min-w-0 items-center justify-center gap-2 overflow-hidden transition-all duration-200 ease-out hover:text-[var(--color-sand)] ${
+                    isActive
+                      ? "flex-[2] text-[var(--color-sand)]"
+                      : "flex-1 text-[var(--color-graph)]"
+                  }`
+                }
               >
-                <Icon className="shrink-0 text-xl" aria-hidden="true" />
-                {isExpanded && (
-                  <span className="truncate text-sm font-semibold">
-                    {item.label}
-                  </span>
+                {({ isActive }) => (
+                  <>
+                    <Icon className="shrink-0 text-xl" aria-hidden="true" />
+                    {isActive && (
+                      <span className="truncate text-sm font-semibold">
+                        {item.label}
+                      </span>
+                    )}
+                  </>
                 )}
               </NavLink>
             );
