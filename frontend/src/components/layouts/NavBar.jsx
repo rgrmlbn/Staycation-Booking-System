@@ -84,7 +84,7 @@ export default function Navbar() {
             { label: "Home", to: "/", icon: FaHome },
             { label: "Properties", to: "/properties", icon: FaBuilding },
             { label: "Sign in", to: "/login", icon: FaSignInAlt },
-            { label: "Book Now", to: "/login", icon: FaCalendarCheck },
+            { label: "Book Now", to: "/book", icon: FaCalendarCheck },
           ].map((item) => {
             const Icon = item.icon;
             return (
