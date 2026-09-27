@@ -1,1 +1,103 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Neutrals / text */
+  --color-ink:        #1A1A1A;
+  --color-ink-dark:   #000000;
+  --color-muted:      #4A4438;
+  --color-graph:      #6B6455;
+
+  /* Surfaces */
+  --color-cream:      #FFFDF8;
+  --color-taste:      #FFFFFF;
+  --color-white:      #ffffff;
+  --color-mocha:      #F5EEDF;
+
+  /* Brand accents, pulled from the logo */
+  --color-sun:        #F5A623;  /* sun + "Saya" gold */
+  --color-sun-dark:   #D98B0E;
+  --color-sand:       #FBC13F;  /* dune / sand gold */
+  --color-palm:       #2FBF71;  /* bright palm frond green */
+  --color-palm-dark:  #1E8F52;  /* deep palm frond green */
+  --color-bark:       #6B3F23;  /* trunk brown */
+
+  --font-display: 'DM Sans', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  --radius-sm:  8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+
+  --shadow-sm:  0 4px 14px rgba(107,63,35,0.16);
+  --shadow-md:  0 8px 20px rgba(107,63,35,0.24);
+  --shadow-lg:  0 20px 50px rgba(107,63,35,0.10);
+  --shadow-xl:  0 32px 80px rgba(107,63,35,0.18);
+}
+
+.dark {
+  --color-ink:        #F2F0EC;
+  --color-ink-dark:   #FFFFFF;
+  --color-muted:      #D8D2C4;
+  --color-graph:      #ABA394;
+
+  --color-cream:      #16151A;
+  --color-taste:      #1C1B20;
+  --color-white:      #1A1A1A;
+  --color-mocha:      #2A2820;
+
+  --color-sun:        #FBB93B;
+  --color-sun-dark:   #F5A623;
+  --color-sand:       #FFD066;
+  --color-palm:       #3FD988;
+  --color-palm-dark:  #2FBF71;
+  --color-bark:       #8A5A34;
+
+  --shadow-sm:  0 4px 14px rgba(0,0,0,0.45);
+  --shadow-md:  0 8px 20px rgba(0,0,0,0.55);
+  --shadow-lg:  0 20px 50px rgba(0,0,0,0.35);
+  --shadow-xl:  0 32px 80px rgba(0,0,0,0.5);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-timing-function: ease;
+    transition-duration: 0.1s;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding-inline: 2.5rem;
+    }
+  }
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family:      var(--font-body);
+  color:            var(--color-ink);
+  overflow-x:       hidden;
+  background-color: var(--color-cream);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+}
