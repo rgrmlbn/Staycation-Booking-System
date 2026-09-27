@@ -11,17 +11,18 @@
 
   /* Surfaces */
   --color-cream:      #FFFDF8;
-  --color-taste:      #FFFFFF;
-  --color-white:      #ffffff;
+  --color-taste:      #FFF7ED;
+  --color-white:      #FFFFFF;
   --color-mocha:      #F5EEDF;
 
   /* Brand accents, pulled from the logo */
-  --color-sun:        #F5A623;  /* sun + "Saya" gold */
+  --color-sun:        #F8A805;  /* sun + "Saya" gold */
   --color-sun-dark:   #D98B0E;
-  --color-sand:       #FBC13F;  /* dune / sand gold */
+  --color-sand:       #FFBB16;  /* dune / sand gold */
   --color-palm:       #2FBF71;  /* bright palm frond green */
   --color-palm-dark:  #1E8F52;  /* deep palm frond green */
-  --color-bark:       #6B3F23;  /* trunk brown */
+  --color-bark:       #493B3B;  /* trunk brown */
+  --color-bark-dark:  #382C2C;
 
   --font-display: 'DM Sans', sans-serif;
   --font-body:    'DM Sans', sans-serif;
