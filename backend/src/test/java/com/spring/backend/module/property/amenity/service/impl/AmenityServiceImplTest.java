@@ -1,12 +1,14 @@
-package com.spring.backend.module.property.service.impl;
+package com.spring.backend.module.property.amenity.service.impl;
 
 import com.spring.backend.exception.common.ResourceNotFoundException;
+import com.spring.backend.exception.property.property.DuplicateAmenityException;
 import com.spring.backend.module.property.amenity.dto.request.AmenityCreateRequest;
 import com.spring.backend.module.property.amenity.dto.request.AmenityUpdateRequest;
 import com.spring.backend.module.property.amenity.dto.response.AmenityResponse;
 import com.spring.backend.module.property.amenity.entity.AmenityEntity;
-import com.spring.backend.module.property.property.mapper.PropertyMapper;
+import com.spring.backend.module.property.amenity.mapper.AmenityMapper;
 import com.spring.backend.module.property.amenity.repository.AmenityRepository;
+import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.property.amenity.service.impl.AmenityServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +33,10 @@ class AmenityServiceImplTest {
     private AmenityRepository amenityRepository; // Fake repository — no real database involved
 
     @Mock
-    private PropertyMapper propertyMapper; // Fake mapper — controls exactly what DTO conversion returns
+    private AmenityMapper amenityMapper; // Fake mapper — controls exactly what DTO conversion returns
+
+    @Mock
+    private OwnershipVerifier ownershipVerifier;
 
     @InjectMocks
     private AmenityServiceImpl amenityService; // Real service, wired with the two mocks above
@@ -53,12 +58,13 @@ class AmenityServiceImplTest {
         AmenityResponse response = mock(AmenityResponse.class);
 
         when(amenityRepository.findAll()).thenReturn(List.of(amenity)); // Simulate one amenity existing in the "database"
-        when(propertyMapper.toAmenityResponse(amenity)).thenReturn(response); // Simulate the mapper converting it to a DTO
+        when(amenityMapper.toAmenityResponse(amenity)).thenReturn(response); // Simulate the mapper converting it to a DTO
 
         List<AmenityResponse> result = amenityService.getAllAmenities();
 
         assertThat(result).hasSize(1); // Confirm the list has exactly the one amenity
         assertThat(result.get(0)).isEqualTo(response); // Confirm it's the mapped DTO, not the raw entity
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     @Test
@@ -69,6 +75,7 @@ class AmenityServiceImplTest {
         List<AmenityResponse> result = amenityService.getAllAmenities();
 
         assertThat(result).isEmpty(); // Confirm no amenities means no results, not a null or an exception
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     // ---------- getAmenityById() ----------
@@ -79,11 +86,12 @@ class AmenityServiceImplTest {
         AmenityResponse response = mock(AmenityResponse.class);
 
         when(amenityRepository.findById(1L)).thenReturn(Optional.of(amenity)); // Simulate finding the amenity
-        when(propertyMapper.toAmenityResponse(amenity)).thenReturn(response); // Simulate mapping it to a DTO
+        when(amenityMapper.toAmenityResponse(amenity)).thenReturn(response); // Simulate mapping it to a DTO
 
         AmenityResponse result = amenityService.getAmenityById(1L);
 
         assertThat(result).isEqualTo(response); // Confirm the returned DTO matches what the mapper produced
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     @Test
@@ -94,7 +102,7 @@ class AmenityServiceImplTest {
         assertThatThrownBy(() -> amenityService.getAmenityById(1L))
                 .isInstanceOf(ResourceNotFoundException.class); // Expect the service to reject a missing ID
 
-        verify(propertyMapper, never()).toAmenityResponse(any()); // Confirm mapping was never attempted since there was nothing to map
+        verify(amenityMapper, never()).toAmenityResponse(any()); // Confirm mapping was never attempted since there was nothing to map
     }
 
     // ---------- createAmenity() ----------
@@ -107,14 +115,29 @@ class AmenityServiceImplTest {
         AmenityEntity savedEntity = new AmenityEntity(); // What the repository "returns" after saving (e.g. with a generated ID)
         AmenityResponse response = mock(AmenityResponse.class);
 
-        when(propertyMapper.toAmenityEntity(request)).thenReturn(mappedEntity); // Simulate converting the request DTO into an entity
+        when(amenityMapper.toAmenityEntity(request)).thenReturn(mappedEntity); // Simulate converting the request DTO into an entity
         when(amenityRepository.save(mappedEntity)).thenReturn(savedEntity); // Simulate persisting it
-        when(propertyMapper.toAmenityResponse(savedEntity)).thenReturn(response); // Simulate converting the saved entity back into a response DTO
+        when(amenityMapper.toAmenityResponse(savedEntity)).thenReturn(response); // Simulate converting the saved entity back into a response DTO
 
         AmenityResponse result = amenityService.createAmenity(request);
 
         assertThat(result).isEqualTo(response); // Confirm the final result is the mapped response
         verify(amenityRepository).save(mappedEntity); // Confirm the mapped entity was actually persisted
+        verify(ownershipVerifier).verifyAdmin();
+    }
+
+    @Test
+    @DisplayName("Should reject creating an amenity with an existing name")
+    void createAmenity_duplicateName_throws() {
+        AmenityCreateRequest request = mock(AmenityCreateRequest.class);
+        when(request.getName()).thenReturn("Wi-Fi");
+        when(amenityRepository.existsByName("Wi-Fi")).thenReturn(true);
+
+        assertThatThrownBy(() -> amenityService.createAmenity(request))
+                .isInstanceOf(DuplicateAmenityException.class);
+
+        verify(ownershipVerifier, never()).verifyAdmin();
+        verify(amenityRepository, never()).save(any());
     }
 
     // ---------- updateAmenity() ----------
@@ -128,13 +151,14 @@ class AmenityServiceImplTest {
         when(update.getName()).thenReturn("Swimming Pool");
         when(amenityRepository.findById(1L)).thenReturn(Optional.of(amenity)); // Simulate finding the existing amenity
         when(amenityRepository.save(amenity)).thenReturn(amenity); // Simulate persisting the updated entity
-        when(propertyMapper.toAmenityResponse(amenity)).thenReturn(response);
+        when(amenityMapper.toAmenityResponse(amenity)).thenReturn(response);
 
         AmenityResponse result = amenityService.updateAmenity(1L, update);
 
         assertThat(amenity.getName()).isEqualTo("Swimming Pool"); // Confirm the entity's name was actually changed
         assertThat(result).isEqualTo(response);
         verify(amenityRepository).save(amenity); // Confirm the updated entity was persisted
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     @Test
@@ -145,11 +169,12 @@ class AmenityServiceImplTest {
         when(update.getName()).thenReturn("   "); // Blank, should be ignored
         when(amenityRepository.findById(1L)).thenReturn(Optional.of(amenity));
         when(amenityRepository.save(amenity)).thenReturn(amenity); // Simulate persisting the (unchanged) entity
-        when(propertyMapper.toAmenityResponse(amenity)).thenReturn(mock(AmenityResponse.class));
+        when(amenityMapper.toAmenityResponse(amenity)).thenReturn(mock(AmenityResponse.class));
 
         amenityService.updateAmenity(1L, update);
 
         assertThat(amenity.getName()).isEqualTo("Wi-Fi"); // Confirm the original name was preserved, not overwritten with blank
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     @Test
@@ -160,12 +185,13 @@ class AmenityServiceImplTest {
         when(update.getName()).thenReturn(null);
         when(amenityRepository.findById(1L)).thenReturn(Optional.of(amenity));
         when(amenityRepository.save(amenity)).thenReturn(amenity); // Simulate persisting the (unchanged) entity
-        when(propertyMapper.toAmenityResponse(amenity)).thenReturn(mock(AmenityResponse.class));
+        when(amenityMapper.toAmenityResponse(amenity)).thenReturn(mock(AmenityResponse.class));
 
         amenityService.updateAmenity(1L, update);
 
         assertThat(amenity.getName()).isEqualTo("Wi-Fi"); // Nothing should change
         verify(amenityRepository).save(amenity); // Save still happens even if nothing changed, matching current service behavior
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     @Test
@@ -191,6 +217,7 @@ class AmenityServiceImplTest {
         amenityService.deleteAmenity(1L);
 
         verify(amenityRepository).delete(amenity); // Confirm the correct entity was passed to delete
+        verify(ownershipVerifier).verifyAdmin();
     }
 
     @Test

@@ -169,6 +169,7 @@ class AuthServiceImplTest {
 
         when(authentication.getCredentials()).thenReturn("current-access-token"); // Simulate the JWT stored by JwtFilter
         when(authentication.getName()).thenReturn("roger@example.com");
+        when(authentication.isAuthenticated()).thenReturn(true);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(userRepository.findByEmail("roger@example.com")).thenReturn(Optional.of(user)); // Simulate finding the logged-in user
 
@@ -190,6 +191,7 @@ class AuthServiceImplTest {
         SecurityContext securityContext = mock(SecurityContext.class);
 
         when(authentication.getName()).thenReturn("ghost@example.com");
+        when(authentication.isAuthenticated()).thenReturn(true);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(userRepository.findByEmail("ghost@example.com")).thenReturn(Optional.empty()); // Simulate no matching user found
 

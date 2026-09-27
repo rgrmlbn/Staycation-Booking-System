@@ -37,50 +37,50 @@ public class BookingController {
     }
 
     // Guest-initiated: change a pending booking's check-in slot/date
-    @PatchMapping("/{bookingId}")
+    @PatchMapping("/{id}")
     ResponseEntity<BookingResponse> updateBooking(
-            @Positive @PathVariable Long bookingId,
+            @Positive @PathVariable Long id,
             @RequestBody @Valid BookingUpdateRequest request) {
 
-        return ResponseEntity.ok(bookingService.updateBooking(bookingId, request));
+        return ResponseEntity.ok(bookingService.updateBooking(id, request));
     }
 
     // Host-initiated: accept a pending booking
-    @PatchMapping("/{bookingId}/approve")
-    ResponseEntity<BookingResponse> approveBooking(@Positive @PathVariable Long bookingId) {
+    @PatchMapping("/{id}/approve")
+    ResponseEntity<BookingResponse> approveBooking(@Positive @PathVariable Long id) {
 
-        return ResponseEntity.ok(bookingService.approveBooking(bookingId));
+        return ResponseEntity.ok(bookingService.approveBooking(id));
     }
 
     // Host-initiated: decline a pending booking, with an optional reason
-    @PatchMapping("/{bookingId}/reject")
+    @PatchMapping("/{id}/reject")
     ResponseEntity<BookingResponse> rejectBooking(
-            @Positive @PathVariable Long bookingId,
+            @Positive @PathVariable Long id,
             @RequestParam(required = true)
             @Size(min = 10, max = 500) String reason) {
 
         return ResponseEntity.ok(
-                bookingService.rejectBooking(bookingId, reason)
+                bookingService.rejectBooking(id, reason)
         );
     }
 
     // Guest-initiated: cancel a pending or confirmed booking
-    @PatchMapping("/{bookingId}/cancel")
+    @PatchMapping("/{id}/cancel")
     ResponseEntity<BookingResponse> cancelBooking(
-            @Positive @PathVariable Long bookingId,
+            @Positive @PathVariable Long id,
             @RequestParam(required = true)
             @Size(min = 10, max = 500) String reason) {
 
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId, reason));
+        return ResponseEntity.ok(bookingService.cancelBooking(id, reason));
     }
 
     // Guest-initiated: mark a confirmed, past-checkout booking as complete
-    @PatchMapping("/{bookingId}/complete")
+    @PatchMapping("/{id}/complete")
     ResponseEntity<BookingResponse> completeBooking(
-            @Positive @PathVariable Long bookingId,
+            @Positive @PathVariable Long id,
             @RequestParam(required = false) String reason) {
 
-        return ResponseEntity.ok(bookingService.completeBooking(bookingId, reason));
+        return ResponseEntity.ok(bookingService.completeBooking(id, reason));
     }
 
     // The current user's bookings as a guest, with pagination support

@@ -1,18 +1,22 @@
-package com.spring.backend.module.property.service.impl;
+package com.spring.backend.module.property.property.service.impl;
 
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
 import com.spring.backend.module.property.property.dto.response.PropertySummaryResponse;
 import com.spring.backend.module.property.amenity.entity.AmenityEntity;
+import com.spring.backend.module.property.checkin.dto.request.CheckInSlotCreateRequest;
+import com.spring.backend.module.property.checkin.entity.CheckInSlotEntity;
+import com.spring.backend.module.property.checkin.mapper.CheckInSlotMapper;
 import com.spring.backend.module.property.property.entity.PropertyEntity;
 import com.spring.backend.module.property.property.enums.PropertyStatus;
 import com.spring.backend.module.property.property.mapper.PropertyMapper;
 import com.spring.backend.module.property.amenity.repository.AmenityRepository;
 import com.spring.backend.module.property.property.repository.PropertyRepository;
-import com.spring.backend.module.property.property.service.impl.PropertyServiceImpl;
 import com.spring.backend.module.shared.util.OwnershipVerifier;
 import com.spring.backend.module.user.user.entity.UserEntity;
+import com.spring.backend.module.user.user.enums.UserRole;
+import com.spring.backend.exception.common.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.connection.RedisSubscribedConnectionException;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
@@ -44,6 +47,9 @@ class PropertyServiceImplTest {
     private PropertyMapper propertyMapper; // Fake mapper — controls exactly what DTO/entity conversion returns
 
     @Mock
+    private CheckInSlotMapper checkInSlotMapper;
+
+    @Mock
     private AmenityRepository amenityRepository; // Fake amenity repository — controls which amenities "exist"
 
     @Mock
@@ -59,6 +65,7 @@ class PropertyServiceImplTest {
     void setUp() {
         owner = new UserEntity();
         owner.setId(10L);
+        owner.setRole(UserRole.HOST);
 
         property = new PropertyEntity();
         property.setId(1L);
@@ -66,6 +73,54 @@ class PropertyServiceImplTest {
         property.setDescription("A quiet retreat in the woods.");
         property.setAddress("123 Forest Road");
         property.setUser(owner);
+    }
+
+    // ---------- getOwnedProperties() ----------
+
+    @Test
+    @DisplayName("Should filter the current host's properties by title")
+    void getOwnedProperties_titleProvided_returnsFilteredMappedPage() {
+        Pageable expectedPageable = Pageable.ofSize(10).withPage(0);
+        Page<PropertyEntity> entityPage = new PageImpl<>(List.of(property), expectedPageable, 1);
+        PropertyDetailedResponse response = mock(PropertyDetailedResponse.class);
+        when(ownershipVerifier.getCurrentUser()).thenReturn(owner);
+        when(propertyRepository.findAllByUserIdAndTitleContainingIgnoreCase(
+                owner.getId(), "Cabin", expectedPageable)).thenReturn(entityPage);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(response);
+
+        Page<PropertyDetailedResponse> result = propertyService.getOwnedProperties(0, 10, "Cabin");
+
+        assertThat(result.getContent()).containsExactly(response);
+        verify(propertyRepository, never()).findAllByUserId(eq(owner.getId()), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("Should return all current host properties when title is omitted")
+    void getOwnedProperties_noTitle_returnsAllMappedPage() {
+        Pageable expectedPageable = Pageable.ofSize(5).withPage(1);
+        Page<PropertyEntity> entityPage = new PageImpl<>(List.of(property), expectedPageable, 1);
+        when(ownershipVerifier.getCurrentUser()).thenReturn(owner);
+        when(propertyRepository.findAllByUserId(owner.getId(), expectedPageable)).thenReturn(entityPage);
+        when(propertyMapper.toPropertyDetailedResponse(property)).thenReturn(mock(PropertyDetailedResponse.class));
+
+        propertyService.getOwnedProperties(1, 5, null);
+
+        verify(propertyRepository, never())
+                .findAllByUserIdAndTitleContainingIgnoreCase(anyLong(), anyString(), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("Should deny access to owned properties for a non-host")
+    void getOwnedProperties_nonHost_throwsAccessDenied() {
+        UserEntity guest = UserEntity.builder().id(11L).role(UserRole.GUEST).build();
+        when(ownershipVerifier.getCurrentUser()).thenReturn(guest);
+
+        assertThatThrownBy(() -> propertyService.getOwnedProperties(0, 10, null))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verify(propertyRepository, never()).findAllByUserId(anyLong(), any(Pageable.class));
+        verify(propertyRepository, never())
+                .findAllByUserIdAndTitleContainingIgnoreCase(anyLong(), anyString(), any(Pageable.class));
     }
 
     // ---------- getAllSummaryProperties() ----------
@@ -200,12 +255,12 @@ class PropertyServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw RedisSubscribedConnectionException when property ID does not exist")
+    @DisplayName("Should throw ResourceNotFoundException when property ID does not exist")
     void getPropertyById_propertyDoesNotExist_throws() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.empty()); // Simulate no property found
 
         assertThatThrownBy(() -> propertyService.getPropertyById(1L))
-                .isInstanceOf(RedisSubscribedConnectionException.class); // Matches the exception currently thrown by the service
+                .isInstanceOf(ResourceNotFoundException.class);
 
         verify(propertyMapper, never()).toPropertyDetailedResponse(any()); // Confirm mapping was never attempted since there was nothing to map
     }
@@ -216,20 +271,31 @@ class PropertyServiceImplTest {
     @DisplayName("Should map and save the property, returning the mapped response")
     void createProperty_mapsAndReturnsResponse() {
         PropertyCreateRequest request = mock(PropertyCreateRequest.class);
-        UserEntity user = mock(UserEntity.class);
+        UserEntity user = owner;
         PropertyEntity mappedEntity = new PropertyEntity();
         PropertyEntity savedEntity = new PropertyEntity();
+        AmenityEntity amenity = new AmenityEntity();
+        amenity.setId(2L);
+        CheckInSlotCreateRequest slotRequest = mock(CheckInSlotCreateRequest.class);
+        CheckInSlotEntity slot = new CheckInSlotEntity();
         PropertyDetailedResponse response = mock(PropertyDetailedResponse.class);
 
-        when(request.getAmenityIds()).thenReturn(null); // or Collections.emptyList(), to skip the amenities branch
+        when(request.getImageUrls()).thenReturn(List.of("https://example.com/cabin.jpg"));
+        when(request.getAmenityIds()).thenReturn(List.of(2L));
+        when(request.getCheckInSlots()).thenReturn(List.of(slotRequest));
         when(ownershipVerifier.getCurrentUser()).thenReturn(user);
         when(propertyMapper.toPropertyEntity(request, user)).thenReturn(mappedEntity);
+        when(amenityRepository.findAllById(List.of(2L))).thenReturn(List.of(amenity));
+        when(checkInSlotMapper.toCheckInSlotEntity(slotRequest, mappedEntity)).thenReturn(slot);
         when(propertyRepository.save(mappedEntity)).thenReturn(savedEntity);
         when(propertyMapper.toPropertyDetailedResponse(savedEntity)).thenReturn(response);
 
         PropertyDetailedResponse result = propertyService.createProperty(request);
 
         assertThat(result).isEqualTo(response);
+        assertThat(mappedEntity.getImages()).hasSize(1);
+        assertThat(mappedEntity.getAmenities()).containsExactly(amenity);
+        assertThat(mappedEntity.getCheckInSlots()).containsExactly(slot);
         verify(propertyRepository).save(mappedEntity);
     }
     // ---------- updateProperty() ----------
@@ -326,14 +392,14 @@ class PropertyServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw RedisSubscribedConnectionException when updating a property that does not exist")
+    @DisplayName("Should throw ResourceNotFoundException when updating a property that does not exist")
     void updateProperty_propertyDoesNotExist_throws() {
         PropertyUpdateRequest update = mock(PropertyUpdateRequest.class);
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> propertyService.updateProperty(1L, update))
-                .isInstanceOf(RedisSubscribedConnectionException.class);
+                .isInstanceOf(ResourceNotFoundException.class);
 
         verify(ownershipVerifier, never()).verifyOwnershipOrAdmin(any()); // Confirm ownership was never checked since there was no property
         verify(propertyRepository, never()).save(any()); // Confirm nothing was saved since the property doesn't exist
@@ -368,12 +434,12 @@ class PropertyServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw RedisSubscribedConnectionException when deleting a property that does not exist")
+    @DisplayName("Should throw ResourceNotFoundException when deleting a property that does not exist")
     void deleteProperty_propertyDoesNotExist_throws() {
         when(propertyRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> propertyService.deleteProperty(1L))
-                .isInstanceOf(RedisSubscribedConnectionException.class);
+                .isInstanceOf(ResourceNotFoundException.class);
 
         verify(ownershipVerifier, never()).verifyOwnershipOrAdmin(any()); // Confirm ownership was never checked since there was no property
         verify(propertyRepository, never()).delete(any()); // Confirm delete was never attempted
