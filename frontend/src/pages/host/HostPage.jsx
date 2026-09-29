@@ -1,28 +1,9 @@
 import {
   ArrowRight,
-  CalendarCheck2,
   HousePlus,
-  UsersRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const HOST_STEPS = [
-  {
-    icon: HousePlus,
-    title: "Set up your host account",
-    description: "Register with the details you will use to manage your stays.",
-  },
-  {
-    icon: CalendarCheck2,
-    title: "Prepare your property",
-    description: "Get your space ready to share with guests on Roomance.",
-  },
-  {
-    icon: UsersRound,
-    title: "Welcome your guests",
-    description: "Make every stay a thoughtful, comfortable experience.",
-  },
-];
 
 export default function HostPage() {
   return (
@@ -69,31 +50,6 @@ export default function HostPage() {
         </div>
       </section>
 
-      <section className="container py-12 md:py-16">
-        <h2 className="text-2xl font-bold text-[var(--color-bark-dark)]">
-          Your first steps
-        </h2>
-        <div className="mt-7 grid gap-7 border-t border-[var(--color-bark)]/20 pt-7 md:grid-cols-3 md:gap-8">
-          {HOST_STEPS.map(({ icon: Icon, title, description }, index) => (
-            <article key={title} className="flex gap-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-mocha)] text-[var(--color-bark-dark)]">
-                <Icon aria-hidden="true" size={20} />
-              </span>
-              <div>
-                <p className="text-xs font-bold text-[var(--color-sun)]">
-                  STEP {index + 1}
-                </p>
-                <h3 className="mt-1 font-bold text-[var(--color-bark-dark)]">
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--color-graph)]">
-                  {description}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
     </main>
   );
 }
