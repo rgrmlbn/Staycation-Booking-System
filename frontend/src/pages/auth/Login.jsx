@@ -31,8 +31,8 @@ export default function Login({ audience = "guest" }) {
 
   return (
     <AuthLayout
-      eyebrow={isHost ? "Host access" : "Welcome back"}
-      title={isHost ? "Host sign in" : "Sign in"}
+      eyebrow={"Welcome back"}
+      title={isHost ? "Host sign in" : "Guest Sign in"}
       description={
         isHost
           ? "Sign in to continue to your host space."
@@ -41,6 +41,9 @@ export default function Login({ audience = "guest" }) {
       alternateText="Don't have an account yet?"
       alternateLabel="Create an account"
       alternateTo={isHost ? "/host/register" : "/register"}
+      audienceText={isHost ? "Are you a guest?" : "Are you a host?"}
+      audienceLinkText="Sign in here"
+      audienceTo={isHost ? "/login" : "/host/login"}
     >
       {location.state?.notice && (
         <p className="mb-5 rounded border border-[var(--color-palm)]/30 bg-[var(--color-palm)]/10 px-4 py-3 text-sm text-[var(--color-palm-dark)]">

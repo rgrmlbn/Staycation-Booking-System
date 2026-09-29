@@ -22,6 +22,16 @@ export default function Navbar() {
   const hostLink = isHostArea
     ? { label: "Guest Page", to: "/", icon: FaHome }
     : { label: "Host Page", to: "/host", icon: FaBuilding };
+  const mobileHomeLink = {
+    label: "Home",
+    to: isHostArea ? "/host" : "/",
+    icon: FaHome,
+  };
+  const mobileLinks = [
+    mobileHomeLink,
+    ...NAV_LINKS.slice(1),
+    { label: "Login", to: "/login", icon: FaSignInAlt },
+  ];
 
   return (
     <>
@@ -84,18 +94,13 @@ export default function Navbar() {
         className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/95 pb-[env(safe-area-inset-bottom)] shadow-[var(--shadow-sm)] backdrop-blur-sm md:hidden"
       >
         <div className="flex">
-          {[
-            { label: "Home", to: "/", icon: FaHome },
-            { label: "Properties", to: "/properties", icon: FaBuilding },
-            { label: "Sign in", to: "/login", icon: FaSignInAlt },
-            hostLink,
-          ].map((item) => {
+          {mobileLinks.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
                 key={item.label}
                 to={item.to}
-                end={item.to === "/"}
+                end={item.label === "Home"}
                 aria-label={item.label}
                 title={item.label}
                 className={({ isActive }) =>

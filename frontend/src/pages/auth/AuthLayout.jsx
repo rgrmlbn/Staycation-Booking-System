@@ -30,6 +30,9 @@ export default function AuthLayout({
   alternateText,
   alternateLabel,
   alternateTo,
+  audienceText,
+  audienceLinkText,
+  audienceTo,
   children,
 }) {
   return (
@@ -55,6 +58,15 @@ export default function AuthLayout({
               className="font-bold text-[var(--color-bark-dark)] hover:text-[var(--color-sun)]"
             >
               {alternateLabel}
+            </Link>
+          </p>
+          <p className="mt-2 text-sm text-[var(--color-graph)]">
+            {audienceText}{" "}
+            <Link
+              to={audienceTo}
+              className="font-bold text-[var(--color-bark-dark)] hover:text-[var(--color-sun)]"
+            >
+              {audienceLinkText}
             </Link>
           </p>
         </div>

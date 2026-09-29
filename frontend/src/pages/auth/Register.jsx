@@ -49,6 +49,9 @@ export default function Register({ accountType = "GUEST" }) {
       alternateText="Already have an account?"
       alternateLabel="Sign in"
       alternateTo={loginPath}
+      audienceText={isHost ? "Are you a guest?" : "Are you a host?"}
+      audienceLinkText="Register here"
+      audienceTo={isHost ? "/register" : "/host/register"}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
