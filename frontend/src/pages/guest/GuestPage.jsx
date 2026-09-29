@@ -1,7 +1,7 @@
 import { MapPin, Users, BedDouble, Search } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-export default function Home() {
+export default function GuestPage() {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       place: "",
@@ -12,29 +12,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--color-cream)]">
-      <section className="relative overflow-hidden pt-20 pb-28 md:pt-28 md:pb-36">
-        {/* Decorative blend — the one bold element on the page */}
+      <section className="relative overflow-hidden bg-[var(--color-bark-dark)] pt-20 pb-28 text-[var(--color-white)] md:pt-28 md:pb-36">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-60 blur-3xl md:-right-20 md:-top-52 md:h-[720px] md:w-[720px]"
+          className="pointer-events-none absolute inset-0 opacity-40 [background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.06)_0px,rgba(255,255,255,0.06)_1px,transparent_1px,transparent_18px)]"
         />
 
         <div className="container relative z-10 flex flex-col items-center text-center">
-          <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-[var(--color-bark-dark)] sm:text-5xl md:text-6xl">
+          <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-[var(--color-white)] sm:text-5xl md:text-6xl">
             Experience the world&rsquo;s most beautiful{" "}
             <span className="text-[var(--color-sand)]">staycation</span>
           </h1>
-          <h4 className="mt-5 max-w-md text-base font-semibold text-[var(--color-muted)] md:text-lg">
+          <h4 className="mt-5 max-w-md text-base font-semibold text-white/75 md:text-lg">
             For 24h, 48h, or even just a few hours.
           </h4>
 
-          {/* Search bar */}
           <div className="mt-12 w-full max-w-3xl">
             <form
               onSubmit={handleSubmit(() => {})}
               className="flex flex-col gap-1 rounded bg-[var(--color-white)] p-2 shadow-[var(--shadow-lg)] md:flex-row md:items-center md:gap-0 md:rounded"
             >
-              {/* Place */}
               <label className="flex min-w-0 flex-1 items-center gap-3 rounded px-5 py-3 text-left md:basis-2/5 md:flex-none md:rounded-full">
                 <MapPin className="shrink-0 text-[var(--color-sun)]" />
                 <span className="flex w-full flex-col">
@@ -52,7 +49,6 @@ export default function Home() {
 
               <div className="hidden h-10 w-px bg-[var(--color-mocha)] md:block" />
 
-              {/* Guest */}
               <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-[var(--color-mocha)] px-5 py-3 text-left md:border-t-0">
                 <Users className="shrink-0 text-[var(--color-sun)]" />
                 <span className="flex w-full flex-col">
@@ -72,7 +68,6 @@ export default function Home() {
 
               <div className="hidden h-10 w-px bg-[var(--color-mocha)] md:block" />
 
-              {/* Room */}
               <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-[var(--color-mocha)] px-5 py-3 text-left md:border-t-0">
                 <BedDouble className="shrink-0 text-[var(--color-sun)]" />
                 <span className="flex w-full flex-col">
@@ -90,10 +85,9 @@ export default function Home() {
                 </span>
               </label>
 
-              {/* Search button */}
               <button
                 type="submit"
-                className="flex cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sun)] px-5 py-3 text-[15px] font-semibold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
+                className="flex cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-[15px] font-semibold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
               >
                 <span>Search</span>
                 <Search />

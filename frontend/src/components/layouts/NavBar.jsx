@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import logo from "../../assets/icons/logocon.png";
 
 import { TbArrowBigRightLineFilled } from "react-icons/tb";
@@ -8,7 +8,6 @@ import {
   FaInfoCircle,
   FaPhoneAlt,
   FaSignInAlt,
-  FaCalendarCheck,
 } from "react-icons/fa";
 
 const NAV_LINKS = [
@@ -19,6 +18,11 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
+  const isHostArea = useLocation().pathname.startsWith("/host");
+  const hostLink = isHostArea
+    ? { label: "Guest Page", to: "/", icon: FaHome }
+    : { label: "Host Page", to: "/host", icon: FaBuilding };
+
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/90 px-12 py-4 backdrop-blur-sm max-md:px-4 max-md:py-4">
@@ -59,15 +63,15 @@ export default function Navbar() {
             <div className="hidden items-center gap-3 md:flex">
               <NavLink
                 to="/login"
-                className="rounded bg-[var(--color-sun)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
+                className="rounded bg-[var(--color-sand)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
               >
                 Sign in
               </NavLink>
               <NavLink
-                to="/login"
+                to={hostLink.to}
                 className="flex items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
               >
-                Book Now
+                {hostLink.label}
                 <TbArrowBigRightLineFilled />
               </NavLink>
             </div>
@@ -84,7 +88,7 @@ export default function Navbar() {
             { label: "Home", to: "/", icon: FaHome },
             { label: "Properties", to: "/properties", icon: FaBuilding },
             { label: "Sign in", to: "/login", icon: FaSignInAlt },
-            { label: "Book Now", to: "/book", icon: FaCalendarCheck },
+            hostLink,
           ].map((item) => {
             const Icon = item.icon;
             return (

@@ -6,7 +6,9 @@ import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
 
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
-export default function Register() {
+export default function Register({ accountType = "GUEST" }) {
+  const isHost = accountType === "HOST";
+  const loginPath = isHost ? "/host/login" : "/login";
   const navigate = useNavigate();
   const [requestError, setRequestError] = useState("");
   const {
@@ -21,9 +23,11 @@ export default function Register() {
     setRequestError("");
     try {
       await axios.post("/api/v1/auth/register", values);
-      navigate("/login", {
+      navigate(loginPath, {
         replace: true,
-        state: { notice: "Your account is ready. Sign in to continue." },
+        state: {
+          notice: `Your ${isHost ? "host " : ""}account is ready. Sign in to continue.`,
+        },
       });
     } catch (error) {
       setRequestError(
@@ -35,12 +39,16 @@ export default function Register() {
 
   return (
     <AuthLayout
-      eyebrow="Join now"
-      title="Create your account"
-      description="A few details and you are on your way to a better stay."
+      eyebrow={isHost ? "Host account" : "Join now"}
+      title={isHost ? "Create your host account" : "Create your account"}
+      description={
+        isHost
+          ? "Set up your host account and get ready to welcome your first guest."
+          : "A few details and you are on your way to a better stay."
+      }
       alternateText="Already have an account?"
       alternateLabel="Sign in"
-      alternateTo="/login"
+      alternateTo={loginPath}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -48,6 +56,7 @@ export default function Register() {
             <input
               id="name"
               type="text"
+              placeholder="Enter your full name"
               autoComplete="name"
               aria-invalid={Boolean(errors.name)}
               aria-describedby={errors.name ? "name-error" : undefined}
@@ -70,6 +79,7 @@ export default function Register() {
             <input
               id="email"
               type="email"
+              placeholder="you@example.com"
               autoComplete="email"
               aria-invalid={Boolean(errors.email)}
               aria-describedby={errors.email ? "email-error" : undefined}
@@ -130,8 +140,8 @@ export default function Register() {
             label="Contact number"
             error={errors.contactNumber?.message}
           >
-            <div className="flex rounded border border-[var(--color-mocha)] bg-[var(--color-white)] focus-within:border-[var(--color-sun-dark)] focus-within:ring-2 focus-within:ring-[var(--color-sun)]/20">
-              <span className="flex items-center border-r border-[var(--color-mocha)] px-3 text-sm text-[var(--color-graph)]">
+            <div className="flex rounded border-2 border-[var(--color-bark)] bg-[var(--color-white)] focus-within:border-[var(--color-sand)] focus-within:ring-2 focus-within:ring-[var(--color-sand)]">
+              <span className="flex items-center border-r border-[var(--color-bark)] px-3 text-sm text-[var(--color-graph)]">
                 +63
               </span>
               <input
@@ -151,7 +161,7 @@ export default function Register() {
                     message: "Invalid phone number format",
                   },
                 })}
-                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-[var(--color-bark-dark)] outline-none"
+                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-[var(--color-bark-dark)] placeholder:text-[var(--color-graph)]/70 outline-none"
               />
             </div>
           </AuthField>
@@ -161,19 +171,22 @@ export default function Register() {
             label="Account type"
             error={errors.role?.message}
           >
+            <input
+              type="hidden"
+              {...register("role", {
+                required: "User Role is required",
+                value: accountType,
+              })}
+            />
             <select
               id="role"
+              disabled={Boolean(accountType)}
               aria-invalid={Boolean(errors.role)}
               aria-describedby={errors.role ? "role-error" : undefined}
-              {...register("role", { required: "User Role is required" })}
-              className={AUTH_INPUT_CLASS}
-              defaultValue=""
+              className={`${AUTH_INPUT_CLASS} disabled:cursor-not-allowed disabled:opacity-60`}
+              defaultValue={accountType}
             >
-              <option value="" disabled>
-                Select account type
-              </option>
-              <option value="GUEST">Guest</option>
-              <option value="HOST">Host</option>
+              <option value={accountType}>{isHost ? "Host" : "Guest"}</option>
             </select>
           </AuthField>
         </div>
@@ -183,6 +196,7 @@ export default function Register() {
             id="address"
             rows="2"
             autoComplete="street-address"
+            placeholder="Street, city, province"
             aria-invalid={Boolean(errors.address)}
             aria-describedby={errors.address ? "address-error" : undefined}
             {...register("address", {
@@ -208,6 +222,7 @@ export default function Register() {
           <input
             id="password"
             type="password"
+            placeholder="Enter a password"
             autoComplete="new-password"
             aria-invalid={Boolean(errors.password)}
             aria-describedby={errors.password ? "password-error" : undefined}
@@ -231,7 +246,7 @@ export default function Register() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full cursor-pointer items-center justify-center rounded bg-[var(--color-sun)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)] hover:bg-[var(--color-sand)] disabled:cursor-wait disabled:opacity-70"
+          className="flex w-full cursor-pointer items-center justify-center rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
         >
           {isSubmitting ? "Creating account..." : "Create account"}
         </button>

@@ -2,7 +2,7 @@ import { ArrowUpRight, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const AUTH_INPUT_CLASS =
-  "w-full rounded border border-[var(--color-mocha)] bg-[var(--color-white)] px-3.5 py-3 text-sm text-[var(--color-bark-dark)] outline-none focus:border-[var(--color-sun-dark)] focus:ring-2 focus:ring-[var(--color-sun)]/20";
+  "w-full rounded border-2 border-[var(--color-bark)] bg-[var(--color-white)] px-3.5 py-3 text-sm text-[var(--color-bark-dark)] placeholder:text-[var(--color-graph)]/70 outline-none focus:border-[var(--color-sand)] focus:ring-2 focus:ring-[var(--color-sand)]";
 
 export function AuthField({ id, label, error, children }) {
   return (
@@ -52,7 +52,7 @@ export default function AuthLayout({
             {alternateText}{" "}
             <Link
               to={alternateTo}
-              className="font-bold text-[var(--color-bark-dark)] hover:text-[var(--color-sun-dark)]"
+              className="font-bold text-[var(--color-bark-dark)] hover:text-[var(--color-sun)]"
             >
               {alternateLabel}
             </Link>
