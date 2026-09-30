@@ -1,4 +1,4 @@
-import { ArrowUpRight, Sun } from "lucide-react";
+import { FaArrowUp, FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export const AUTH_INPUT_CLASS =
@@ -81,7 +81,7 @@ export default function AuthLayout({
       >
         <div className="relative z-10 max-w-lg">
           <div className="mb-6 flex size-12 items-center justify-center rounded bg-[var(--color-sun)] text-[var(--color-bark-dark)]">
-            <Sun aria-hidden="true" size={25} />
+            <FaSun aria-hidden="true" size={25} />
           </div>
           <p className="text-xs font-bold uppercase text-[var(--color-sand)]">
             A little time away goes a long way
@@ -98,14 +98,14 @@ export default function AuthLayout({
             className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-sand)] hover:text-white"
           >
             Explore staycations
-            <ArrowUpRight aria-hidden="true" />
+            <FaArrowUp aria-hidden="true" />
           </Link>
         </div>
         <div
           aria-hidden="true"
           className="absolute bottom-10 right-10 flex size-36 items-center justify-center rounded-full border border-white/15 text-white/10 xl:bottom-16 xl:right-16 xl:size-48"
         >
-          <Sun size={100} strokeWidth={0.7} />
+          <FaSun size={100} />
         </div>
       </aside>
     </main>

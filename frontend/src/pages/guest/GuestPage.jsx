@@ -1,4 +1,4 @@
-import { MapPin, Users, BedDouble, Search } from "lucide-react";
+import { FaBed, FaMapMarkerAlt, FaSearch, FaUsers } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 
 export default function GuestPage() {
@@ -33,7 +33,7 @@ export default function GuestPage() {
               className="flex flex-col gap-1 rounded bg-[var(--color-white)] p-2 shadow-[var(--shadow-lg)] md:flex-row md:items-center md:gap-0 md:rounded"
             >
               <label className="flex min-w-0 flex-1 items-center gap-3 rounded px-5 py-3 text-left md:basis-2/5 md:flex-none md:rounded-full">
-                <MapPin className="shrink-0 text-[var(--color-sun)]" />
+                <FaMapMarkerAlt className="shrink-0 text-[var(--color-sun)]" />
                 <span className="flex w-full flex-col">
                   <span className="text-xs font-semibold text-[var(--color-graph)]">
                     Place
@@ -50,7 +50,7 @@ export default function GuestPage() {
               <div className="hidden h-10 w-px bg-[var(--color-mocha)] md:block" />
 
               <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-[var(--color-mocha)] px-5 py-3 text-left md:border-t-0">
-                <Users className="shrink-0 text-[var(--color-sun)]" />
+                <FaUsers className="shrink-0 text-[var(--color-sun)]" />
                 <span className="flex w-full flex-col">
                   <span className="text-xs font-semibold text-[var(--color-graph)]">
                     Guests
@@ -69,7 +69,7 @@ export default function GuestPage() {
               <div className="hidden h-10 w-px bg-[var(--color-mocha)] md:block" />
 
               <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-[var(--color-mocha)] px-5 py-3 text-left md:border-t-0">
-                <BedDouble className="shrink-0 text-[var(--color-sun)]" />
+                <FaBed className="shrink-0 text-[var(--color-sun)]" />
                 <span className="flex w-full flex-col">
                   <span className="text-xs font-semibold text-[var(--color-graph)]">
                     Rooms
@@ -90,7 +90,7 @@ export default function GuestPage() {
                 className="flex cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-[15px] font-semibold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
               >
                 <span>Search</span>
-                <Search />
+                <FaSearch />
               </button>
             </form>
           </div>

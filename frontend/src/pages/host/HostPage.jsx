@@ -1,9 +1,5 @@
-import {
-  ArrowRight,
-  HousePlus,
-} from "lucide-react";
+import { FaArrowRight, FaHome } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
 
 export default function HostPage() {
   return (
@@ -31,14 +27,14 @@ export default function HostPage() {
                 className="inline-flex min-h-12 items-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
               >
                 Create a host account
-                <ArrowRight aria-hidden="true" size={18} />
+                <FaArrowRight aria-hidden="true" size={18} />
               </Link>
             </div>
           </div>
 
           <aside className="border-t border-white/20 pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
             <div className="flex size-12 items-center justify-center rounded bg-[var(--color-sun)] text-[var(--color-bark-dark)]">
-              <HousePlus aria-hidden="true" size={25} />
+              <FaHome aria-hidden="true" size={25} />
             </div>
             <h2 className="mt-5 text-2xl font-bold">
               A good stay starts at home.
@@ -49,7 +45,6 @@ export default function HostPage() {
           </aside>
         </div>
       </section>
-
     </main>
   );
 }

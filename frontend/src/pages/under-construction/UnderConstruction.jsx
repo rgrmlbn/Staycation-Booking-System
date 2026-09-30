@@ -1,4 +1,4 @@
-import { Construction } from "lucide-react";
+import { FaTools } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function UnderConstruction() {
@@ -6,7 +6,7 @@ export default function UnderConstruction() {
     <main className="flex min-h-[75vh] items-center justify-center bg-[var(--color-cream)] px-6 pt-16 pb-[calc(5rem+env(safe-area-inset-bottom))] text-center md:py-16">
       <div className="flex max-w-xl flex-col items-center">
         <div className="mb-6 flex size-25 items-center justify-center rounded-full bg-[var(--color-sun)]/20 text-[var(--color-sun-dark)]">
-          <Construction aria-hidden="true" size={50} />
+          <FaTools aria-hidden="true" size={50} />
         </div>
         <p className="mb-3 text-m font-semibold uppercase text-[var(--color-sun-dark)]">
           SORRY FOR THE INCONVENIENCE
