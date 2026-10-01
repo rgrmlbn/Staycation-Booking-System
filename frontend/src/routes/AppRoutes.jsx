@@ -6,6 +6,8 @@ import PropertyList from "../pages/property/PropertyList";
 import HostPage from "../pages/host/HostPage";
 import HostLogin from "../pages/host/HostLogin";
 import HostRegister from "../pages/host/HostRegister";
+import HostProperties from "../pages/host/HostProperties";
+import About from "../pages/about/About";
 import UnderConstruction from "../pages/under-construction/UnderConstruction";
 
 export default function AppRoutes() {
@@ -15,9 +17,13 @@ export default function AppRoutes() {
       <Route path="/login" element={<GuestLogin />} />
       <Route path="/register" element={<GuestRegister />} />
       <Route path="/properties" element={<PropertyList />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/host/about" element={<About />} />
       <Route path="/host" element={<HostPage />} />
+      <Route path="/host/properties" element={<HostProperties />} />
       <Route path="/host/login" element={<HostLogin />} />
       <Route path="/host/register" element={<HostRegister />} />
+      <Route path="/host/contact" element={<UnderConstruction />} />
       <Route path="*" element={<UnderConstruction />} />
     </Routes>
   );

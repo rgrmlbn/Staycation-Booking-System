@@ -7,7 +7,7 @@ export default function PropertyCard({
   reviewScore,
 }) {
   return (
-    <article className="flex h-full flex-col rounded-lg border border-[var(--color-mocha)] bg-[var(--color-white)] p-6 shadow-[var(--shadow-sm)]">
+    <article className="flex h-full flex-col rounded border border-[var(--color-mocha)] bg-[var(--color-white)] p-6 shadow-[var(--shadow-sm)]">
       <div className="mb-6 flex h-32 items-end rounded bg-[var(--color-bark-dark)] p-5 text-[var(--color-white)] [background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.08)_0px,rgba(255,255,255,0.08)_1px,transparent_1px,transparent_16px)]">
         <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-sand)]">
           Staycation home
@@ -41,7 +41,7 @@ export default function PropertyCard({
         </div>
       </dl>
 
-      <div className="mt-auto flex items-center gap-1">
+      <div className="mt-5 flex items-center gap-1">
         <FaStar aria-hidden="true" className="text-[var(--color-sun)]" />
         <span className="font-bold text-[var(--color-bark-dark)]">
           {reviewScore}

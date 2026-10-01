@@ -1,5 +1,14 @@
-import { FaBed, FaMapMarkerAlt, FaSearch, FaUsers } from "react-icons/fa";
+import {
+  FaBed,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaSearch,
+  FaUsers,
+} from "react-icons/fa";
 import { useForm } from "react-hook-form";
+import { PropertiesSection } from "../property/PropertyList";
+import { AboutSection } from "../about/About";
 
 export default function GuestPage() {
   const { register, handleSubmit } = useForm({
@@ -93,6 +102,47 @@ export default function GuestPage() {
                 <FaSearch />
               </button>
             </form>
+          </div>
+        </div>
+      </section>
+      <PropertiesSection />
+      <AboutSection />
+      <section
+        id="contact"
+        className="scroll-mt-24 border-t border-[var(--color-bark)]/10 bg-[var(--color-white)] py-16 pb-28 text-[var(--color-bark-dark)] md:py-20 md:pb-20"
+      >
+        <div className="container">
+          <p className="text-xs font-bold uppercase text-[var(--color-sun-dark)]">
+            Contact
+          </p>
+          <h2 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">
+            Let’s help plan your next stay.
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--color-graph)]">
+            Have a question about Roomance or need a hand with your plans? Get
+            in touch with our team.
+          </p>
+          <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:gap-8">
+            <a
+              href="tel:+63281234567"
+              className="inline-flex items-center gap-3 text-sm font-semibold text-[var(--color-bark-dark)] hover:text-[var(--color-sun-dark)]"
+            >
+              <FaPhoneAlt
+                aria-hidden="true"
+                className="text-[var(--color-sun-dark)]"
+              />
+              +63 (2) 8123-4567
+            </a>
+            <a
+              href="mailto:roomance@gmail.com"
+              className="inline-flex items-center gap-3 text-sm font-semibold text-[var(--color-bark-dark)] hover:text-[var(--color-sun-dark)]"
+            >
+              <FaEnvelope
+                aria-hidden="true"
+                className="text-[var(--color-sun-dark)]"
+              />
+              roomance@gmail.com
+            </a>
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
-import { NavLink, useLocation } from "react-router-dom";
-import logo from "../../assets/icons/logocon.png";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../../assets/icons/logocon-white.png";
 
 import { TbArrowBigRightLineFilled } from "react-icons/tb";
 import {
@@ -19,18 +19,30 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const isHostArea = useLocation().pathname.startsWith("/host");
+  const homeLink = { ...NAV_LINKS[0], to: isHostArea ? "/host" : "/" };
   const hostLink = isHostArea
     ? { label: "Guest Page", to: "/", icon: FaHome }
     : { label: "Host Page", to: "/host", icon: FaBuilding };
-  const mobileHomeLink = {
-    label: "Home",
-    to: isHostArea ? "/host" : "/",
-    icon: FaHome,
+  const propertyLink = isHostArea
+    ? { ...NAV_LINKS[1], to: "/host#properties" }
+    : { ...NAV_LINKS[1], to: "/#properties" };
+  const aboutLink = {
+    ...NAV_LINKS[2],
+    to: isHostArea ? "/host#about" : "/#about",
   };
+  const contactLink = {
+    ...NAV_LINKS[3],
+    to: isHostArea ? "/host#contact" : "/#contact",
+  };
+  const navLinks = [homeLink, propertyLink, aboutLink, contactLink];
   const mobileLinks = [
-    mobileHomeLink,
-    ...NAV_LINKS.slice(1),
-    { label: "Login", to: "/login", icon: FaSignInAlt },
+    homeLink,
+    ...navLinks.slice(1),
+    {
+      label: "Login",
+      to: isHostArea ? "/host/login" : "/login",
+      icon: FaSignInAlt,
+    },
   ];
 
   return (
@@ -39,51 +51,45 @@ export default function Navbar() {
         <div className="container flex items-center justify-between">
           {/* Left — Logo */}
           <div className="flex items-center">
-            <NavLink to="/" className="flex shrink-0 items-center">
+            <Link to={homeLink.to} className="flex shrink-0 items-center">
               <img src={logo} alt="Roomance" className="h-9 w-auto md:h-12" />
-            </NavLink>
+            </Link>
           </div>
 
           {/* Right */}
           <div className="flex items-center gap-3">
             {/* Nav */}
             <nav className="hidden items-center gap-10 md:mr-6 md:flex">
-              {NAV_LINKS.map((link) => {
+              {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
-                  <NavLink
+                  <Link
                     key={link.to}
                     to={link.to}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 text-[15px] font-semibold transition-colors hover:text-[var(--color-sand)] ${
-                        isActive
-                          ? "text-[var(--color-sand)]"
-                          : "text-[var(--color-bark)]"
-                      }`
-                    }
+                    className="flex items-center gap-2 text-[15px] font-semibold text-[var(--color-bark)] transition-colors hover:text-[var(--color-sand)]"
                   >
                     <Icon />
                     {link.label}
-                  </NavLink>
+                  </Link>
                 );
               })}
             </nav>
 
             {/* CTA */}
             <div className="hidden items-center gap-3 md:flex">
-              <NavLink
-                to="/login"
+              <Link
+                to={isHostArea ? "/host/login" : "/login"}
                 className="rounded bg-[var(--color-sand)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
               >
                 Sign in
-              </NavLink>
-              <NavLink
+              </Link>
+              <Link
                 to={hostLink.to}
                 className="flex items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
               >
                 {hostLink.label}
                 <TbArrowBigRightLineFilled />
-              </NavLink>
+              </Link>
             </div>
           </div>
         </div>
@@ -97,31 +103,18 @@ export default function Navbar() {
           {mobileLinks.map((item) => {
             const Icon = item.icon;
             return (
-              <NavLink
+              <Link
                 key={item.label}
                 to={item.to}
-                end={item.label === "Home"}
                 aria-label={item.label}
                 title={item.label}
-                className={({ isActive }) =>
-                  `flex min-h-16 min-w-0 items-center justify-center gap-2 overflow-hidden transition-all duration-200 ease-out hover:text-[var(--color-sand)] ${
-                    isActive
-                      ? "flex-[2] text-[var(--color-sand)]"
-                      : "flex-1 text-[var(--color-graph)]"
-                  }`
-                }
+                className="flex min-h-16 min-w-0 flex-1 flex-col items-center justify-center gap-1 overflow-hidden text-[var(--color-graph)] transition-colors hover:text-[var(--color-sand)]"
               >
-                {({ isActive }) => (
-                  <>
-                    <Icon className="shrink-0 text-xl" aria-hidden="true" />
-                    {isActive && (
-                      <span className="truncate text-sm font-semibold">
-                        {item.label}
-                      </span>
-                    )}
-                  </>
-                )}
-              </NavLink>
+                <Icon className="shrink-0 text-xl" aria-hidden="true" />
+                <span className="max-w-full truncate text-[10px] font-semibold">
+                  {item.label}
+                </span>
+              </Link>
             );
           })}
         </div>
