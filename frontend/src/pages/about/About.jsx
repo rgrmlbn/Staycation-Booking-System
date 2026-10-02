@@ -50,7 +50,7 @@ export function AboutSection() {
               <article key={value.title}>
                 <Icon
                   aria-hidden="true"
-                  className="text-2xl text-[var(--color-sun-dark)]"
+                  className="text-2xl text-[var(--color-sun)]"
                 />
                 <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
                   {value.title}

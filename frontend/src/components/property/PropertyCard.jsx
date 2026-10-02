@@ -22,7 +22,7 @@ export default function PropertyCard({
         <div className="flex items-center gap-3">
           <FaUsers
             aria-hidden="true"
-            className="shrink-0 text-[var(--color-sun-dark)]"
+            className="shrink-0 text-[var(--color-sun)]"
           />
           <div>
             <dt className="sr-only">Max guests</dt>
@@ -32,7 +32,7 @@ export default function PropertyCard({
         <div className="flex items-start gap-3">
           <FaMapMarkerAlt
             aria-hidden="true"
-            className="mt-0.5 shrink-0 text-[var(--color-sun-dark)]"
+            className="mt-0.5 shrink-0 text-[var(--color-sun)]"
           />
           <div>
             <dt className="sr-only">Address</dt>
@@ -42,7 +42,7 @@ export default function PropertyCard({
       </dl>
 
       <div className="mt-5 flex items-center gap-1">
-        <FaStar aria-hidden="true" className="text-[var(--color-sun)]" />
+        <FaStar aria-hidden="true" className="text-[var(--color-sand)]" />
         <span className="font-bold text-[var(--color-bark-dark)]">
           {reviewScore}
         </span>

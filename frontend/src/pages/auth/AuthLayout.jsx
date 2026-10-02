@@ -80,7 +80,7 @@ export default function AuthLayout({
         }}
       >
         <div className="relative z-10 max-w-lg">
-          <div className="mb-6 flex size-12 items-center justify-center rounded bg-[var(--color-sun)] text-[var(--color-bark-dark)]">
+          <div className="mb-6 flex size-12 items-center justify-center rounded bg-[var(--color-sand)] text-[var(--color-bark-dark)]">
             <FaSun aria-hidden="true" size={25} />
           </div>
           <p className="text-xs font-bold uppercase text-[var(--color-sand)]">

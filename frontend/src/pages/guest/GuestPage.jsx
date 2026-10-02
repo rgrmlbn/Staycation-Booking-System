@@ -129,7 +129,7 @@ export default function GuestPage() {
             >
               <FaPhoneAlt
                 aria-hidden="true"
-                className="text-[var(--color-sun-dark)]"
+                className="text-[var(--color-sun)]"
               />
               +63 (2) 8123-4567
             </a>
@@ -139,7 +139,7 @@ export default function GuestPage() {
             >
               <FaEnvelope
                 aria-hidden="true"
-                className="text-[var(--color-sun-dark)]"
+                className="text-[var(--color-sun)]"
               />
               roomance@gmail.com
             </a>

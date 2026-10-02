@@ -2,10 +2,8 @@ import { Link } from "react-router-dom";
 import {
   FaBuilding,
   FaCookieBite,
-  FaEnvelope,
   FaFileAlt,
   FaHome,
-  FaPhoneAlt,
   FaShieldAlt,
   FaSignInAlt,
   FaUserPlus,
@@ -42,7 +40,7 @@ const FOOTER_GROUPS = [
 export default function Footer() {
   return (
     <footer className="border-t-4 border-[var(--color-sun)] bg-[var(--color-bark-dark)] text-white">
-      <div className="container grid gap-10 px-6 pb-28 pt-12 sm:grid-cols-2 md:grid-cols-3 md:px-10 md:pb-12 md:pt-14 xl:grid-cols-[1.5fr_repeat(4,minmax(0,1fr))]">
+      <div className="container grid gap-10 px-6 pb-28 pt-12 sm:grid-cols-2 md:grid-cols-3 md:px-10 md:pb-12 md:pt-14 xl:grid-cols-[1.5fr_repeat(3,minmax(0,1fr))]">
         <div className="max-w-sm">
           <Link to="/" aria-label="Roomance home" className="inline-flex">
             <img src={logo} alt="Roomance" className="h-11 w-auto" />
@@ -75,38 +73,6 @@ export default function Footer() {
             </ul>
           </div>
         ))}
-
-        <div>
-          <h2 className="text-sm font-bold text-[var(--color-sand)]">
-            Contact
-          </h2>
-          <ul className="mt-4 space-y-3 text-sm text-white/75">
-            <li>
-              <a
-                href="tel:+63281234567"
-                className="inline-flex items-center gap-2 transition-colors hover:text-white"
-              >
-                <FaPhoneAlt
-                  aria-hidden="true"
-                  className="text-[var(--color-sand)]"
-                />
-                +63 (2) 8123-4567
-              </a>
-            </li>
-            <li>
-              <a
-                href="mailto:roomance@gmail.com"
-                className="inline-flex items-center gap-2 transition-colors hover:text-white"
-              >
-                <FaEnvelope
-                  aria-hidden="true"
-                  className="text-[var(--color-sand)]"
-                />
-                roomance@gmail.com
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
 
       <div className="border-t border-white/15">
