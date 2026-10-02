@@ -1,17 +1,14 @@
-import {
-  FaArrowRight,
-  FaEnvelope,
-  FaHeart,
-  FaHome,
-  FaPhoneAlt,
-  FaUsers,
-} from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaHome, FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import ContactSection from "../home/sections/ContactSection";
 
 export default function HostPage() {
   return (
     <main className="min-h-[calc(100svh-5rem)] bg-[var(--color-cream)]">
-      <section className="relative overflow-hidden bg-[var(--color-bark-dark)] text-[var(--color-white)]">
+      <section
+        id="home"
+        className="relative overflow-hidden bg-[var(--color-bark-dark)] text-[var(--color-white)]"
+      >
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-40 [background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.06)_0px,rgba(255,255,255,0.06)_1px,transparent_1px,transparent_18px)]"
@@ -70,7 +67,7 @@ export default function HostPage() {
           </p>
           <Link
             to="/host/properties"
-            className="mt-8 inline-flex min-h-12 items-center gap-2 rounded bg-[var(--color-sun)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
+            className="mt-8 inline-flex min-h-12 items-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
           >
             View your properties
             <FaArrowRight aria-hidden="true" />
@@ -97,7 +94,7 @@ export default function HostPage() {
             <article>
               <FaHome
                 aria-hidden="true"
-                className="text-2xl text-[var(--color-sun-dark)]"
+                className="text-2xl text-[var(--color-sun)]"
               />
               <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
                 Share your space
@@ -109,7 +106,7 @@ export default function HostPage() {
             <article>
               <FaUsers
                 aria-hidden="true"
-                className="text-2xl text-[var(--color-sun-dark)]"
+                className="text-2xl text-[var(--color-sun)]"
               />
               <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
                 Welcome new guests
@@ -121,7 +118,7 @@ export default function HostPage() {
             <article>
               <FaHeart
                 aria-hidden="true"
-                className="text-2xl text-[var(--color-sun-dark)]"
+                className="text-2xl text-[var(--color-sun)]"
               />
               <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
                 Host with care
@@ -134,44 +131,11 @@ export default function HostPage() {
         </div>
       </section>
 
-      <section
-        id="contact"
-        className="scroll-mt-24 border-t border-[var(--color-bark)]/10 bg-[var(--color-white)] py-16 pb-28 text-[var(--color-bark-dark)] md:py-20 md:pb-20"
-      >
-        <div className="container">
-          <p className="text-xs font-bold uppercase text-[var(--color-sun-dark)]">
-            Host support
-          </p>
-          <h2 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">
-            We’re here to help you get started.
-          </h2>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--color-graph)]">
-            Questions about hosting on Roomance? Reach out to our team.
-          </p>
-          <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:gap-8">
-            <a
-              href="tel:+63281234567"
-              className="inline-flex items-center gap-3 text-sm font-semibold text-[var(--color-bark-dark)] hover:text-[var(--color-sun-dark)]"
-            >
-              <FaPhoneAlt
-                aria-hidden="true"
-                className="text-[var(--color-sun-dark)]"
-              />
-              +63 (2) 8123-4567
-            </a>
-            <a
-              href="mailto:roomance@gmail.com"
-              className="inline-flex items-center gap-3 text-sm font-semibold text-[var(--color-bark-dark)] hover:text-[var(--color-sun-dark)]"
-            >
-              <FaEnvelope
-                aria-hidden="true"
-                className="text-[var(--color-sun-dark)]"
-              />
-              roomance@gmail.com
-            </a>
-          </div>
-        </div>
-      </section>
+      <ContactSection
+        eyebrow="Host support"
+        title="We’re here to help you get started."
+        description="Questions about hosting on Roomance? Reach out to our team."
+      />
     </main>
   );
 }

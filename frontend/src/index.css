@@ -70,18 +70,11 @@
     transition-duration: 0.1s;
   }
 
-  .container {
-    width: 100%;
-    max-width: 1400px;
-    margin-inline: auto;
-    padding-inline: 1.5rem;
-  }
+}
 
-  @media (min-width: 768px) {
-    .container {
-      padding-inline: 2.5rem;
-    }
-  }
+.container {
+  width: 90%;
+  margin-inline: auto;
 }
 
 html { scroll-behavior: smooth; }

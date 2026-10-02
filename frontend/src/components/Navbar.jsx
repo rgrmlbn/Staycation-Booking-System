@@ -1,97 +1,67 @@
-import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/icons/logocon-white.png";
-
-import { TbArrowBigRightLineFilled } from "react-icons/tb";
+import { Link } from "react-router-dom";
 import {
-  FaHome,
   FaBuilding,
+  FaHome,
   FaInfoCircle,
   FaPhoneAlt,
   FaSignInAlt,
 } from "react-icons/fa";
+import { TbArrowBigRightLineFilled } from "react-icons/tb";
+import logo from "../assets/icons/logocon-white.png";
 
-const NAV_LINKS = [
-  { label: "Home", to: "/", icon: FaHome },
-  { label: "Properties", to: "/properties", icon: FaBuilding },
-  { label: "About", to: "/#about", icon: FaInfoCircle },
-  { label: "Contact", to: "/contact", icon: FaPhoneAlt },
-];
+const NAV_ICONS = {
+  Home: FaHome,
+  Properties: FaBuilding,
+  About: FaInfoCircle,
+  Contact: FaPhoneAlt,
+};
 
-export default function Navbar() {
-  const isHostArea = useLocation().pathname.startsWith("/host");
-  const homeLink = {
-    ...NAV_LINKS[0],
-    to: isHostArea ? "/host#home" : "/#home",
-  };
-  const hostLink = isHostArea
-    ? { label: "Guest Page", to: "/#home", icon: FaHome }
-    : { label: "Host Page", to: "/host#home", icon: FaBuilding };
-  const propertyLink = isHostArea
-    ? { ...NAV_LINKS[1], to: "/host#properties" }
-    : { ...NAV_LINKS[1], to: "/#properties" };
-  const aboutLink = {
-    ...NAV_LINKS[2],
-    to: isHostArea ? "/host#about" : "/#about",
-  };
-  const contactLink = {
-    ...NAV_LINKS[3],
-    to: isHostArea ? "/host#contact" : "/#contact",
-  };
-  const navLinks = [homeLink, propertyLink, aboutLink, contactLink];
-  const mobileLinks = [
-    homeLink,
-    ...navLinks.slice(1),
-    {
-      label: "Login",
-      to: isHostArea ? "/host/login" : "/login",
-      icon: FaSignInAlt,
-    },
-  ];
+export default function Navbar({
+  links,
+  signInTo,
+  switchAreaTo,
+  switchAreaLabel,
+}) {
+  const mobileLinks = [...links, { label: "Login", to: signInTo }];
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/90 py-4 backdrop-blur-sm max-md:py-4">
+      <header className="sticky top-0 z-50 border-b border-[var(--color-bark-dark)]/10 bg-[var(--color-white)]/90 px-12 py-4 backdrop-blur-sm max-md:px-4 max-md:py-4">
         <div className="container flex items-center justify-between">
-          {/* Left — Logo */}
-          <div className="flex items-center">
-            <Link to={homeLink.to} className="flex shrink-0 items-center">
-              <img src={logo} alt="Roomance" className="h-9 w-auto md:h-12" />
-            </Link>
-          </div>
+          <Link to={links[0].to} className="flex shrink-0 items-center">
+            <img src={logo} alt="Roomance" className="h-9 w-auto md:h-12" />
+          </Link>
 
-          {/* Right */}
           <div className="flex items-center gap-3">
-            {/* Nav */}
             <nav className="hidden items-center gap-10 md:mr-6 md:flex">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
+              {links.map((link) => {
+                const Icon = NAV_ICONS[link.label];
                 return (
                   <Link
-                    key={link.to}
+                    key={link.label}
                     to={link.to}
                     className="flex items-center gap-2 text-[15px] font-semibold text-[var(--color-bark)] transition-colors hover:text-[var(--color-sand)]"
                   >
-                    <Icon />
+                    {Icon && <Icon aria-hidden="true" />}
                     {link.label}
                   </Link>
                 );
               })}
             </nav>
 
-            {/* CTA */}
             <div className="hidden items-center gap-3 md:flex">
               <Link
-                to={isHostArea ? "/host/login" : "/login"}
+                to={signInTo}
                 className="rounded bg-[var(--color-sand)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
               >
                 Sign in
               </Link>
               <Link
-                to={hostLink.to}
+                to={switchAreaTo}
                 className="flex items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
               >
-                {hostLink.label}
-                <TbArrowBigRightLineFilled />
+                {switchAreaLabel}
+                <TbArrowBigRightLineFilled aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -104,7 +74,7 @@ export default function Navbar() {
       >
         <div className="flex">
           {mobileLinks.map((item) => {
-            const Icon = item.icon;
+            const Icon = NAV_ICONS[item.label] || FaSignInAlt;
             return (
               <Link
                 key={item.label}

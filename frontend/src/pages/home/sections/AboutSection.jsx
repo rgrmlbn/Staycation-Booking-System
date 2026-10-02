@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaCompass, FaHeart, FaHome } from "react-icons/fa";
+import { TbArrowBigRightLineFilled } from "react-icons/tb";
 
 const VALUES = [
   {
@@ -22,7 +23,7 @@ const VALUES = [
   },
 ];
 
-export function AboutSection() {
+export default function AboutSection() {
   return (
     <section
       id="about"
@@ -33,10 +34,10 @@ export function AboutSection() {
           <p className="text-xs font-bold uppercase text-[var(--color-sun-dark)]">
             What matters to us
           </p>
-          <h2 className="mt-3 text-3xl font-bold leading-tight text-[var(--color-bark-dark)] sm:text-4xl">
+          <h2 className="mt-3 text-4xl font-bold leading-tight text-[var(--color-bark-dark)] sm:text-5xl">
             A good stay starts with feeling welcome.
           </h2>
-          <p className="mt-4 text-base leading-7 text-[var(--color-graph)]">
+          <p className="mt-4 text-lg leading-8 text-[var(--color-graph)]">
             Whether you are planning a quick change of scenery or welcoming
             guests into your property, Roomance is here to make the search and
             discovery feel more straightforward.
@@ -65,46 +66,20 @@ export function AboutSection() {
 
         <div className="mt-14 flex flex-wrap gap-4 border-t border-[var(--color-bark)]/15 pt-8">
           <Link
-            to="/properties"
+            to="/#properties"
             className="inline-flex min-h-12 items-center rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
           >
             Explore properties
           </Link>
           <Link
             to="/host"
-            className="inline-flex min-h-12 items-center rounded border border-[var(--color-bark)]/30 px-5 py-3 text-sm font-bold text-[var(--color-white)] bg-[var(--color-bark)]"
+            className="inline-flex min-h-12 items-center gap-2 rounded border border-[var(--color-bark)]/30 bg-[var(--color-bark)] px-5 py-3 text-sm font-bold text-[var(--color-white)]"
           >
             Become a host
+            <TbArrowBigRightLineFilled aria-hidden="true" />
           </Link>
         </div>
       </div>
     </section>
-  );
-}
-
-export default function About() {
-  return (
-    <main className="bg-[var(--color-cream)]">
-      <section className="relative overflow-hidden bg-[var(--color-bark-dark)] px-6 py-20 text-white md:py-28">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-40 [background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.06)_0px,rgba(255,255,255,0.06)_1px,transparent_1px,transparent_18px)]"
-        />
-        <div className="container relative">
-          <p className="text-xs font-bold uppercase text-[var(--color-sand)]">
-            About Roomance
-          </p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-            Make room for a better kind of getaway.
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 md:text-lg">
-            Roomance brings guests and staycation hosts together, making it
-            easier to find a place to pause, recharge, and enjoy a little time
-            away.
-          </p>
-        </div>
-      </section>
-      <AboutSection />
-    </main>
   );
 }

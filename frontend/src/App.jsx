@@ -45,7 +45,7 @@ function App() {
     const isHomeSectionNavigation =
       current.pathname === destination.pathname &&
       ["/", "/host"].includes(current.pathname) &&
-      ["#properties", "#about", "#contact"].includes(destination.hash);
+      ["#home", "#properties", "#about", "#contact"].includes(destination.hash);
 
     if (
       destination.origin === current.origin &&
