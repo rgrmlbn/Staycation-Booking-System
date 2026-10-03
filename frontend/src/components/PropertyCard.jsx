@@ -1,32 +1,61 @@
-import { FaMapMarkerAlt, FaStar, FaUsers } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaBed,
+  FaMapMarkerAlt,
+  FaStar,
+  FaUsers,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80";
+
+function formatStatus(status) {
+  return status?.replaceAll("_", " ").toLowerCase() || "Status unavailable";
+}
 
 export default function PropertyCard({
+  id,
   title,
+  bedrooms,
   maxGuests,
   address,
+  status,
+  imageUrls,
   reviewScore,
-  image,
+  reviewCount,
 }) {
-  const imageUrl =
-    image ??
-    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80";
+  const imageUrl = imageUrls?.[0] || FALLBACK_IMAGE;
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded border border-[var(--color-mocha)] bg-[var(--color-white)] shadow-[var(--shadow-sm)]">
-      <div className="mb-6 overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={`${title} staycation home`}
-          className="h-32 w-full object-cover"
-        />
-      </div>
+      <img
+        src={imageUrl}
+        alt={`${title} staycation home`}
+        className="h-48 w-full object-cover"
+      />
 
-      <div className="px-6 pb-6">
-        <h2 className="text-xl font-bold text-[var(--color-bark-dark)]">
-          {title}
-        </h2>
+      <div className="flex flex-1 flex-col p-6">
+        <div className="flex min-h-14 items-start justify-between gap-3">
+          <h2 className="line-clamp-2 text-xl font-bold text-[var(--color-bark-dark)]">
+            {title}
+          </h2>
+          <span className="shrink-0 rounded-full bg-[var(--color-taste)] px-3 py-1 text-xs font-semibold capitalize text-[var(--color-bark)]">
+            {formatStatus(status)}
+          </span>
+        </div>
 
         <dl className="mt-5 space-y-3 text-sm text-[var(--color-graph)]">
+          <div className="flex items-center gap-3">
+            <FaBed
+              aria-hidden="true"
+              className="shrink-0 text-[var(--color-sun)]"
+            />
+            <div>
+              <dt className="sr-only">Bedrooms</dt>
+              <dd>{bedrooms ?? "—"} bedrooms</dd>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <FaUsers
               aria-hidden="true"
@@ -34,7 +63,7 @@ export default function PropertyCard({
             />
             <div>
               <dt className="sr-only">Max guests</dt>
-              <dd>Up to {maxGuests} guests</dd>
+              <dd>Up to {maxGuests ?? "—"} guests</dd>
             </div>
           </div>
           <div className="flex items-start gap-3">
@@ -44,20 +73,35 @@ export default function PropertyCard({
             />
             <div>
               <dt className="sr-only">Address</dt>
-              <dd>{address}</dd>
+              <dd className="line-clamp-2 min-h-10">
+                {address || "Address unavailable"}
+              </dd>
             </div>
           </div>
         </dl>
 
-        <div className="mt-5 flex items-center gap-1">
-          <FaStar aria-hidden="true" className="text-[var(--color-sand)]" />
-          <span className="font-bold text-[var(--color-bark-dark)]">
-            {reviewScore}
+        <div className="mt-1 mb-3 flex min-h-7 items-center gap-1.5 text-base">
+          <FaStar
+            aria-hidden="true"
+            className="shrink-0 text-lg text-[var(--color-sand)]"
+          />
+          <span className="font-bold leading-none text-[var(--color-bark-dark)]">
+            {reviewScore == null ? "New" : reviewScore.toFixed(1)}
           </span>
-          <span className="text-sm text-[var(--color-graph)]">
-            Review score
+          <span className="leading-none text-[var(--color-graph)]">
+            {reviewCount > 0
+              ? `(${reviewCount} ${reviewCount === 1 ? "review" : "reviews"})`
+              : "No reviews yet"}
           </span>
         </div>
+
+        <Link
+          to={`/properties/${id}`}
+          className="mt-auto inline-flex min-h-11 items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-3 text-sm font-bold text-[var(--color-white)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-bark-dark)]"
+        >
+          View property
+          <FaArrowRight aria-hidden="true" className="-rotate-45" />
+        </Link>
       </div>
     </article>
   );
