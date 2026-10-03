@@ -1,8 +1,8 @@
-import { FaArrowUp, FaSun } from "react-icons/fa";
+import { FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export const AUTH_INPUT_CLASS =
-  "w-full rounded border-2 border-[var(--color-bark)] bg-[var(--color-white)] px-3.5 py-3 text-sm text-[var(--color-bark-dark)] placeholder:text-[var(--color-graph)]/70 outline-none focus:border-[var(--color-sand)] focus:ring-2 focus:ring-[var(--color-sand)]";
+  "w-full rounded border-2 border-[var(--color-bark)] bg-[var(--color-white)] px-3.5 py-3 text-sm text-[var(--color-bark-dark)] placeholder:text-[var(--color-graph)]/70 outline-none focus:border-[var(--color-sand)] focus:ring-2 focus:ring-[var(--color-sand)] aria-[invalid=true]:border-red-600 aria-[invalid=true]:focus:border-red-600 aria-[invalid=true]:focus:ring-red-200";
 
 export function AuthField({ id, label, error, children }) {
   return (
@@ -81,7 +81,7 @@ export default function AuthLayout({
       >
         <div className="relative z-10 max-w-lg">
           <div className="mb-6 flex size-12 items-center justify-center rounded bg-[var(--color-sand)] text-[var(--color-bark-dark)]">
-            <FaSun aria-hidden="true" size={25} />
+            <FaSun aria-hidden="true" size={30} />
           </div>
           <p className="text-xs font-bold uppercase text-[var(--color-sand)]">
             A little time away goes a long way
@@ -93,13 +93,6 @@ export default function AuthLayout({
             Find a stay that fits your plans, whether it is a few hours or a few
             days.
           </p>
-          <Link
-            to="/"
-            className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-sand)] hover:text-white"
-          >
-            Explore staycations
-            <FaArrowUp aria-hidden="true" />
-          </Link>
         </div>
         <div
           aria-hidden="true"

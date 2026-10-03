@@ -1,5 +1,6 @@
 import { FaArrowLeft, FaBed, FaMapMarkerAlt, FaStar, FaUsers } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
+import { IoBookmark } from "react-icons/io5";
 import PROPERTIES from "../../data/properties";
 
 const FALLBACK_IMAGE =
@@ -161,6 +162,27 @@ export default function PropertyDetail() {
                   No check-in options listed.
                 </p>
               )}
+            </section>
+
+            <section className="mt-10 flex flex-col gap-4 border-t border-[var(--color-mocha)] pt-8 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-[var(--color-graph)]">
+                  {property.checkInSlots?.length
+                    ? `From ${formatPrice(
+                        Math.min(
+                          ...property.checkInSlots.map((slot) => slot.price),
+                        ),
+                      )} per stay`
+                    : "Check-in options unavailable"}
+                </p>
+              </div>
+              <Link
+                to={`/guest/bookings?propertyId=${encodeURIComponent(property.id)}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-6 py-3 text-sm font-bold text-[var(--color-white)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-bark-dark)]"
+              >
+                Book now
+                <IoBookmark aria-hidden="true" size={18} />
+              </Link>
             </section>
           </div>
         </div>

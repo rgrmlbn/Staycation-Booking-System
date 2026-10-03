@@ -1,6 +1,12 @@
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
+import { FaMessage } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
-import { AUTH_INPUT_CLASS, AuthField } from "../../auth/AuthLayout";
+import { AUTH_INPUT_CLASS, AuthField } from "../../pages/auth/AuthLayout";
+import {
+  EMAIL_VALIDATION,
+  MESSAGE_VALIDATION,
+  REQUIRED_VALIDATION,
+} from "../../utils/validation";
 
 export default function ContactSection({
   eyebrow = "Contact",
@@ -11,7 +17,7 @@ export default function ContactSection({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const onSubmit = ({ name, email, message }) => {
     const emailSubject = encodeURIComponent(`Contact request from ${name}`);
@@ -51,6 +57,7 @@ export default function ContactSection({
               >
                 <FaPhoneAlt
                   aria-hidden="true"
+                  size={18}
                   className="shrink-0 text-lg text-[var(--color-sun)]"
                 />
                 +63 (2) 8123-4567
@@ -61,6 +68,7 @@ export default function ContactSection({
               >
                 <FaEnvelope
                   aria-hidden="true"
+                  size={18}
                   className="shrink-0 text-lg text-[var(--color-sun)]"
                 />
                 roomance@gmail.com
@@ -68,6 +76,7 @@ export default function ContactSection({
               <div className="inline-flex items-center gap-3 text-base font-semibold text-[var(--color-bark-dark)] hover:text-[var(--color-sand)] md:text-lg">
                 <FaMapMarkerAlt
                   aria-hidden="true"
+                  size={18}
                   className="shrink-0 text-lg text-[var(--color-sun)]"
                 />
                 Makati City, Philippines
@@ -95,7 +104,7 @@ export default function ContactSection({
                   aria-describedby={
                     errors.name ? "contact-name-error" : undefined
                   }
-                  {...register("name", { required: "Name is required" })}
+                  {...register("name", REQUIRED_VALIDATION("Name"))}
                   className={AUTH_INPUT_CLASS}
                 />
               </AuthField>
@@ -113,13 +122,7 @@ export default function ContactSection({
                   aria-describedby={
                     errors.email ? "contact-email-error" : undefined
                   }
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Enter a valid email address",
-                    },
-                  })}
+                  {...register("email", EMAIL_VALIDATION)}
                   className={AUTH_INPUT_CLASS}
                 />
               </AuthField>
@@ -137,13 +140,7 @@ export default function ContactSection({
                 aria-describedby={
                   errors.message ? "contact-message-error" : undefined
                 }
-                {...register("message", {
-                  required: "Message is required",
-                  minLength: {
-                    value: 10,
-                    message: "Message must be at least 10 characters",
-                  },
-                })}
+                {...register("message", MESSAGE_VALIDATION)}
                 className={`${AUTH_INPUT_CLASS} resize-y`}
               />
             </AuthField>
@@ -153,9 +150,10 @@ export default function ContactSection({
               </p>
               <button
                 type="submit"
-                className="flex shrink-0 cursor-pointer items-center justify-center rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
+                className="flex shrink-0 cursor-pointer flex items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
               >
                 Send Message
+                <FaMessage aria-hidden="true" size={16} />
               </button>
             </div>
           </form>

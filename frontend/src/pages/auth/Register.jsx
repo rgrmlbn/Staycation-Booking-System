@@ -2,9 +2,17 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaUserPlus } from "react-icons/fa";
 import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
-
-const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+import {
+  ADDRESS_VALIDATION,
+  CONTACT_NUMBER_VALIDATION,
+  DATE_OF_BIRTH_VALIDATION,
+  EMAIL_VALIDATION,
+  NAME_VALIDATION,
+  PASSWORD_VALIDATION,
+  REQUIRED_VALIDATION,
+} from "../../utils/validation";
 
 export default function Register({ accountType = "GUEST" }) {
   const isHost = accountType === "HOST";
@@ -15,7 +23,7 @@ export default function Register({ accountType = "GUEST" }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -63,17 +71,7 @@ export default function Register({ accountType = "GUEST" }) {
               autoComplete="name"
               aria-invalid={Boolean(errors.name)}
               aria-describedby={errors.name ? "name-error" : undefined}
-              {...register("name", {
-                required: "Name is required",
-                minLength: {
-                  value: 5,
-                  message: "Name must be between 5 and 50 characters",
-                },
-                maxLength: {
-                  value: 50,
-                  message: "Name must be between 5 and 50 characters",
-                },
-              })}
+              {...register("name", NAME_VALIDATION)}
               className={AUTH_INPUT_CLASS}
             />
           </AuthField>
@@ -86,13 +84,7 @@ export default function Register({ accountType = "GUEST" }) {
               autoComplete="email"
               aria-invalid={Boolean(errors.email)}
               aria-describedby={errors.email ? "email-error" : undefined}
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Provide a valid email",
-                },
-              })}
+              {...register("email", EMAIL_VALIDATION)}
               className={AUTH_INPUT_CLASS}
             />
           </AuthField>
@@ -102,7 +94,7 @@ export default function Register({ accountType = "GUEST" }) {
               id="gender"
               aria-invalid={Boolean(errors.gender)}
               aria-describedby={errors.gender ? "gender-error" : undefined}
-              {...register("gender", { required: "Gender is required" })}
+              {...register("gender", REQUIRED_VALIDATION("Gender"))}
               className={AUTH_INPUT_CLASS}
               defaultValue=""
             >
@@ -129,11 +121,10 @@ export default function Register({ accountType = "GUEST" }) {
               aria-describedby={
                 errors.dateOfBirth ? "dateOfBirth-error" : undefined
               }
-              {...register("dateOfBirth", {
-                required: "Birthdate is required",
-                validate: (value) =>
-                  value < today || "Provide a valid birthdate",
-              })}
+              {...register(
+                "dateOfBirth",
+                DATE_OF_BIRTH_VALIDATION(today),
+              )}
               className={AUTH_INPUT_CLASS}
             />
           </AuthField>
@@ -143,8 +134,14 @@ export default function Register({ accountType = "GUEST" }) {
             label="Contact number"
             error={errors.contactNumber?.message}
           >
-            <div className="flex rounded border-2 border-[var(--color-bark)] bg-[var(--color-white)] focus-within:border-[var(--color-sand)] focus-within:ring-2 focus-within:ring-[var(--color-sand)]">
-              <span className="flex items-center border-r border-[var(--color-bark)] px-3 text-sm text-[var(--color-graph)]">
+            <div
+              className={`flex rounded border-2 bg-[var(--color-white)] focus-within:ring-2 ${
+                errors.contactNumber
+                  ? "border-red-600 focus-within:border-red-600 focus-within:ring-red-200"
+                  : "border-[var(--color-bark)] focus-within:border-[var(--color-sand)] focus-within:ring-[var(--color-sand)]"
+              }`}
+            >
+              <span className="flex items-center border-r border-inherit px-3 text-sm text-[var(--color-graph)]">
                 +63
               </span>
               <input
@@ -157,13 +154,7 @@ export default function Register({ accountType = "GUEST" }) {
                 aria-describedby={
                   errors.contactNumber ? "contactNumber-error" : undefined
                 }
-                {...register("contactNumber", {
-                  required: "Contact number is required",
-                  pattern: {
-                    value: /^9\d{9}$/,
-                    message: "Invalid phone number format",
-                  },
-                })}
+                {...register("contactNumber", CONTACT_NUMBER_VALIDATION)}
                 className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-[var(--color-bark-dark)] placeholder:text-[var(--color-graph)]/70 outline-none"
               />
             </div>
@@ -177,7 +168,7 @@ export default function Register({ accountType = "GUEST" }) {
             <input
               type="hidden"
               {...register("role", {
-                required: "User Role is required",
+                ...REQUIRED_VALIDATION("User Role"),
                 value: accountType,
               })}
             />
@@ -202,17 +193,7 @@ export default function Register({ accountType = "GUEST" }) {
             placeholder="Street, city, province"
             aria-invalid={Boolean(errors.address)}
             aria-describedby={errors.address ? "address-error" : undefined}
-            {...register("address", {
-              required: "Address is required",
-              minLength: {
-                value: 8,
-                message: "Address must be between 8 and 80 characters",
-              },
-              maxLength: {
-                value: 80,
-                message: "Address must be between 8 and 80 characters",
-              },
-            })}
+            {...register("address", ADDRESS_VALIDATION)}
             className={`${AUTH_INPUT_CLASS} resize-y`}
           />
         </AuthField>
@@ -229,14 +210,7 @@ export default function Register({ accountType = "GUEST" }) {
             autoComplete="new-password"
             aria-invalid={Boolean(errors.password)}
             aria-describedby={errors.password ? "password-error" : undefined}
-            {...register("password", {
-              required: "Password is required",
-              pattern: {
-                value: PASSWORD_PATTERN,
-                message:
-                  "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
-              },
-            })}
+            {...register("password", PASSWORD_VALIDATION)}
             className={AUTH_INPUT_CLASS}
           />
         </AuthField>
@@ -249,9 +223,11 @@ export default function Register({ accountType = "GUEST" }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full cursor-pointer items-center justify-center rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
         >
+          
           {isSubmitting ? "Creating account..." : "Create account"}
+          <FaUserPlus aria-hidden="true" size={18} />
         </button>
       </form>
     </AuthLayout>

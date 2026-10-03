@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import GuestPage from "../pages/guest/GuestPage";
 import GuestLogin from "../pages/guest/GuestLogin";
 import GuestRegister from "../pages/guest/GuestRegister";
+import GuestBookings from "../pages/guest/GuestBookings";
 import PropertyList from "../pages/property/PropertyList";
 import PropertyDetail from "../pages/property/PropertyDetail";
 import HostPage from "../pages/host/HostPage";
@@ -18,6 +19,7 @@ export default function AppRoutes() {
       <Route path="/register" element={<GuestRegister />} />
       <Route path="/properties" element={<PropertyList />} />
       <Route path="/properties/:id" element={<PropertyDetail />} />
+      <Route path="/guest/bookings" element={<GuestBookings />} />
       <Route path="/host" element={<HostPage />} />
       <Route path="/host/properties" element={<HostProperties />} />
       <Route path="/host/login" element={<HostLogin />} />

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FaSignInAlt } from "react-icons/fa";
 
 export default function HostProperties() {
   return (
@@ -15,9 +16,10 @@ export default function HostProperties() {
         </p>
         <Link
           to="/host/login"
-          className="mt-8 inline-flex min-h-12 items-center rounded bg-[var(--color-bark)] px-5 py-3 text-sm font-bold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
+          className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-3 text-sm font-bold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
         >
           Host sign in
+          <FaSignInAlt aria-hidden="true" size={18}/>
         </Link>
       </section>
     </main>

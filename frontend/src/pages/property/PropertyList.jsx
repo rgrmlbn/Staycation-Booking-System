@@ -1,4 +1,4 @@
-import PropertyGrid from "../../components/PropertyGrid";
+import PropertyGrid from "../../components/property/PropertyGrid";
 
 export default function PropertyList() {
   return (

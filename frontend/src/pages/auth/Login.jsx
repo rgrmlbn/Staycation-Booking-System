@@ -2,7 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaSignInAlt } from "react-icons/fa";
 import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
+import {
+  EMAIL_VALIDATION,
+  REQUIRED_VALIDATION,
+} from "../../utils/validation";
 
 export default function Login({ audience = "guest" }) {
   const isHost = audience === "host";
@@ -13,7 +18,7 @@ export default function Login({ audience = "guest" }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const onSubmit = async (values) => {
     setRequestError("");
@@ -59,13 +64,7 @@ export default function Login({ audience = "guest" }) {
             autoComplete="email"
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? "email-error" : undefined}
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Provide a valid email",
-              },
-            })}
+            {...register("email", EMAIL_VALIDATION)}
             className={AUTH_INPUT_CLASS}
           />
         </AuthField>
@@ -82,7 +81,7 @@ export default function Login({ audience = "guest" }) {
             autoComplete="current-password"
             aria-invalid={Boolean(errors.password)}
             aria-describedby={errors.password ? "password-error" : undefined}
-            {...register("password", { required: "Password is required" })}
+            {...register("password", REQUIRED_VALIDATION("Password"))}
             className={AUTH_INPUT_CLASS}
           />
         </AuthField>
@@ -95,9 +94,11 @@ export default function Login({ audience = "guest" }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full cursor-pointer items-center justify-center rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
         >
+          
           {isSubmitting ? "Signing in..." : "Sign in"}
+          <FaSignInAlt aria-hidden="true" size={18}/>
         </button>
       </form>
     </AuthLayout>

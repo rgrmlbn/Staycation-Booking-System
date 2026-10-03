@@ -1,6 +1,7 @@
-import { FaArrowRight, FaHeart, FaHome, FaUsers } from "react-icons/fa";
+import { FaUserPlus, FaHeart, FaHome, FaUsers } from "react-icons/fa";
+import { RiLandscapeFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import ContactSection from "../home/sections/ContactSection";
+import ContactSection from "../../components/sections/ContactSection";
 
 export default function HostPage() {
   return (
@@ -31,14 +32,14 @@ export default function HostPage() {
                 className="inline-flex min-h-12 items-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
               >
                 Create a host account
-                <FaArrowRight aria-hidden="true" size={18} />
+                <FaUserPlus aria-hidden="true" size={18} />
               </Link>
             </div>
           </div>
 
           <aside className="border-t border-white/20 pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
             <div className="flex size-12 items-center justify-center rounded bg-[var(--color-sand)] text-[var(--color-bark-dark)]">
-              <FaHome aria-hidden="true" size={25} />
+              <FaHome aria-hidden="true" size={30} />
             </div>
             <h2 className="mt-5 text-2xl font-bold">
               A good stay starts at home.
@@ -70,7 +71,7 @@ export default function HostPage() {
             className="mt-8 inline-flex min-h-12 items-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
           >
             View your properties
-            <FaArrowRight aria-hidden="true" />
+            <RiLandscapeFill aria-hidden="true" size={18} />
           </Link>
         </div>
       </section>
@@ -94,6 +95,7 @@ export default function HostPage() {
             <article>
               <FaHome
                 aria-hidden="true"
+                size={28}
                 className="text-2xl text-[var(--color-sun)]"
               />
               <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
@@ -106,6 +108,7 @@ export default function HostPage() {
             <article>
               <FaUsers
                 aria-hidden="true"
+                size={28}
                 className="text-2xl text-[var(--color-sun)]"
               />
               <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
@@ -117,7 +120,8 @@ export default function HostPage() {
             </article>
             <article>
               <FaHeart
-                aria-hidden="true"
+                aria-hidden="true"  
+                size={28}
                 className="text-2xl text-[var(--color-sun)]"
               />
               <h3 className="mt-4 text-lg font-bold text-[var(--color-bark-dark)]">
@@ -131,11 +135,7 @@ export default function HostPage() {
         </div>
       </section>
 
-      <ContactSection
-        eyebrow="Host support"
-        title="We’re here to help you get started."
-        description="Questions about hosting on Roomance? Reach out to our team."
-      />
+      <ContactSection />
     </main>
   );
 }

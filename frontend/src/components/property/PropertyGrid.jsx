@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropertyCard from "./PropertyCard";
-import PROPERTIES from "../data/properties";
+import PROPERTIES from "../../data/properties";
 
 export default function PropertyGrid({
   pageSize,
