@@ -6,24 +6,32 @@ const PROPERTIES = [
     maxGuests: 2,
     address: "Poblacion, Makati City",
     reviewScore: "4.9 / 5",
+    image:
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
   },
   {
     title: "The Greenhouse in Tagaytay",
     maxGuests: 6,
     address: "Maharlika West, Tagaytay",
     reviewScore: "4.8 / 5",
+    image:
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80",
   },
   {
     title: "Coastal Calm in Batangas",
     maxGuests: 8,
     address: "Laiya, San Juan, Batangas",
     reviewScore: "4.7 / 5",
+    image:
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80",
   },
   {
     title: "Quiet Corner of Antipolo",
     maxGuests: 4,
     address: "Dela Paz, Antipolo City",
     reviewScore: "4.9 / 5",
+    image:
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=80",
   },
 ];
 

@@ -90,6 +90,7 @@ export default function ContactSection({
                   id="contact-name"
                   type="text"
                   autoComplete="name"
+                  placeholder="Enter your full name"
                   aria-invalid={Boolean(errors.name)}
                   aria-describedby={
                     errors.name ? "contact-name-error" : undefined
@@ -131,6 +132,7 @@ export default function ContactSection({
               <textarea
                 id="contact-message"
                 rows="6"
+                placeholder="Send us a message"
                 aria-invalid={Boolean(errors.message)}
                 aria-describedby={
                   errors.message ? "contact-message-error" : undefined

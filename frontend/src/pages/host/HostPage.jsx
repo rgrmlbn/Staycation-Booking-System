@@ -37,7 +37,7 @@ export default function HostPage() {
           </div>
 
           <aside className="border-t border-white/20 pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
-            <div className="flex size-12 items-center justify-center rounded bg-[var(--color-sun)] text-[var(--color-bark-dark)]">
+            <div className="flex size-12 items-center justify-center rounded bg-[var(--color-sand)] text-[var(--color-bark-dark)]">
               <FaHome aria-hidden="true" size={25} />
             </div>
             <h2 className="mt-5 text-2xl font-bold">

@@ -5,48 +5,59 @@ export default function PropertyCard({
   maxGuests,
   address,
   reviewScore,
+  image,
 }) {
+  const imageUrl =
+    image ??
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80";
+
   return (
-    <article className="flex h-full flex-col rounded border border-[var(--color-mocha)] bg-[var(--color-white)] p-6 shadow-[var(--shadow-sm)]">
-      <div className="mb-6 flex h-32 items-end rounded bg-[var(--color-bark-dark)] p-5 text-[var(--color-white)] [background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.08)_0px,rgba(255,255,255,0.08)_1px,transparent_1px,transparent_16px)]">
-        <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-sand)]">
-          Staycation home
-        </span>
+    <article className="flex h-full flex-col overflow-hidden rounded border border-[var(--color-mocha)] bg-[var(--color-white)] shadow-[var(--shadow-sm)]">
+      <div className="mb-6 overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={`${title} staycation home`}
+          className="h-32 w-full object-cover"
+        />
       </div>
 
-      <h2 className="text-xl font-bold text-[var(--color-bark-dark)]">
-        {title}
-      </h2>
+      <div className="px-6 pb-6">
+        <h2 className="text-xl font-bold text-[var(--color-bark-dark)]">
+          {title}
+        </h2>
 
-      <dl className="mt-5 space-y-3 text-sm text-[var(--color-graph)]">
-        <div className="flex items-center gap-3">
-          <FaUsers
-            aria-hidden="true"
-            className="shrink-0 text-[var(--color-sun)]"
-          />
-          <div>
-            <dt className="sr-only">Max guests</dt>
-            <dd>Up to {maxGuests} guests</dd>
+        <dl className="mt-5 space-y-3 text-sm text-[var(--color-graph)]">
+          <div className="flex items-center gap-3">
+            <FaUsers
+              aria-hidden="true"
+              className="shrink-0 text-[var(--color-sun)]"
+            />
+            <div>
+              <dt className="sr-only">Max guests</dt>
+              <dd>Up to {maxGuests} guests</dd>
+            </div>
           </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <FaMapMarkerAlt
-            aria-hidden="true"
-            className="mt-0.5 shrink-0 text-[var(--color-sun)]"
-          />
-          <div>
-            <dt className="sr-only">Address</dt>
-            <dd>{address}</dd>
+          <div className="flex items-start gap-3">
+            <FaMapMarkerAlt
+              aria-hidden="true"
+              className="mt-0.5 shrink-0 text-[var(--color-sun)]"
+            />
+            <div>
+              <dt className="sr-only">Address</dt>
+              <dd>{address}</dd>
+            </div>
           </div>
-        </div>
-      </dl>
+        </dl>
 
-      <div className="mt-5 flex items-center gap-1">
-        <FaStar aria-hidden="true" className="text-[var(--color-sand)]" />
-        <span className="font-bold text-[var(--color-bark-dark)]">
-          {reviewScore}
-        </span>
-        <span className="text-sm text-[var(--color-graph)]">Review score</span>
+        <div className="mt-5 flex items-center gap-1">
+          <FaStar aria-hidden="true" className="text-[var(--color-sand)]" />
+          <span className="font-bold text-[var(--color-bark-dark)]">
+            {reviewScore}
+          </span>
+          <span className="text-sm text-[var(--color-graph)]">
+            Review score
+          </span>
+        </div>
       </div>
     </article>
   );

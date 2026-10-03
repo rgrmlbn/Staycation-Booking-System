@@ -16,10 +16,19 @@ function App() {
   }, [isLoading, location.key]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (!location.hash) return undefined;
 
     const sectionId = decodeURIComponent(location.hash.slice(1));
     const frame = window.requestAnimationFrame(() => {
+      if (sectionId === "home") {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        return;
+      }
+
       document.getElementById(sectionId)?.scrollIntoView({
         behavior: "smooth",
         block: "start",

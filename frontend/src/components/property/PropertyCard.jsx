@@ -5,13 +5,20 @@ export default function PropertyCard({
   maxGuests,
   address,
   reviewScore,
+  image,
 }) {
+  const imageUrl =
+    image ??
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80";
+
   return (
     <article className="flex h-full flex-col rounded border border-[var(--color-mocha)] bg-[var(--color-white)] p-6 shadow-[var(--shadow-sm)]">
-      <div className="mb-6 flex h-32 items-end rounded bg-[var(--color-bark-dark)] p-5 text-[var(--color-white)] [background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.08)_0px,rgba(255,255,255,0.08)_1px,transparent_1px,transparent_16px)]">
-        <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-sand)]">
-          Staycation home
-        </span>
+      <div className="mb-6 overflow-hidden rounded">
+        <img
+          src={imageUrl}
+          alt={`${title} staycation home`}
+          className="h-32 w-full object-cover"
+        />
       </div>
 
       <h2 className="text-xl font-bold text-[var(--color-bark-dark)]">
