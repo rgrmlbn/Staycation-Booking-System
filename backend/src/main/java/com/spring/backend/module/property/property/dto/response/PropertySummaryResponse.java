@@ -12,7 +12,6 @@ public class PropertySummaryResponse {
 
     private Long id;
     private Long hostId;
-    private String hostName;
     private String title;
 
     private Integer bedrooms;

@@ -101,7 +101,7 @@ export default function PageTransitionLoader({ children }) {
                 aria-hidden="true"
                 className="mt-5 h-1 w-20 overflow-hidden rounded-full bg-[var(--color-mocha)]"
               >
-                <span className="block h-full w-1/2 animate-pulse rounded-full bg-[var(--color-sun)]" />
+                <span className="loader-progress-fill block h-full rounded-full bg-[var(--color-sun)]" />
               </span>
             </div>
             <div className="h-1.5 bg-[var(--color-sun)]" />

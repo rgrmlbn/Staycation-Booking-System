@@ -79,6 +79,20 @@
 
 html { scroll-behavior: smooth; }
 
+@keyframes loader-progress-fill {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.loader-progress-fill {
+  animation: loader-progress-fill 850ms ease-out forwards;
+}
+
 body {
   font-family:      var(--font-body);
   color:            var(--color-ink);

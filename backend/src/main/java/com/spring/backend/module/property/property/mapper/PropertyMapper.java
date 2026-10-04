@@ -43,7 +43,6 @@ public class PropertyMapper {
         return PropertySummaryResponse.builder()
                 .id(entity.getId())
                 .hostId(entity.getUser().getId())
-                .hostName(entity.getUser().getName())
                 .title(entity.getTitle())
                 .bedrooms(entity.getBedrooms())
                 .maxGuests(entity.getMaxGuests())
