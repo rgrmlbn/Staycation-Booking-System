@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/icons/logocon-white.png";
 
@@ -18,7 +19,32 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
-  const isHostArea = useLocation().pathname.startsWith("/host");
+  const location = useLocation();
+  const isHostArea = location.pathname.startsWith("/host");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!location.hash) return undefined;
+
+    const sectionId = decodeURIComponent(location.hash.slice(1));
+    const frame = window.requestAnimationFrame(() => {
+      if (sectionId === "home") {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        return;
+      }
+
+      document.getElementById(sectionId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.hash, location.pathname]);
+
   const homeLink = {
     ...NAV_LINKS[0],
     to: isHostArea ? "/host#home" : "/#home",
