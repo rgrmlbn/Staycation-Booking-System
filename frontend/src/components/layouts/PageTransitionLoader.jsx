@@ -13,6 +13,17 @@ export default function PageTransitionLoader({ children }) {
     return () => window.clearTimeout(timeout);
   }, [isLoading, location.key]);
 
+  useEffect(() => {
+    if (!isLoading) return undefined;
+
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+    };
+  }, [isLoading]);
+
   const handleNavigationClick = (event) => {
     if (!(event.target instanceof Element)) return;
 
