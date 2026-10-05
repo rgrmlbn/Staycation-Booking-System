@@ -17,7 +17,7 @@ export default function ContactSection({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onChange", shouldFocusError: false });
 
   const onSubmit = ({ name, email, message }) => {
     const emailSubject = encodeURIComponent(`Contact request from ${name}`);

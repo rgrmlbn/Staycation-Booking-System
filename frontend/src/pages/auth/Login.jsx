@@ -18,7 +18,7 @@ export default function Login({ audience = "guest" }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onChange", shouldFocusError: false });
 
   const onSubmit = async (values) => {
     setRequestError("");

@@ -23,7 +23,7 @@ export default function Register({ accountType = "GUEST" }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onChange", shouldFocusError: false });
 
   const today = new Date().toISOString().slice(0, 10);
 

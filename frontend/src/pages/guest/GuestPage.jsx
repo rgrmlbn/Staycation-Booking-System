@@ -46,6 +46,7 @@ export default function GuestPage() {
   } = useForm({
     defaultValues: { place: "", guests: 1, rooms: 1 },
     mode: "onChange",
+    shouldFocusError: false,
   });
 
   return (
