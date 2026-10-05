@@ -4,14 +4,21 @@ import logo from "../../assets/icons/logocon-white.png";
 
 export default function PageTransitionLoader({ children }) {
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(true);
+  const isHomeSectionNavigation =
+    ["/", "/host"].includes(location.pathname) &&
+    ["#home", "#properties", "#about", "#contact"].includes(location.hash);
+  const routeKey = `${location.pathname}${location.search}${
+    isHomeSectionNavigation ? "" : location.hash
+  }`;
+  const [loadedRouteKey, setLoadedRouteKey] = useState(null);
+  const isLoading = loadedRouteKey !== routeKey;
 
   useEffect(() => {
     if (!isLoading) return undefined;
 
-    const timeout = window.setTimeout(() => setIsLoading(false), 850);
+    const timeout = window.setTimeout(() => setLoadedRouteKey(routeKey), 850);
     return () => window.clearTimeout(timeout);
-  }, [isLoading, location.key]);
+  }, [isLoading, routeKey]);
 
   useEffect(() => {
     if (!isLoading) return undefined;
@@ -24,36 +31,9 @@ export default function PageTransitionLoader({ children }) {
     };
   }, [isLoading]);
 
-  const handleNavigationClick = (event) => {
-    if (!(event.target instanceof Element)) return;
-
-    const link = event.target.closest("a[href]");
-    if (!link || link.target || link.hasAttribute("download")) return;
-
-    const destination = new URL(link.href, window.location.href);
-    const current = new URL(window.location.href);
-    const isSameLocation =
-      destination.origin === current.origin &&
-      destination.pathname === current.pathname &&
-      destination.search === current.search &&
-      destination.hash === current.hash;
-    const isHomeSectionNavigation =
-      current.pathname === destination.pathname &&
-      ["/", "/host"].includes(current.pathname) &&
-      ["#home", "#properties", "#about", "#contact"].includes(destination.hash);
-
-    if (
-      destination.origin === current.origin &&
-      !isSameLocation &&
-      !isHomeSectionNavigation
-    ) {
-      setIsLoading(true);
-    }
-  };
-
   return (
-    <div onClickCapture={handleNavigationClick}>
-      {children}
+    <div>
+      {!isLoading && children}
       {isLoading && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--color-cream)]/95 p-6 backdrop-blur-sm"
