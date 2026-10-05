@@ -1,4 +1,6 @@
-import { Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
+import Footer from "../components/layouts/Footer";
+import NavBar from "../components/layouts/NavBar";
 import GuestPage from "../pages/guest/GuestPage";
 import GuestLogin from "../pages/guest/GuestLogin";
 import GuestRegister from "../pages/guest/GuestRegister";
@@ -11,19 +13,31 @@ import HostRegister from "../pages/host/HostRegister";
 import HostProperties from "../pages/host/HostProperties";
 import UnderConstruction from "../pages/under-construction/UnderConstruction";
 
+function AppLayout() {
+  return (
+    <>
+      <NavBar />
+      <Outlet />
+      <Footer />
+    </>
+  );
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<GuestPage />} />
-      <Route path="/login" element={<GuestLogin />} />
-      <Route path="/register" element={<GuestRegister />} />
-      <Route path="/properties" element={<PropertyList />} />
-      <Route path="/properties/:id" element={<PropertyDetail />} />
-      <Route path="/guest/bookings" element={<GuestBookings />} />
-      <Route path="/host" element={<HostPage />} />
-      <Route path="/host/properties" element={<HostProperties />} />
-      <Route path="/host/login" element={<HostLogin />} />
-      <Route path="/host/register" element={<HostRegister />} />
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<GuestPage />} />
+        <Route path="/login" element={<GuestLogin />} />
+        <Route path="/register" element={<GuestRegister />} />
+        <Route path="/properties" element={<PropertyList />} />
+        <Route path="/properties/:id" element={<PropertyDetail />} />
+        <Route path="/guest/bookings" element={<GuestBookings />} />
+        <Route path="/host" element={<HostPage />} />
+        <Route path="/host/properties" element={<HostProperties />} />
+        <Route path="/host/login" element={<HostLogin />} />
+        <Route path="/host/register" element={<HostRegister />} />
+      </Route>
       <Route path="/host/contact" element={<UnderConstruction />} />
       <Route path="*" element={<UnderConstruction />} />
     </Routes>

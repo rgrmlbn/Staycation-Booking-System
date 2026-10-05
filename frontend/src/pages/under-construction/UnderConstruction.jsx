@@ -1,9 +1,9 @@
-import { FaTools } from "react-icons/fa";
+import { FaArrowRight, FaTools } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function UnderConstruction() {
   return (
-    <main className="flex min-h-[75vh] items-center justify-center bg-[var(--color-cream)] px-6 pt-16 pb-[calc(5rem+env(safe-area-inset-bottom))] text-center md:py-16">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--color-cream)] px-6 py-16 text-center">
       <div className="flex max-w-xl flex-col items-center">
         <div className="mb-6 flex size-25 items-center justify-center rounded-full bg-[var(--color-sun)]/20 text-[var(--color-sun-dark)]">
           <FaTools aria-hidden="true" size={50} />
@@ -20,9 +20,10 @@ export default function UnderConstruction() {
         </p>
         <Link
           to="/"
-          className="mt-8 inline-flex cursor-pointer items-center justify-center rounded bg-[var(--color-sun)] px-5 py-3 text-[15px] font-semibold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
+          className="mt-8 inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-[15px] font-semibold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
         >
           Back to Home
+          <FaArrowRight aria-hidden="true" size={14} />
         </Link>
       </div>
     </main>

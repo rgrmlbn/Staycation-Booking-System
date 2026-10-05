@@ -104,7 +104,6 @@ export default function PageTransitionLoader({ children }) {
                 <span className="loader-progress-fill block h-full rounded-full bg-[var(--color-sun)]" />
               </span>
             </div>
-            <div className="h-1.5 bg-[var(--color-sun)]" />
           </div>
         </div>
       )}
