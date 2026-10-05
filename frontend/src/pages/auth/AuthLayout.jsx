@@ -33,6 +33,7 @@ export default function AuthLayout({
   audienceText,
   audienceLinkText,
   audienceTo,
+  adminTo,
   children,
 }) {
   return (
@@ -69,6 +70,17 @@ export default function AuthLayout({
               {audienceLinkText}
             </Link>
           </p>
+          {adminTo && (
+            <p className="mt-2 text-sm text-[var(--color-graph)]">
+              Administrator?{" "}
+              <Link
+                to={adminTo}
+                className="font-bold text-[var(--color-bark-dark)] hover:text-[var(--color-sun)]"
+              >
+                Admin sign in
+              </Link>
+            </p>
+          )}
         </div>
       </section>
 

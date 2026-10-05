@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaSignInAlt } from "react-icons/fa";
 import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
+import authService from "../../services/authService";
 import {
   EMAIL_VALIDATION,
   REQUIRED_VALIDATION,
@@ -11,6 +11,7 @@ import {
 
 export default function Login({ audience = "guest" }) {
   const isHost = audience === "host";
+  const isAdmin = audience === "admin";
   const navigate = useNavigate();
   const location = useLocation();
   const [requestError, setRequestError] = useState("");
@@ -23,10 +24,15 @@ export default function Login({ audience = "guest" }) {
   const onSubmit = async (values) => {
     setRequestError("");
     try {
-      const { data } = await axios.post("/api/v1/auth/login", values);
-      sessionStorage.setItem("accessToken", data.accessToken);
-      sessionStorage.setItem("refreshToken", data.refreshToken);
-      navigate(isHost ? "/host" : "/", { replace: true });
+      const session = await authService.login(values, audience.toUpperCase());
+      const destinationByRole = {
+        GUEST: "/guest/dashboard",
+        HOST: "/host/dashboard",
+        ADMIN: "/admin/dashboard",
+      };
+      navigate(destinationByRole[session.role], {
+        replace: true,
+      });
     } catch (error) {
       setRequestError(
         error.response?.data?.message || "Unable to sign in. Please try again.",
@@ -36,19 +42,40 @@ export default function Login({ audience = "guest" }) {
 
   return (
     <AuthLayout
-      eyebrow={"Welcome back"}
-      title={isHost ? "Host sign in" : "Guest Sign in"}
-      description={
-        isHost
-          ? "Sign in to continue to your host space."
-          : "Pick up where your next staycation begins."
+      eyebrow={isAdmin ? "Administrator access" : "Welcome back"}
+      title={
+        isAdmin
+          ? "Admin sign in"
+          : isHost
+            ? "Host sign in"
+            : "Guest sign in"
       }
-      alternateText="Don't have an account yet?"
-      alternateLabel="Create an account"
-      alternateTo={isHost ? "/host/register" : "/register"}
-      audienceText={isHost ? "Are you a guest?" : "Are you a host?"}
-      audienceLinkText="Sign in here"
-      audienceTo={isHost ? "/login" : "/host/login"}
+      description={
+        isAdmin
+          ? "Sign in to manage the Roomance platform."
+          : isHost
+            ? "Sign in to continue to your host space."
+            : "Pick up where your next staycation begins."
+      }
+      alternateText={
+        isAdmin
+          ? "Need a guest account?"
+          : "Don't have an account yet?"
+      }
+      alternateLabel={isAdmin ? "Guest sign in" : "Create an account"}
+      alternateTo={
+        isAdmin ? "/login" : isHost ? "/host/register" : "/register"
+      }
+      audienceText={
+        isAdmin
+          ? "Need a host account?"
+          : isHost
+            ? "Are you a guest?"
+            : "Are you a host?"
+      }
+      audienceLinkText={isAdmin ? "Host sign in" : "Sign in here"}
+      audienceTo={isAdmin ? "/host/login" : isHost ? "/login" : "/host/login"}
+      adminTo={isAdmin ? undefined : "/admin/login"}
     >
       {location.state?.notice && (
         <p className="mb-5 rounded border border-[var(--color-palm)]/30 bg-[var(--color-palm)]/10 px-4 py-3 text-sm text-[var(--color-palm-dark)]">
@@ -96,9 +123,8 @@ export default function Login({ audience = "guest" }) {
           disabled={isSubmitting}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
         >
-          
           {isSubmitting ? "Signing in..." : "Sign in"}
-          <FaSignInAlt aria-hidden="true" size={18}/>
+          <FaSignInAlt aria-hidden="true" size={18} />
         </button>
       </form>
     </AuthLayout>

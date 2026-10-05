@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/icons/logocon-white.png";
+import AccountMenu from "./AccountMenu";
 
 import { TbArrowBigRightLineFilled } from "react-icons/tb";
 import {
@@ -9,7 +10,9 @@ import {
   FaInfoCircle,
   FaPhoneAlt,
   FaSignInAlt,
+  FaUserCircle,
 } from "react-icons/fa";
+import { useAuth } from "../../hooks/useAuth";
 
 const NAV_LINKS = [
   { label: "Home", to: "/", icon: FaHome },
@@ -20,7 +23,9 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const location = useLocation();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const isHostArea = location.pathname.startsWith("/host");
+  const loginPath = isHostArea ? "/host/login" : "/login";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -68,9 +73,9 @@ export default function Navbar() {
     homeLink,
     ...navLinks.slice(1),
     {
-      label: "Login",
-      to: isHostArea ? "/host/login" : "/login",
-      icon: FaSignInAlt,
+      label: isAuthenticated ? "Profile" : "Login",
+      to: isAuthenticated ? "/account/profile" : loginPath,
+      icon: isAuthenticated ? FaUserCircle : FaSignInAlt,
     },
   ];
 
@@ -105,20 +110,35 @@ export default function Navbar() {
             </nav>
 
             {/* CTA */}
-            <div className="hidden items-center gap-3 md:flex">
-              <Link
-                to={isHostArea ? "/host/login" : "/login"}
-                className="rounded bg-[var(--color-sand)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
-              >
-                Sign in
-              </Link>
-              <Link
-                to={hostLink.to}
-                className="flex items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
-              >
-                {hostLink.label}
-                <TbArrowBigRightLineFilled />
-              </Link>
+            <div
+              className={`items-center gap-3 ${
+                isAuthenticated ? "flex" : "hidden md:flex"
+              }`}
+            >
+              {isAuthenticated ? (
+                <AccountMenu user={user} logout={logout} />
+              ) : isLoading ? (
+                <div
+                  aria-label="Loading account"
+                  className="size-11 animate-pulse rounded-full bg-[var(--color-bark)]/10"
+                />
+              ) : (
+                <>
+                  <Link
+                    to={loginPath}
+                    className="rounded bg-[var(--color-sand)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-ink-bark)] shadow-[var(--shadow-sm)]"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    to={hostLink.to}
+                    className="flex items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-2.5 text-[15px] font-semibold text-[var(--color-white)] shadow-[var(--shadow-sm)]"
+                  >
+                    {hostLink.label}
+                    <TbArrowBigRightLineFilled />
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

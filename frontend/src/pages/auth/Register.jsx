@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaUserPlus } from "react-icons/fa";
 import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
+import authService from "../../services/authService";
 import {
   ADDRESS_VALIDATION,
   CONTACT_NUMBER_VALIDATION,
@@ -30,7 +30,7 @@ export default function Register({ accountType = "GUEST" }) {
   const onSubmit = async (values) => {
     setRequestError("");
     try {
-      await axios.post("/api/v1/auth/register", values);
+      await authService.register(values);
       navigate(loginPath, {
         replace: true,
         state: {
