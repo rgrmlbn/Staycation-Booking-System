@@ -1,6 +1,7 @@
 import {
   FaArrowRight,
   FaBed,
+  FaEdit,
   FaMapMarkerAlt,
   FaStar,
   FaUsers,
@@ -24,6 +25,7 @@ export default function PropertyCard({
   imageUrls,
   reviewScore,
   reviewCount,
+  onEdit,
 }) {
   const imageUrl = imageUrls?.[0] || FALLBACK_IMAGE;
   const formattedStatus = formatStatus(status);
@@ -31,33 +33,43 @@ export default function PropertyCard({
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded border border-[var(--color-mocha)] bg-[var(--color-white)] shadow-[var(--shadow-sm)]">
-      <img
-        src={imageUrl}
-        alt={`${title} staycation home`}
-        className="h-48 w-full object-cover"
-      />
+      <div className="relative">
+        <img
+          src={imageUrl}
+          alt={`${title} staycation home`}
+          className="h-48 w-full object-cover"
+        />
+        <span
+          className={`absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+            isAvailable
+              ? "bg-green-100 text-green-800"
+              : "bg-[var(--color-taste)] text-[var(--color-bark)]"
+          }`}
+        >
+          {isAvailable && (
+            <span
+              aria-hidden="true"
+              className="size-2 rounded-full bg-green-600"
+            />
+          )}
+          {formattedStatus}
+        </span>
+        {onEdit && (
+          <button
+            type="button"
+            onClick={onEdit}
+            className="absolute left-3 top-3 inline-flex min-h-9 items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-3 py-2 text-xs font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-sun)]"
+          >
+            Edit
+            <FaEdit aria-hidden="true" size={14} />
+          </button>
+        )}
+      </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <div className="flex min-h-14 items-start justify-between gap-3">
-          <h2 className="line-clamp-2 text-xl font-bold text-[var(--color-bark-dark)]">
-            {title}
-          </h2>
-          <span
-            className={`inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-              isAvailable
-                ? "bg-green-100 text-green-800"
-                : "bg-[var(--color-taste)] text-[var(--color-bark)]"
-            }`}
-          >
-            {isAvailable && (
-              <span
-                aria-hidden="true"
-                className="size-2 rounded-full bg-green-600"
-              />
-            )}
-            {formattedStatus}
-          </span>
-        </div>
+        <h2 className="min-h-14 w-full line-clamp-2 text-xl font-bold text-[var(--color-bark-dark)]">
+          {title}
+        </h2>
 
         <dl className="mt-5 space-y-3 text-sm text-[var(--color-graph)]">
           <div className="flex items-center gap-3">

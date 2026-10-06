@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
     byStatus: "/properties/detailed/status",
     mine: "/properties/my/detailed",
     create: "/properties/create",
+    imageUploadSignature: "/properties/images/signature",
     update: "/properties/update",
     delete: "/properties/delete",
   },

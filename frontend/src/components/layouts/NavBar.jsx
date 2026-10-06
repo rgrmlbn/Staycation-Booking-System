@@ -25,6 +25,7 @@ export default function Navbar() {
   const location = useLocation();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const isHostArea = location.pathname.startsWith("/host");
+  const isAuthenticatedHost = user?.role?.toUpperCase() === "HOST";
   const loginPath = isHostArea ? "/host/login" : "/login";
 
   useEffect(() => {
@@ -52,21 +53,38 @@ export default function Navbar() {
 
   const homeLink = {
     ...NAV_LINKS[0],
-    to: isHostArea ? "/host#home" : "/#home",
+    to: isAuthenticatedHost
+      ? "/host/dashboard"
+      : isHostArea
+        ? "/host#home"
+        : "/#home",
   };
   const hostLink = isHostArea
     ? { label: "Guest Page", to: "/#home", icon: FaHome }
     : { label: "Host Page", to: "/host#home", icon: FaBuilding };
   const propertyLink = isHostArea
-    ? { ...NAV_LINKS[1], to: "/host#properties" }
+    ? {
+        ...NAV_LINKS[1],
+        to: isAuthenticatedHost
+          ? "/host/dashboard#my-properties"
+          : "/host#properties",
+      }
     : { ...NAV_LINKS[1], to: "/#properties" };
   const aboutLink = {
     ...NAV_LINKS[2],
-    to: isHostArea ? "/host#about" : "/#about",
+    to: isAuthenticatedHost
+      ? "/host/dashboard#about"
+      : isHostArea
+        ? "/host#about"
+        : "/#about",
   };
   const contactLink = {
     ...NAV_LINKS[3],
-    to: isHostArea ? "/host#contact" : "/#contact",
+    to: isAuthenticatedHost
+      ? "/host/dashboard#contact"
+      : isHostArea
+        ? "/host#contact"
+        : "/#contact",
   };
   const navLinks = [homeLink, propertyLink, aboutLink, contactLink];
   const mobileLinks = [

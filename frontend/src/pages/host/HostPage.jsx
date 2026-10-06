@@ -67,7 +67,7 @@ export default function HostPage() {
             stay that feels personal.
           </p>
           <Link
-            to="/host/properties"
+            to="/host/dashboard"
             className="mt-8 inline-flex min-h-12 items-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
           >
             View your properties
