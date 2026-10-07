@@ -91,3 +91,55 @@ export const ROOM_COUNT_VALIDATION = {
     message: "No more than 4 rooms",
   },
 };
+
+export const PROPERTY_VALIDATION = {
+  title: {
+    required: "Property title is required",
+    validate: (value) =>
+      (value.trim().length >= 5 && value.trim().length <= 100) ||
+      "Property title must be between 5 and 100 characters",
+  },
+  description: {
+    required: "Description is required",
+    validate: (value) =>
+      (value.trim().length >= 10 && value.trim().length <= 200) ||
+      "Description must be between 10 and 200 characters",
+  },
+  address: {
+    required: "Address is required",
+    validate: (value) =>
+      (value.trim().length >= 10 && value.trim().length <= 200) ||
+      "Address must be between 10 and 200 characters",
+  },
+  bedrooms: {
+    required: "Bedrooms is required",
+    valueAsNumber: true,
+    min: { value: 1, message: "Bedrooms must be at least 1" },
+    validate: Number.isInteger || "Bedrooms must be a whole number",
+  },
+  bathrooms: {
+    required: "Bathrooms is required",
+    valueAsNumber: true,
+    min: { value: 1, message: "Bathrooms must be at least 1" },
+    validate: Number.isInteger || "Bathrooms must be a whole number",
+  },
+  maxGuests: {
+    required: "Maximum guests is required",
+    valueAsNumber: true,
+    min: { value: 1, message: "Maximum guests must be at least 1" },
+    validate: Number.isInteger || "Maximum guests must be a whole number",
+  },
+  startTime: { required: "Check-in time is required" },
+  durationHours: {
+    required: "Duration is required",
+    valueAsNumber: true,
+    min: { value: 1, message: "Duration must be at least 1 hour" },
+    validate: Number.isInteger || "Duration must be a whole number",
+  },
+  price: {
+    required: "Price is required",
+    valueAsNumber: true,
+    min: { value: 0.01, message: "Price must be greater than 0" },
+  },
+  maximumImageSize: 10 * 1024 * 1024,
+};
