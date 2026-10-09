@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
 import { useChangePassword } from "../../hooks/useUsers";
+import { PasswordInput } from "../auth/AuthLayout";
 import { PASSWORD_VALIDATION } from "../../utils/validation";
 
 const INPUT_CLASS =
@@ -82,12 +83,11 @@ export default function Settings() {
             >
               {label}
             </label>
-            <input
+            <PasswordInput
               id={id}
-              type="password"
               autoComplete={autoComplete}
+              error={errors[id]?.message}
               {...register(id, rules)}
-              aria-invalid={Boolean(errors[id])}
               className={INPUT_CLASS}
             />
             {errors[id] && (

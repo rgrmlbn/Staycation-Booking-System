@@ -1,27 +1,66 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import PropertyCard from "./PropertyCard";
-import PROPERTIES from "../../data/properties";
+import propertyService from "../../services/propertyService";
+import { DEFAULT_PAGE_SIZE, QUERY_KEYS } from "../../utils/constants";
+
+function getErrorMessage(error) {
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.detail ||
+    error?.message ||
+    "Something went wrong. Please try again."
+  );
+}
 
 export default function PropertyGrid({
   pageSize,
   paginated = false,
+  searchParams,
   gridClassName = "grid gap-6 sm:grid-cols-2 lg:grid-cols-4",
 }) {
   const [page, setPage] = useState(0);
-  const visiblePageSize = pageSize ?? PROPERTIES.length;
-  const totalPages = Math.ceil(PROPERTIES.length / visiblePageSize);
-  const properties = PROPERTIES.slice(
-    page * visiblePageSize,
-    (page + 1) * visiblePageSize,
-  );
+  const visiblePageSize = pageSize ?? DEFAULT_PAGE_SIZE;
+  const queryParams = {
+    page,
+    size: visiblePageSize,
+    ...(searchParams ?? {}),
+  };
+  const {
+    data: propertiesPage,
+    error,
+    isPending,
+  } = useQuery({
+    queryKey: [...QUERY_KEYS.properties, "summary", queryParams],
+    queryFn: () =>
+      searchParams
+        ? propertyService.searchSummaryProperties(queryParams)
+        : propertyService.getSummaryProperties(queryParams),
+  });
+  const properties = propertiesPage?.content ?? [];
+  const totalPages = propertiesPage?.totalPages ?? 0;
 
   return (
     <>
-      <div className={gridClassName}>
-        {properties.map((property) => (
-          <PropertyCard key={property.id} {...property} />
-        ))}
-      </div>
+      {isPending ? (
+        <p className="text-sm text-[var(--color-graph)]" role="status">
+          Loading properties...
+        </p>
+      ) : error ? (
+        <p className="text-sm text-red-700" role="alert">
+          Could not load properties: {getErrorMessage(error)}
+        </p>
+      ) : properties.length === 0 ? (
+        <p className="text-sm text-[var(--color-graph)]">
+          No properties are available right now.
+        </p>
+      ) : (
+        <div className={gridClassName}>
+          {properties.map((property) => (
+            <PropertyCard key={property.id} {...property} />
+          ))}
+        </div>
+      )}
       {paginated && totalPages > 1 && (
         <nav
           aria-label="Property list pages"

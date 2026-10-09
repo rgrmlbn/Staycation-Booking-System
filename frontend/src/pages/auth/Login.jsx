@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaSignInAlt } from "react-icons/fa";
-import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
+import AuthLayout, {
+  AUTH_INPUT_CLASS,
+  AuthField,
+  PasswordInput,
+} from "./AuthLayout";
 import authService from "../../services/authService";
 import {
   EMAIL_VALIDATION,
@@ -75,7 +79,6 @@ export default function Login({ audience = "guest" }) {
       }
       audienceLinkText={isAdmin ? "Host sign in" : "Sign in here"}
       audienceTo={isAdmin ? "/host/login" : isHost ? "/login" : "/host/login"}
-      adminTo={isAdmin ? undefined : "/admin/login"}
     >
       {location.state?.notice && (
         <p className="mb-5 rounded border border-[var(--color-palm)]/30 bg-[var(--color-palm)]/10 px-4 py-3 text-sm text-[var(--color-palm-dark)]">
@@ -101,13 +104,11 @@ export default function Login({ audience = "guest" }) {
           label="Password"
           error={errors.password?.message}
         >
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             placeholder="Enter your password"
             autoComplete="current-password"
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? "password-error" : undefined}
+            error={errors.password?.message}
             {...register("password", REQUIRED_VALIDATION("Password"))}
             className={AUTH_INPUT_CLASS}
           />

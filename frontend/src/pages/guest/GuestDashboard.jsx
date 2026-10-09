@@ -14,7 +14,7 @@ export default function GuestDashboard() {
           Find a place for your next break and keep your travel plans close.
         </p>
         <Link
-          to="/#properties"
+          to="/properties"
           className="mt-8 inline-flex min-h-12 items-center rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)]"
         >
           Explore properties

@@ -1,4 +1,5 @@
-import { FaSun } from "react-icons/fa";
+import { useState } from "react";
+import { FaEye, FaEyeSlash, FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export const AUTH_INPUT_CLASS =
@@ -23,6 +24,38 @@ export function AuthField({ id, label, error, children }) {
   );
 }
 
+export function PasswordInput({ id, error, className = "", ...props }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const resolvedClassName = className || AUTH_INPUT_CLASS;
+  const describedBy = props["aria-describedby"] ||
+    (error ? `${id}-error` : undefined);
+
+  return (
+    <div className="relative">
+      <input
+        {...props}
+        id={id}
+        type={showPassword ? "text" : "password"}
+        aria-invalid={Boolean(error) || props["aria-invalid"]}
+        aria-describedby={describedBy}
+        className={`${resolvedClassName} pr-11`}
+      />
+      <button
+        type="button"
+        aria-label={showPassword ? "Hide password" : "Show password"}
+        onClick={() => setShowPassword((visible) => !visible)}
+        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-[var(--color-graph)] transition-colors hover:text-[var(--color-bark-dark)] focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-[var(--color-sand)]"
+      >
+        {showPassword ? (
+          <FaEyeSlash aria-hidden="true" size={16} />
+        ) : (
+          <FaEye aria-hidden="true" size={16} />
+        )}
+      </button>
+    </div>
+  );
+}
+
 export default function AuthLayout({
   eyebrow,
   title,
@@ -33,7 +66,6 @@ export default function AuthLayout({
   audienceText,
   audienceLinkText,
   audienceTo,
-  adminTo,
   children,
 }) {
   return (
@@ -70,17 +102,6 @@ export default function AuthLayout({
               {audienceLinkText}
             </Link>
           </p>
-          {adminTo && (
-            <p className="mt-2 text-sm text-[var(--color-graph)]">
-              Administrator?{" "}
-              <Link
-                to={adminTo}
-                className="font-bold text-[var(--color-bark-dark)] hover:text-[var(--color-sun)]"
-              >
-                Admin sign in
-              </Link>
-            </p>
-          )}
         </div>
       </section>
 

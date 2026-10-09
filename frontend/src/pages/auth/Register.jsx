@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
-import AuthLayout, { AUTH_INPUT_CLASS, AuthField } from "./AuthLayout";
+import AuthLayout, {
+  AUTH_INPUT_CLASS,
+  AuthField,
+  PasswordInput,
+} from "./AuthLayout";
 import authService from "../../services/authService";
 import {
   ADDRESS_VALIDATION,
@@ -203,13 +207,11 @@ export default function Register({ accountType = "GUEST" }) {
           label="Password"
           error={errors.password?.message}
         >
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             placeholder="Enter a password"
             autoComplete="new-password"
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? "password-error" : undefined}
+            error={errors.password?.message}
             {...register("password", PASSWORD_VALIDATION)}
             className={AUTH_INPUT_CLASS}
           />

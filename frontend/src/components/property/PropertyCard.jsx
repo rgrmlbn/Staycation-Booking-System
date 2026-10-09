@@ -123,6 +123,7 @@ export default function PropertyCard({
 
         <Link
           to={`/properties/${id}`}
+          state={onEdit ? { returnTo: "/host/dashboard#my-properties" } : undefined}
           className="mt-auto inline-flex min-h-11 items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-5 py-3 text-sm font-bold text-[var(--color-white)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-bark-dark)]"
         >
           View property

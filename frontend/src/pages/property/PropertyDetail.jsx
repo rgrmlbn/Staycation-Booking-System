@@ -1,13 +1,17 @@
 import { FaArrowLeft, FaBed, FaMapMarkerAlt, FaStar, FaUsers } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { IoBookmark } from "react-icons/io5";
-import PROPERTIES from "../../data/properties";
+import { useProperty } from "../../hooks/useProperties";
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80";
 
 function displayStatus(status) {
   return status?.replaceAll("_", " ").toLowerCase() || "Status unavailable";
+}
+
+function isAvailable(status) {
+  return displayStatus(status) === "available";
 }
 
 function formatPrice(price) {
@@ -18,18 +22,38 @@ function formatPrice(price) {
   }).format(price);
 }
 
+function getErrorMessage(error) {
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.detail ||
+    error?.message ||
+    "Something went wrong. Please try again."
+  );
+}
+
 export default function PropertyDetail() {
   const { id } = useParams();
-  const property = PROPERTIES.find((item) => String(item.id) === id);
+  const location = useLocation();
+  const returnTo = location.state?.returnTo || "/properties";
+  const { data: property, error, isPending } = useProperty(id);
 
-  if (!property) {
+  if (isPending || error || !property) {
+    const notFound = error?.response?.status === 404;
     return (
       <main className="container min-h-[calc(100svh-5rem)] py-16">
-        <p className="text-red-700" role="alert">
-          Property details are unavailable.
-        </p>
+        {isPending ? (
+          <p className="text-[var(--color-graph)]" role="status">
+            Loading property details...
+          </p>
+        ) : (
+          <p className="text-red-700" role="alert">
+            {notFound
+              ? "Property details are unavailable."
+              : `Could not load property details: ${getErrorMessage(error)}`}
+          </p>
+        )}
         <Link
-          to="/properties"
+          to={returnTo}
           className="mt-6 inline-flex items-center gap-2 font-semibold text-[var(--color-bark)]"
         >
           <FaArrowLeft aria-hidden="true" /> Back to properties
@@ -46,7 +70,7 @@ export default function PropertyDetail() {
     <main className="min-h-[calc(100svh-5rem)] bg-[var(--color-cream)] py-10 pb-28 md:py-16">
       <div className="container">
         <Link
-          to="/properties"
+          to={returnTo}
           className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-bark)] hover:text-[var(--color-sun-dark)]"
         >
           <FaArrowLeft aria-hidden="true" /> Back to properties
@@ -66,7 +90,19 @@ export default function PropertyDetail() {
 
           <div className="p-6 sm:p-10">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-[var(--color-taste)] px-3 py-1 text-xs font-semibold capitalize text-[var(--color-bark)]">
+              <span
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+                  isAvailable(property.status)
+                    ? "bg-green-100 text-green-800"
+                    : "bg-[var(--color-taste)] text-[var(--color-bark)]"
+                }`}
+              >
+                {isAvailable(property.status) && (
+                  <span
+                    aria-hidden="true"
+                    className="size-2 rounded-full bg-green-600"
+                  />
+                )}
                 {displayStatus(property.status)}
               </span>
               <span className="text-sm text-[var(--color-graph)]">

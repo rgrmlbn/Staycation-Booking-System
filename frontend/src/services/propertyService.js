@@ -8,6 +8,13 @@ export const propertyService = {
     return data;
   },
 
+  async searchSummaryProperties(params = {}) {
+    const { data } = await api.get(API_ENDPOINTS.properties.summarySearch, {
+      params,
+    });
+    return data;
+  },
+
   async getProperties(params = {}) {
     const { data } = await api.get(API_ENDPOINTS.properties.detailed, { params });
     return data;

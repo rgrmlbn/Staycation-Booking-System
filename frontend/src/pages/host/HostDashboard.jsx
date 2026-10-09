@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { FaHeart, FaHome, FaPlus, FaTimes, FaUsers } from "react-icons/fa";
@@ -29,6 +29,7 @@ function getErrorMessage(error) {
 export default function HostDashboard() {
   const [page, setPage] = useState(0);
   const [isCreating, setIsCreating] = useState(false);
+  const propertyDialogRef = useRef(null);
   const [editingProperty, setEditingProperty] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [formError, setFormError] = useState("");
@@ -58,6 +59,23 @@ export default function HostDashboard() {
   const createProperty = useCreateProperty();
   const updateProperty = useUpdateProperty();
   const properties = propertiesPage?.content;
+
+  useEffect(() => {
+    const dialog = propertyDialogRef.current;
+    if (!dialog) return;
+
+    if (isCreating && !dialog.open) {
+      dialog.showModal();
+    } else if (!isCreating && dialog.open) {
+      dialog.close();
+    }
+  }, [isCreating]);
+
+  const closePropertyForm = () => {
+    setIsCreating(false);
+    setEditingProperty(null);
+    setFormError("");
+  };
 
   const handleCreateProperty = async (values) => {
     const amenityIds = (values.amenityIds ?? []).map(Number);
@@ -163,23 +181,15 @@ export default function HostDashboard() {
                   imageFiles: undefined,
                   amenityIds: [],
                   startTime: "",
-                  durationHours: 24,
+                  durationHours: "",
                   price: "",
                 });
-                setIsCreating((open) => !open);
+                setIsCreating(true);
               }}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded bg-[var(--color-sand)] px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-sun)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-bark)]"
             >
-              {isCreating
-                ? "Close form"
-                : editingProperty
-                  ? "Edit property"
-                  : "Create property"}
-              {isCreating ? (
-                <FaTimes aria-hidden="true" size={16} />
-              ) : (
-                <FaPlus aria-hidden="true" size={16} />
-              )}
+              Create property
+              <FaPlus aria-hidden="true" size={16} />
             </button>
           </div>
 
@@ -189,15 +199,41 @@ export default function HostDashboard() {
             </p>
           )}
 
-          {isCreating && (
+          <dialog
+            ref={propertyDialogRef}
+            aria-labelledby="property-form-title"
+            onCancel={(event) => {
+              event.preventDefault();
+              closePropertyForm();
+            }}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                closePropertyForm();
+              }
+            }}
+            className="m-auto max-h-[min(90dvh,56rem)] w-[min(96vw,64rem)] max-w-none overflow-y-auto rounded border border-[var(--color-mocha)] bg-white p-0 text-[var(--color-ink)] shadow-[var(--shadow-xl)] backdrop:bg-black/50"
+          >
             <form
               onSubmit={handleSubmit(handleCreateProperty)}
               noValidate
-              className="mt-6 grid gap-6 rounded border border-[var(--color-mocha)] bg-white p-6 shadow-[var(--shadow-sm)] sm:grid-cols-2 sm:p-8"
+              className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8"
             >
-              <h3 className="text-xl font-bold text-[var(--color-bark-dark)] sm:col-span-2">
-                {editingProperty ? "Edit property" : "Create a property"}
-              </h3>
+              <div className="flex items-center justify-between gap-4 sm:col-span-2">
+                <h3
+                  id="property-form-title"
+                  className="text-xl font-bold text-[var(--color-bark-dark)]"
+                >
+                  {editingProperty ? "Edit property" : "Create a property"}
+                </h3>
+                <button
+                  type="button"
+                  onClick={closePropertyForm}
+                  aria-label="Close property form"
+                  className="inline-flex size-10 shrink-0 items-center justify-center rounded text-[var(--color-bark-dark)] transition-colors hover:bg-[var(--color-cream)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-bark)]"
+                >
+                  <FaTimes aria-hidden="true" size={18} />
+                </button>
+              </div>
               {formError && (
                 <p
                   className="text-sm text-red-700 sm:col-span-2"
@@ -212,6 +248,7 @@ export default function HostDashboard() {
                   id="title"
                   name="title"
                   defaultValue={editingProperty?.title ?? ""}
+                  placeholder="Cozy villa by the beach"
                   aria-invalid={Boolean(errors.title)}
                   aria-describedby={errors.title ? "title-error" : undefined}
                   {...register("title", PROPERTY_VALIDATION.title)}
@@ -229,6 +266,7 @@ export default function HostDashboard() {
                   id="description"
                   name="description"
                   defaultValue={editingProperty?.description ?? ""}
+                  placeholder="Describe your space, amenities, and what guests can expect."
                   aria-invalid={Boolean(errors.description)}
                   aria-describedby={
                     errors.description ? "description-error" : undefined
@@ -246,6 +284,7 @@ export default function HostDashboard() {
                   id="address"
                   name="address"
                   defaultValue={editingProperty?.address ?? ""}
+                  placeholder="123 Main Street, City, Province"
                   aria-invalid={Boolean(errors.address)}
                   aria-describedby={errors.address ? "address-error" : undefined}
                   {...register("address", PROPERTY_VALIDATION.address)}
@@ -287,11 +326,6 @@ export default function HostDashboard() {
                   })}
                   className="mt-0.5 min-h-12 w-full cursor-pointer rounded border-2 border-dashed border-[var(--color-bark)]/40 bg-[var(--color-cream)] px-3 py-2 text-sm text-[var(--color-bark-dark)] file:mr-4 file:cursor-pointer file:rounded file:border-0 file:bg-[var(--color-sand)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[var(--color-bark-dark)] hover:border-[var(--color-sun)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-sand)]"
                 />
-                <span className="font-normal text-[var(--color-graph)]">
-                  {editingProperty?.imageUrls?.length
-                    ? ` ${editingProperty.imageUrls.length} current image${editingProperty.imageUrls.length === 1 ? "" : "s"} will be kept. Selecting new images replaces the current image set.`
-                    : ""}
-                </span>
                 </AuthField>
               </div>
 
@@ -301,6 +335,7 @@ export default function HostDashboard() {
                   name="bedrooms"
                   type="number"
                   defaultValue={editingProperty?.bedrooms ?? ""}
+                  placeholder="2"
                   aria-invalid={Boolean(errors.bedrooms)}
                   aria-describedby={
                     errors.bedrooms ? "bedrooms-error" : undefined
@@ -315,6 +350,7 @@ export default function HostDashboard() {
                   name="bathrooms"
                   type="number"
                   defaultValue={editingProperty?.bathrooms ?? ""}
+                  placeholder="1"
                   aria-invalid={Boolean(errors.bathrooms)}
                   aria-describedby={
                     errors.bathrooms ? "bathrooms-error" : undefined
@@ -333,6 +369,7 @@ export default function HostDashboard() {
                   name="maxGuests"
                   type="number"
                   defaultValue={editingProperty?.maxGuests ?? ""}
+                  placeholder="4"
                   aria-invalid={Boolean(errors.maxGuests)}
                   aria-describedby={
                     errors.maxGuests ? "maxGuests-error" : undefined
@@ -411,6 +448,7 @@ export default function HostDashboard() {
                       id="startTime"
                       name="startTime"
                       type="time"
+                      placeholder="14:00"
                       aria-invalid={Boolean(errors.startTime)}
                       aria-describedby={
                         errors.startTime ? "startTime-error" : undefined
@@ -431,7 +469,7 @@ export default function HostDashboard() {
                       id="durationHours"
                       name="durationHours"
                       type="number"
-                      defaultValue="24"
+                      placeholder="24"
                       aria-invalid={Boolean(errors.durationHours)}
                       aria-describedby={
                         errors.durationHours
@@ -455,6 +493,7 @@ export default function HostDashboard() {
                       name="price"
                       type="number"
                       step="0.01"
+                      placeholder="2500"
                       aria-invalid={Boolean(errors.price)}
                       aria-describedby={errors.price ? "price-error" : undefined}
                       {...register("price", PROPERTY_VALIDATION.price)}
@@ -495,18 +534,14 @@ export default function HostDashboard() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsCreating(false);
-                    setEditingProperty(null);
-                    setFormError("");
-                  }}
+                  onClick={closePropertyForm}
                   className="min-h-12 cursor-pointer rounded border border-[var(--color-bark)]/25 px-5 py-3 text-sm font-bold text-[var(--color-bark-dark)] transition-colors hover:bg-[var(--color-cream)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-bark)]"
                 >
                   Cancel
                 </button>
               </div>
             </form>
-          )}
+          </dialog>
 
           {isLoadingProperties ? (
             <p className="mt-8 text-sm text-[var(--color-graph)]" role="status">

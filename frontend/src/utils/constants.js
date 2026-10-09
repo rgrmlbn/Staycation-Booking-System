@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   },
   properties: {
     summary: "/properties/summary",
+    summarySearch: "/properties/summary/search",
     detailed: "/properties/detailed",
     byStatus: "/properties/detailed/status",
     mine: "/properties/my/detailed",

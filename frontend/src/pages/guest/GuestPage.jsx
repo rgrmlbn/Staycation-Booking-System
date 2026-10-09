@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   FaBed,
@@ -39,6 +40,7 @@ const VALUES = [
 ];
 
 export default function GuestPage() {
+  const [searchParams, setSearchParams] = useState(null);
   const {
     register,
     handleSubmit,
@@ -71,7 +73,13 @@ export default function GuestPage() {
 
           <div className="mt-12 w-full max-w-3xl">
             <form
-              onSubmit={handleSubmit(() => {})}
+              onSubmit={handleSubmit(({ place, guests, rooms }) =>
+                setSearchParams({
+                  address: place.trim(),
+                  guests,
+                  rooms,
+                }),
+              )}
               className="flex flex-col gap-1 rounded bg-[var(--color-white)] p-2 shadow-[var(--shadow-lg)] md:flex-row md:items-center md:gap-0"
             >
               <label className="flex min-w-0 flex-1 items-center gap-3 rounded px-5 py-3 text-left md:basis-2/5 md:flex-none">
@@ -186,7 +194,11 @@ export default function GuestPage() {
           </div>
 
           <div className="mt-12">
-            <PropertyGrid pageSize={4} />
+            <PropertyGrid
+              key={JSON.stringify(searchParams)}
+              pageSize={4}
+              searchParams={searchParams}
+            />
           </div>
           <Link
             to="/properties"
