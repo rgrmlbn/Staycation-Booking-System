@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { FaBuilding } from "react-icons/fa";
 import PropertyCard from "./PropertyCard";
 import propertyService from "../../services/propertyService";
 import { DEFAULT_PAGE_SIZE, QUERY_KEYS } from "../../utils/constants";
@@ -51,9 +52,18 @@ export default function PropertyGrid({
           Could not load properties: {getErrorMessage(error)}
         </p>
       ) : properties.length === 0 ? (
-        <p className="text-sm text-[var(--color-graph)]">
-          No properties are available right now.
-        </p>
+        <div className="rounded-xl border border-[var(--color-mocha)] bg-[var(--color-white)] px-6 py-10 text-center shadow-[var(--shadow-sm)] sm:px-10">
+          <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-[var(--color-taste)] text-[var(--color-sun-dark)]">
+            <FaBuilding aria-hidden="true" size={22} />
+          </span>
+          <h2 className="mt-4 text-xl font-bold text-[var(--color-bark-dark)]">
+            No properties available right now
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--color-graph)]">
+            There aren&apos;t any stays to show at the moment. Please check back
+            soon for new places to explore.
+          </p>
+        </div>
       ) : (
         <div className={gridClassName}>
           {properties.map((property) => (
