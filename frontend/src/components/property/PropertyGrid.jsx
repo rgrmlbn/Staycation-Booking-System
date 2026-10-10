@@ -52,8 +52,8 @@ export default function PropertyGrid({
           Could not load properties: {getErrorMessage(error)}
         </p>
       ) : properties.length === 0 ? (
-        <div className="rounded-xl border border-[var(--color-mocha)] bg-[var(--color-white)] px-6 py-10 text-center shadow-[var(--shadow-sm)] sm:px-10">
-          <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-[var(--color-taste)] text-[var(--color-sun-dark)]">
+        <div className="rounded px-6 py-10 text-center shadow-[var(--shadow-sm)] sm:px-10">
+          <span className="mx-auto flex size-14 bg-[var(--color-taste)] text-[var(--color-sun-dark)]">
             <FaBuilding aria-hidden="true" size={22} />
           </span>
           <h2 className="mt-4 text-xl font-bold text-[var(--color-bark-dark)]">
