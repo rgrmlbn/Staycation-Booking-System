@@ -1,6 +1,7 @@
 import { FaArrowLeft, FaBed, FaMapMarkerAlt, FaStar, FaUsers } from "react-icons/fa";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { IoBookmark } from "react-icons/io5";
+import { useAuth } from "../../hooks/useAuth";
 import { useProperty } from "../../hooks/useProperties";
 
 const FALLBACK_IMAGE =
@@ -12,6 +13,10 @@ function displayStatus(status) {
 
 function isAvailable(status) {
   return displayStatus(status) === "available";
+}
+
+function isRemoved(status) {
+  return displayStatus(status) === "removed";
 }
 
 function formatPrice(price) {
@@ -34,6 +39,7 @@ function getErrorMessage(error) {
 export default function PropertyDetail() {
   const { id } = useParams();
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const returnTo = location.state?.returnTo || "/properties";
   const { data: property, error, isPending } = useProperty(id);
 
@@ -65,6 +71,7 @@ export default function PropertyDetail() {
   const images = property.imageUrls?.length
     ? property.imageUrls
     : [FALLBACK_IMAGE];
+  const bookingPath = `/guest/bookings?propertyId=${encodeURIComponent(property.id)}`;
 
   return (
     <main className="min-h-[calc(100svh-5rem)] bg-[var(--color-cream)] py-10 pb-28 md:py-16">
@@ -94,13 +101,17 @@ export default function PropertyDetail() {
                 className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
                   isAvailable(property.status)
                     ? "bg-green-100 text-green-800"
-                    : "bg-[var(--color-taste)] text-[var(--color-bark)]"
+                    : isRemoved(property.status)
+                      ? "bg-red-100 text-red-800"
+                      : "bg-[var(--color-taste)] text-[var(--color-bark)]"
                 }`}
               >
-                {isAvailable(property.status) && (
+                {(isAvailable(property.status) || isRemoved(property.status)) && (
                   <span
                     aria-hidden="true"
-                    className="size-2 rounded-full bg-green-600"
+                    className={`size-2 rounded-full ${
+                      isAvailable(property.status) ? "bg-green-600" : "bg-red-600"
+                    }`}
                   />
                 )}
                 {displayStatus(property.status)}
@@ -213,7 +224,17 @@ export default function PropertyDetail() {
                 </p>
               </div>
               <Link
-                to={`/guest/bookings?propertyId=${encodeURIComponent(property.id)}`}
+                to={isAuthenticated ? bookingPath : "/login"}
+                state={
+                  isAuthenticated
+                    ? undefined
+                    : {
+                        from: {
+                          pathname: "/guest/bookings",
+                          search: `?propertyId=${encodeURIComponent(property.id)}`,
+                        },
+                      }
+                }
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded bg-[var(--color-bark)] px-6 py-3 text-sm font-bold text-[var(--color-white)] shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-bark-dark)]"
               >
                 Book now

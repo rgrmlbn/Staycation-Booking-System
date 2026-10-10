@@ -34,7 +34,7 @@ export default function Login({ audience = "guest" }) {
         HOST: "/host/dashboard",
         ADMIN: "/admin/dashboard",
       };
-      navigate(destinationByRole[session.role], {
+      navigate(location.state?.from || destinationByRole[session.role], {
         replace: true,
       });
     } catch (error) {

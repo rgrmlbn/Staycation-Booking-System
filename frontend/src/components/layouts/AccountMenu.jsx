@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaCog, FaSignOutAlt, FaUserEdit } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaCog,
+  FaSignOutAlt,
+  FaUserEdit,
+} from "react-icons/fa";
 
 export default function AccountMenu({
   user,
@@ -50,7 +55,7 @@ export default function AccountMenu({
           {initials}
         </span>
       </summary>
-      <div className="absolute right-0 top-full z-50 mt-3 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg border border-[var(--color-mocha)] bg-[var(--color-white)] shadow-[var(--shadow-lg)]">
+      <div className="absolute right-0 top-full z-50 mt-3 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded border border-[var(--color-mocha)] bg-[var(--color-white)] shadow-[var(--shadow-lg)]">
         <div className="flex items-center gap-3 bg-[var(--color-cream)] px-4 py-4">
           <div
             aria-hidden="true"
@@ -86,6 +91,30 @@ export default function AccountMenu({
                 />
                 <span>Edit profile</span>
               </Link>
+              {user?.role?.toUpperCase() === "GUEST" && (
+                <Link
+                  to="/guest/bookings"
+                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-semibold text-[var(--color-bark-dark)] transition hover:bg-[var(--color-cream)] focus-visible:bg-[var(--color-cream)] focus-visible:outline-none"
+                >
+                  <FaCalendarAlt
+                    aria-hidden="true"
+                    className="text-[var(--color-sun-dark)]"
+                  />
+                  <span>Bookings</span>
+                </Link>
+              )}
+              {user?.role?.toUpperCase() === "HOST" && (
+                <Link
+                  to="/host/bookings"
+                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-semibold text-[var(--color-bark-dark)] transition hover:bg-[var(--color-cream)] focus-visible:bg-[var(--color-cream)] focus-visible:outline-none"
+                >
+                  <FaCalendarAlt
+                    aria-hidden="true"
+                    className="text-[var(--color-sun-dark)]"
+                  />
+                  <span>Bookings</span>
+                </Link>
+              )}
               <Link
                 to="/account/settings"
                 className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-semibold text-[var(--color-bark-dark)] transition hover:bg-[var(--color-cream)] focus-visible:bg-[var(--color-cream)] focus-visible:outline-none"

@@ -27,8 +27,6 @@ public class AmenityServiceImpl implements AmenityService {
     @Override
     public List<AmenityResponse> getAllAmenities() {
 
-        ownershipVerifier.verifyAdmin();
-
         return amenityRepository.findAll()
                 .stream()
                 .map(amenity -> amenityMapper.toAmenityResponse(amenity))

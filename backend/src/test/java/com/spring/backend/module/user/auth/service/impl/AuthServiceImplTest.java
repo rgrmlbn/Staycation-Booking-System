@@ -12,6 +12,7 @@ import com.spring.backend.module.user.token.entity.RefreshToken;
 import com.spring.backend.module.user.token.service.interfaces.RefreshTokenService;
 import com.spring.backend.module.user.token.service.interfaces.TokenBlacklistService;
 import com.spring.backend.module.user.user.entity.UserEntity;
+import com.spring.backend.module.user.user.enums.UserRole;
 import com.spring.backend.module.user.user.mapper.UserMapper;
 import com.spring.backend.module.user.user.repository.UserRepository;
 import com.spring.backend.security.principal.UserPrincipal;
@@ -24,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -136,6 +138,72 @@ class AuthServiceImplTest {
         assertThat(result.getAccessToken()).isEqualTo("access-token");
         assertThat(result.getRefreshToken()).isEqualTo("refresh-token");
         verify(loginRateLimiterService).checkLimits("roger@example.com"); // Confirm the rate limiter was consulted before authenticating
+    }
+
+    @Test
+    @DisplayName("Should reject a host account on the guest sign-in page")
+    void login_wrongAudience_rejectsCredentials() {
+        LoginRequest request = mock(LoginRequest.class);
+        Authentication authentication = mock(Authentication.class);
+        UserPrincipal principal = mock(UserPrincipal.class);
+        user.setRole(UserRole.HOST);
+
+        when(request.getEmail()).thenReturn("roger@example.com");
+        when(request.getPassword()).thenReturn("raw-password");
+        when(request.getAudience()).thenReturn(UserRole.GUEST);
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(principal.getUser()).thenReturn(user);
+
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(BadCredentialsException.class);
+
+        verify(jwtUtil, never()).generateAccessToken(any());
+        verify(refreshTokenService, never()).createRefreshToken(any());
+    }
+
+    @Test
+    @DisplayName("Should reject an admin account from a host sign-in page")
+    void login_adminOnHostAudience_rejectsCredentials() {
+        LoginRequest request = mock(LoginRequest.class);
+        Authentication authentication = mock(Authentication.class);
+        UserPrincipal principal = mock(UserPrincipal.class);
+        user.setRole(UserRole.ADMIN);
+
+        when(request.getEmail()).thenReturn("roger@example.com");
+        when(request.getPassword()).thenReturn("raw-password");
+        when(request.getAudience()).thenReturn(UserRole.HOST);
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(principal.getUser()).thenReturn(user);
+
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(BadCredentialsException.class);
+
+        verify(jwtUtil, never()).generateAccessToken(any());
+        verify(refreshTokenService, never()).createRefreshToken(any());
+    }
+
+    @Test
+    @DisplayName("Should reject an admin account from a guest sign-in page")
+    void login_adminOnGuestAudience_rejectsCredentials() {
+        LoginRequest request = mock(LoginRequest.class);
+        Authentication authentication = mock(Authentication.class);
+        UserPrincipal principal = mock(UserPrincipal.class);
+        user.setRole(UserRole.ADMIN);
+
+        when(request.getEmail()).thenReturn("roger@example.com");
+        when(request.getPassword()).thenReturn("raw-password");
+        when(request.getAudience()).thenReturn(UserRole.GUEST);
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(principal.getUser()).thenReturn(user);
+
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(BadCredentialsException.class);
+
+        verify(jwtUtil, never()).generateAccessToken(any());
+        verify(refreshTokenService, never()).createRefreshToken(any());
     }
 
     // ---------- refreshToken() ----------

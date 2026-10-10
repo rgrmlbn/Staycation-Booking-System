@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // ← add this line
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -59,7 +59,9 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 // PROPERTIES
                                 "/api/v1/properties/summary",
-                                "/api/v1/properties/detailed"
+                                "/api/v1/properties/detailed",
+                                "/api/v1/properties/summary/search",
+                                "/api/v1/properties/detailed/{id}"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

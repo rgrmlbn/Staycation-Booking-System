@@ -3,8 +3,10 @@ package com.spring.backend.module.property.property.controller;
 import com.spring.backend.module.property.property.dto.request.PropertyCreateRequest;
 import com.spring.backend.module.property.property.dto.request.PropertyUpdateRequest;
 import com.spring.backend.module.property.property.dto.response.PropertyDetailedResponse;
+
 import com.spring.backend.module.property.property.dto.response.PropertySummaryResponse;
 import com.spring.backend.module.property.property.enums.PropertyStatus;
+
 import com.spring.backend.module.property.property.service.interfaces.PropertyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +45,19 @@ public class PropertyController {
 
         return ResponseEntity.ok().body(propertyService.getAllSummaryProperties(page, size, title));
 
+    }
+
+    @GetMapping("/summary/search")
+    ResponseEntity<Page<PropertySummaryResponse>> searchSummaryProperties(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size,
+            @RequestParam String address,
+            @RequestParam @Positive int guests,
+            @RequestParam @Positive int rooms
+    ) {
+        return ResponseEntity.ok().body(
+                propertyService.getAllSummaryPropertiesByAddressAndGuestAndRooms(page, size, address, guests, rooms)
+        );
     }
 
     @GetMapping("/detailed")

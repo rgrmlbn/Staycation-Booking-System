@@ -11,6 +11,7 @@ public interface PropertyService {
 
     Page<PropertyDetailedResponse> getOwnedProperties(int page, int size, String title);
     Page<PropertySummaryResponse> getAllSummaryProperties(int page, int size, String title);
+    Page<PropertySummaryResponse> getAllSummaryPropertiesByAddressAndGuestAndRooms(int page, int size, String address, int guests, int rooms);
     Page<PropertyDetailedResponse> getAllDetailedProperties(int page, int size, String title);
     Page<PropertyDetailedResponse> getAllDetailedPropertiesByStatus(int page, int size, PropertyStatus status);
     PropertyDetailedResponse getPropertyById(Long id);

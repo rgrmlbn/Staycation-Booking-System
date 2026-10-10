@@ -13,6 +13,7 @@ import HostLogin from "../pages/host/HostLogin";
 import HostRegister from "../pages/host/HostRegister";
 import HostProperties from "../pages/host/HostProperties";
 import HostDashboard from "../pages/host/HostDashboard";
+import HostBookings from "../pages/host/HostBookings";
 import Login from "../pages/auth/Login";
 import AdminLayout from "../pages/admin/AdminLayout";
 import AdminDashboard from "../pages/admin/Dashboard";
@@ -91,6 +92,14 @@ export default function AppRoutes() {
           element={
             <RoleRoute roles="HOST">
               <HostProperties />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/host/bookings"
+          element={
+            <RoleRoute roles="HOST">
+              <HostBookings />
             </RoleRoute>
           }
         />

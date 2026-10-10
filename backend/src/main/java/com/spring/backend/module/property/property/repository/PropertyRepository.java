@@ -15,6 +15,13 @@ public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> 
             Pageable pageable
     );
 
+    Page<PropertyEntity> findByAddressContainingIgnoreCaseAndMaxGuestsGreaterThanEqualAndBedroomsGreaterThanEqual(
+            String address,
+            Integer guests,
+            Integer rooms,
+            Pageable pageable
+    );
+
     Page<PropertyEntity> findByStatus(
             PropertyStatus status,
             Pageable pageable

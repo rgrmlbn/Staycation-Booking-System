@@ -1,5 +1,6 @@
 package com.spring.backend.module.user.auth.dto.request;
 
+import com.spring.backend.module.user.user.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -19,4 +20,6 @@ public class LoginRequest {
 
     @NotBlank(message = "Password is required")
     private String password;
+
+    private UserRole audience;
 }

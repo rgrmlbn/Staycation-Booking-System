@@ -172,6 +172,23 @@ class PropertyServiceImplTest {
         verify(propertyRepository, never()).findByTitleContainingIgnoreCase(any(), any()); // Confirm a blank title is treated like no title
     }
 
+    @Test
+    @DisplayName("Should search summaries by partial address, guest capacity, and bedroom count")
+    void getAllSummaryPropertiesByAddressAndGuestAndRooms_returnsFilteredMappedPage() {
+        Pageable expectedPageable = Pageable.ofSize(10).withPage(1);
+        Page<PropertyEntity> entityPage = new PageImpl<>(List.of(property), expectedPageable, 1);
+        PropertySummaryResponse response = mock(PropertySummaryResponse.class);
+        when(propertyRepository.findByAddressContainingIgnoreCaseAndMaxGuestsGreaterThanEqualAndBedroomsGreaterThanEqual(
+                "Calo", 3, 2, expectedPageable
+        )).thenReturn(entityPage);
+        when(propertyMapper.toPropertySummaryResponse(property)).thenReturn(response);
+
+        Page<PropertySummaryResponse> result =
+                propertyService.getAllSummaryPropertiesByAddressAndGuestAndRooms(1, 10, " Calo ", 3, 2);
+
+        assertThat(result.getContent()).containsExactly(response);
+    }
+
     // ---------- getAllDetailedProperties() ----------
 
     @Test

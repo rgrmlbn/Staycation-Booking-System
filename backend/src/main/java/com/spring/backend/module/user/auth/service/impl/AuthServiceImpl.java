@@ -14,12 +14,14 @@ import com.spring.backend.module.user.token.entity.RefreshToken;
 import com.spring.backend.module.user.token.service.interfaces.RefreshTokenService;
 import com.spring.backend.module.user.token.service.interfaces.TokenBlacklistService;
 import com.spring.backend.module.user.user.entity.UserEntity;
+import com.spring.backend.module.user.user.enums.UserRole;
 import com.spring.backend.module.user.user.mapper.UserMapper;
 import com.spring.backend.module.user.user.repository.UserRepository;
 import com.spring.backend.security.principal.UserPrincipal;
 import com.spring.backend.security.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,6 +78,12 @@ public class AuthServiceImpl implements AuthService {
 
         // Retrieve the authenticated user principal after authentication succeeds
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        UserRole role = principal.getUser().getRole();
+        UserRole audience = request.getAudience();
+
+        if (audience != null && role != audience) {
+            throw new BadCredentialsException("Bad credentials");
+        }
 
         // Generate a short-lived access token and a refresh token for the authenticated user
         String accessToken = jwtUtil.generateAccessToken(principal);
@@ -84,6 +92,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .role(role)
                 .build();
     }
 
@@ -103,6 +112,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
+                .role(principal.getUser().getRole())
                 .build();
     }
 

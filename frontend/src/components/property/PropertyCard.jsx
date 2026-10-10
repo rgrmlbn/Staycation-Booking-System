@@ -30,6 +30,7 @@ export default function PropertyCard({
   const imageUrl = imageUrls?.[0] || FALLBACK_IMAGE;
   const formattedStatus = formatStatus(status);
   const isAvailable = formattedStatus === "available";
+  const isRemoved = formattedStatus === "removed";
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded border border-[var(--color-mocha)] bg-[var(--color-white)] shadow-[var(--shadow-sm)]">
@@ -43,13 +44,17 @@ export default function PropertyCard({
           className={`absolute right-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
             isAvailable
               ? "bg-green-100 text-green-800"
-              : "bg-[var(--color-taste)] text-[var(--color-bark)]"
+              : isRemoved
+                ? "bg-red-100 text-red-800"
+                : "bg-[var(--color-taste)] text-[var(--color-bark)]"
           }`}
         >
-          {isAvailable && (
+          {(isAvailable || isRemoved) && (
             <span
               aria-hidden="true"
-              className="size-2 rounded-full bg-green-600"
+              className={`size-2 rounded-full ${
+                isAvailable ? "bg-green-600" : "bg-red-600"
+              }`}
             />
           )}
           {formattedStatus}

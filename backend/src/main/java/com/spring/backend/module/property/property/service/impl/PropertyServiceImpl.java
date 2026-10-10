@@ -93,6 +93,20 @@ public class PropertyServiceImpl implements PropertyService {
         return property.map(propertyEntity -> propertyMapper.toPropertySummaryResponse(propertyEntity));
     }
 
+    @Override
+    public Page<PropertySummaryResponse> getAllSummaryPropertiesByAddressAndGuestAndRooms(int page, int size, String address, int guests, int rooms) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<PropertyEntity> properties =
+                propertyRepository.findByAddressContainingIgnoreCaseAndMaxGuestsGreaterThanEqualAndBedroomsGreaterThanEqual(
+                        address.trim(),
+                        guests,
+                        rooms,
+                        pageable
+                );
+
+        return properties.map(propertyEntity -> propertyMapper.toPropertySummaryResponse(propertyEntity));
+    }
+
     // Get all detailed properties, with optional title filtering and pagination support
     @Override
     public Page<PropertyDetailedResponse> getAllDetailedProperties(int page, int size, String title) {
