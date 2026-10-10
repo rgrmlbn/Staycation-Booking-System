@@ -59,7 +59,7 @@ export default function PropertyGrid({
           <h2 className="mt-4 text-xl font-bold text-[var(--color-bark-dark)]">
             No properties available right now
           </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--color-graph)]">
+          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--color-graph)]">
             There aren&apos;t any stays to show at the moment. Please check back
             soon for new places to explore.
           </p>
